@@ -1,0 +1,13 @@
+
+import React from "react";
+class EducationTest extends React.Component{
+    
+    
+    render (){
+      return  ('<h1>jgjhj</h1>')
+    
+    }
+}
+
+
+export default EducationTest ;
