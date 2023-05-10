@@ -27,7 +27,7 @@ import {
 
 
 export const Expense = () => {
- // test commit 1
+  // test commit 1
   const history = useHistory();
   const [isAction, setIsAction] = useState(false);
 
@@ -86,7 +86,7 @@ export const Expense = () => {
         console.log(resultItems)
         console.log(user.UserId)
         resultItems.map(data => {
-          setTankhahItems(tankhahItems=>[...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID }]);
+          setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID }]);
         });
 
       }).catch(function (error) {
@@ -227,7 +227,7 @@ export const Expense = () => {
         formik.setFieldValue("tarikh", response.data.tarikh);
         formik.setFieldValue("shomare", response.data.shomare);
         formik.setFieldValue("tankhah", response.data.tankhah_ID);
-       
+
         GetAllTankhahInfo(response.data.tankhah_ID);
 
       }).catch(function (error) {
@@ -240,7 +240,7 @@ export const Expense = () => {
   const addSouratHazineHeader = (data) => {
     setIsAction(true);
     console.log("data")
-    console.log( {
+    console.log({
       "SoratID": 0,
       "MohidID": user.lastMohitID,
       "Shomare": parseInt(data.shomare),
@@ -252,7 +252,7 @@ export const Expense = () => {
       "tarikh": headerDate,
       "sanadID": 0,
       "shomare_name": 0,
-      "SalID":parseInt(sessionStorage.getItem("SalMali")) ,
+      "SalID": parseInt(sessionStorage.getItem("SalMali")),
       "tarikh_name": ""
     })
 
@@ -282,11 +282,11 @@ export const Expense = () => {
           "tarikh": headerDate,
           "sanadID": 0,
           "shomare_name": 0,
-          "salID":  parseInt(sessionStorage.getItem("SalMali")),
+          "salID": parseInt(sessionStorage.getItem("SalMali")),
           "tarikh_name": ""
         }
       }).then(function (response) {
-       // console.log("response : " + response.data);
+        // console.log("response : " + response.data);
         toast.success('عملیات با موفقیت انجام پذیرفت', {
           position: toast.POSITION.TOP_LEFT,
           className: 'toast-message'
@@ -330,7 +330,7 @@ export const Expense = () => {
 
                 axios.delete(serverAdress + `DeleteSouratHazineHeader?id=${id}`, { headers })
                   .then(function (res) {
-                      toast.success('عملیات با موفقیت انجام پذیرفت', {
+                    toast.success('عملیات با موفقیت انجام پذیرفت', {
                       position: toast.POSITION.TOP_LEFT,
                       className: 'toast-message'
                     });
@@ -402,7 +402,7 @@ export const Expense = () => {
           "tarikh": headerDate,
           "sanadID": 0,
           "shomare_name": 0,
-          "salID":  parseInt(sessionStorage.getItem("SalMali")),
+          "salID": parseInt(sessionStorage.getItem("SalMali")),
           "tarikh_name": ""
         }
       }).then(function (response) {
@@ -434,7 +434,7 @@ export const Expense = () => {
         <Col lg="12" >
           <nav className="breadcrumb">
             <a className="breadcrumb-item" href="#">خانه</a>
-            <span className="breadcrumb-item active">مدیریت صورت هزینه ها</span>          
+            <span className="breadcrumb-item active">مدیریت صورت هزینه ها</span>
           </nav>
         </Col>
 
@@ -512,8 +512,6 @@ export const Expense = () => {
                       {tarikhError == true ? <div style={{ marginTop: "0.25rem", fontSize: "80%", color: "#c4183c", fontFamily: 'IRANSans', }}>فیلد تاریخ اجباری است</div> : ''}
                     </Col>
                   </Row>
-
-
                   <Row>
                     <Col md="4" className="form-group">
                       <label htmlFor="sharh">شرح*:</label>
@@ -545,7 +543,6 @@ export const Expense = () => {
                       </div>
                     </Col>
                   </Row>
-
                   <Row>
                     <Col className="form-group">
                       <div className='form-inline'>
@@ -554,14 +551,14 @@ export const Expense = () => {
                             <span className='form-inline'>
                               ثبت
                               {isAction == true ? <ReactLoading type="spin" color="red" height={20} width={20} className="ml-2" /> : ''}
-                            </span>                         
+                            </span>
                           </Button>
                           : operation == "edit" ?
                             <Button theme="warning" className="mb-2 mr-1" type="submit" disabled={isAction == true ? true : false}>
                               <span className='form-inline'>
                                 ثبت
                                 {isAction == true ? <ReactLoading type="spin" color="red" height={20} width={20} className="ml-2" /> : ''}
-                              </span>                           
+                              </span>
                             </Button>
                             : operation == "delete" ?
                               <Button theme="danger" className="mb-2 mr-1" type="submit" disabled={isAction == true ? true : false} >

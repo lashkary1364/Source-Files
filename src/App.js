@@ -13,6 +13,7 @@ import './assets/ag-grid.css'
 import PrivateRoute from "./PrivateRoute";
 
 import {Home2} from './home2'
+import { NotFound } from "./views/NotFound";
 // import { ToastProvider } from 'react-toast-notifications'
 
 export default () => (
@@ -39,8 +40,9 @@ export default () => (
   );
 })} */}
 
-      {/* <Route path="/" key={100000} exact component={Login} /> */}
-      <Route path="/home2" key={100001} exact component={Home2} />
+      <Route path="/" key={100000} exact component={Login} />
+      <Route path="*" component={NotFound}></Route>
+      {/* <Route path="/home2" key={100001} exact component={Home2} /> */}
 {/* </ToastProvider> */}
     </div>
 
