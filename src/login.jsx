@@ -14,17 +14,17 @@ import persian from "react-date-object/calendars/persian"
 //import persian_fa from "react-date-object/locales/persian_fa"
 import DatePicker, { DateObject } from "react-multi-date-picker";
 import {
-   useHistory
-  } from 'react-router-dom';
+    useHistory
+} from 'react-router-dom';
 
 const Login = () => {
-    
-    const history = useHistory();  
+
+    const history = useHistory();
     const [ErrorFlag, setErrorFlag] = useState(false);
     const [mohitItems, setMohitItems] = useState([]);
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
     const [resultItems] = [];
-    
+
     const validationSchema = Yup.object().shape({
         userName: Yup.string().required('فیلد نام کاربری اجباری است'),
         //test test
@@ -61,7 +61,7 @@ const Login = () => {
         onSubmit: (data) => {
             axios(
                 {
-                    url:serverAdress+ 'login',
+                    url: serverAdress + 'login',
                     method: "post",
                     data:
                     {
@@ -97,7 +97,7 @@ const Login = () => {
 
                     const date = new DateObject({ calendar: persian })
                     console.log(date.year)
-                    sessionStorage.setItem("SalMali",date.year);
+                    sessionStorage.setItem("SalMali", date.year);
 
                     // sessionStorage.getItem("LoginTocken");
                     // console.log("get session item:")
@@ -112,7 +112,7 @@ const Login = () => {
                         console.log(response.data.access_token)
                         localStorage.setItem("access-tocken", response.data.access_token);
                         window.location.replace('/home')
-                       // history.push("/home");
+                        // history.push("/home");
                         //window.location.replace('http://192.168.0.254:1212/home')
                         // window.location.replace('/blog-overview')
                         // window.location.assign('http://localhost:3000/blog-overview')
@@ -142,6 +142,13 @@ const Login = () => {
 
     }, []);
 
+    useEffect(() => {
+        getWorkEnvironment();
+
+
+    }, [formik.values.userName], [formik.values.password])
+
+
 
     useEffect(
         () => {
@@ -157,6 +164,7 @@ const Login = () => {
 
     const getWorkEnvironment = () => {
 
+        setMohitItems([])
         axios(
             {
                 url: serverAdress + `GetAllWorkEnvironment`,
@@ -187,13 +195,16 @@ const Login = () => {
     }
 
 
-    const handleChangeMohit = (value) => {
+    // const handleChangeUserName = (value) => {
 
-        sessionStorage.setItem("MohitKaryId", value)
-        console.log("MohitKaryId88888888888888888")
-        console.log(value)
+    //     console.log("............................")
+    //     formik.setFieldValue("userName", value)
+    //     getWorkEnvironment();
 
-    }
+
+    // }
+
+
 
     return (
 

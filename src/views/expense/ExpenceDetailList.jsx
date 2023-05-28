@@ -33,7 +33,7 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
     },
     { field: 'ShomareBarge', headerName: 'شماره فاکتور', },
     { field: 'TarikhPardakht', headerName: 'تاریخ پرداخت', },
-    { field: 'Mablagh', headerName: 'مبلغ', },
+    { field: 'Mablagh1', headerName: 'مبلغ', },
     { field: 'Sharh', headerName: 'شرح', },
     { field: 'State', hide:true},
     { field: 'Tozihat', headerName: 'توضیحات', },
@@ -43,14 +43,7 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
   useEffect(() => {
     console.log("grid data .......")
     console.log(gridData)
-    //setRowData([])
-
-  //   resultItems.map((data) => {
-  //     setMohitItems(mohitItems => [...mohitItems, { Id: data.mohitID, Name: data.fullMohitOnvan }]);
-  // });
-
-
-   setRowData([])
+    setRowData([])
 
     gridData.map((data, index) => {
       
@@ -61,7 +54,8 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
         "RowIndex": index,
         "ShomareBarge": data?.ShomareBarge,
         "TarikhPardakht": data?.TarikhPardakht,
-        "Mablagh": data?.Mablagh,
+        "Mablagh1": data?.Mablagh.toLocaleString(),
+        "Mablagh":data?.Mablagh,
         "CodeHesab": data?.CodeHesab,
         "Mrkaz1Code": data?.Mrkaz1Code,
         "Mrkaz2Code": data?.Mrkaz2Code,
@@ -78,15 +72,7 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
     console.log(gridData)
 
     // setRowData(gridData);
-  }, [gridData ]);
-
-useEffect(()=>{
-console.log("row data ...")
-console.log(rowData)
-
-
-},[rowData])
-
+  }, [gridData]);
 
   const gridStyle = useMemo(() => ({ height: '600px', width: '100%', }), []);
 
@@ -130,6 +116,9 @@ console.log(rowData)
       return;
     }
 
+
+    console.log("row data ...")
+    console.log(rowData)
     axios(
       {
         url: serverAdress +"InsertSoratHazineDetail",

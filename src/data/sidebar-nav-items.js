@@ -58,7 +58,7 @@ export default function () {
       title: "گزارش تست",
       htmlBefore: '<i class="material-icons">note_add</i>',
         // '<i class="material-icons">error</i>',
-      to: "/stimulreport",
+      to: "/report",
     },
     // {
     //   title: "دیتیل مدیریت هزینه",

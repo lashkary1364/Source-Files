@@ -80,7 +80,7 @@ export const ExpenseList = () => {
 
     // }
 
-  ])
+  ]);
 
   // const onSelectionChanged = useCallback(() => {
   //   // const selectedRows = gridRef.current.api.getSelectedRows();
@@ -114,9 +114,10 @@ export const ExpenseList = () => {
     }).then(function (response) {
       console.table(response.data);
       setRowData(response.data);
-      console.log("row data ===>")
+      console.log("row data ===>");
       console.table(rowData);
     }).catch(function (error) {
+      
       console.log("axois error: " + error);
 
     })
@@ -140,7 +141,7 @@ export const ExpenseList = () => {
         console.log("get all tankhah ...")
         const resultItems = response.data;
         resultItems.map(data => {
-          setTankhahItems(tankhahItems=>[...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID }]);
+          setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID }]);
         });
 
       }).catch(function (error) {
@@ -191,9 +192,7 @@ export const ExpenseList = () => {
 
 
   const handleAdd = () => {
-
-    history.push("/expense?operation=add")
-
+    history.push("/expense?operation=add");
   }
 
 
@@ -255,7 +254,7 @@ export const ExpenseList = () => {
                 <label htmlFor="tankhah" className="mr-2"> انتخاب تنخواه*:</label>
                 <FormSelect className="form-control" id="tankhah" name="tankhah" onChange={(e) => getAllData(e.target.value)}>
                   <option value={""}>یک موردانتخاب کنید</option>
-{/* 
+                  {/* 
                   {mohitItems.map((item) => (
 
 <option key={item.Id} value={item.Id}>{item.Name}</option>

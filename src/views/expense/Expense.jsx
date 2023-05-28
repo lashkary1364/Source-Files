@@ -9,12 +9,13 @@ import {
 import ReactLoading from 'react-loading';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
-import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { faHouseMedicalCircleCheck, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios';
-import persian from "react-date-object/calendars/persian"
 //import persian_fa from "react-date-object/locales/persian_fa"
 import DatePicker, { DateObject } from "react-multi-date-picker";
+import persian from "react-date-object/calendars/persian"
+import persian_en from "react-date-object/locales/persian_en"
 import 'react-toastify/dist/ReactToastify.css';
 import '../../assets/view-css.css';
 import { ToastContainer, toast } from 'react-toastify';
@@ -24,35 +25,56 @@ import {
   Route,
   useHistory
 } from 'react-router-dom';
-
+import * as moment from 'jalali-moment';
 
 export const Expense = () => {
-  // test commit 1
+ 
   const history = useHistory();
   const [isAction, setIsAction] = useState(false);
 
   const queryParameters = new URLSearchParams(window.location.search);
   const soratId = queryParameters.get("id");
-  //const operation = queryParameters.get("operation");
+ 
   const [operation, setOperation] = useState(queryParameters.get("operation"));
   const calendarRef = useRef();
-  // const [submittedDate, setSubmittedDate] = useState();
-  //const [items, setItems] = useState([]);
+  
   const [tarikhError, setTarikhError] = useState(false);
   const [tankhahItems, setTankhahItems] = useState([]);
   const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
   const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
-  const [headerDate, setHeaderDate] = useState(new DateObject({ calendar: persian }).format());
+  const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }))
+  const date = new DateObject({ calendar: persian, locale: persian_en })
+  const [dateHeader,setDateHeader]=useState(date.format());
+  console.log(date.format()) 
+  
+ 
+ 
+ 
 
-  const handleChangeDate = (date) => {
-    if (date == null)
-      setTarikhError(true);
-    else
-      setTarikhError(false);
+  const convert = (date, format = state.format) => {
+    console.log("convert....")
+    console.log(date.format)
+    console.log(state)
+console.log(format)
+    let object = { date, format }
+    console.log("object")
+    console.log(object)
+    setState(new DateObject(object).convert(persian, persian_en).format())
+    console.log("state ... ")
+    console.log(new DateObject(object).convert(persian, persian_en).format())
+    setDateHeader(new DateObject(object).convert(persian, persian_en).format())
+    //gregorian: new DateObject(object).format(),
 
-    console.log()
-    setHeaderDate(date.format("YYYY/MM/DD"));
+    // arabic: new DateObject(object).convert(arabic, arabic_en).format(),
+    //  indian: new DateObject(object).convert(indian, indian_en).format(),
+    //  jsDate: date.toDate(),
+    //   ...object
+
   }
+
+
+
+
 
   useEffect(() => {
 
@@ -119,6 +141,7 @@ export const Expense = () => {
         formik.setFieldValue("shomare", response.data.shomare)
         formik.setFieldValue("etebarMax", response.data.etebarMax)
         formik.setFieldValue("mande", response.data.mojodi)
+
       }).catch(function (error) {
         // handle error
         console.log("axois error: ");
@@ -238,8 +261,24 @@ export const Expense = () => {
   }
 
   const addSouratHazineHeader = (data) => {
+
+
+    console.log("tarikh ... ")
+    console.log(dateHeader)
+
+    console.log("hhhhh")
+    console.log(data)
+
+    // console.log("value")
+    // console.log(value)
+    //const tarikh=moment(data.tarikh, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')
+
+    // console.log("tarikh....")
+    // console.log(tarikh)
+
     setIsAction(true);
-    console.log("data")
+    console.log("data");
+
     console.log({
       "SoratID": 0,
       "MohidID": user.lastMohitID,
@@ -249,12 +288,12 @@ export const Expense = () => {
       "total": 0,
       "Sharh": data.sharh,
       "tozihat": data.tozihat,
-      "tarikh": headerDate,
+      "tarikh": dateHeader,
       "sanadID": 0,
       "shomare_name": 0,
       "SalID": parseInt(sessionStorage.getItem("SalMali")),
       "tarikh_name": ""
-    })
+    });
 
 
     axios(
@@ -279,14 +318,14 @@ export const Expense = () => {
           "total": 0,
           "sharh": data.sharh,
           "tozihat": data.tozihat,
-          "tarikh": headerDate,
+          "tarikh": dateHeader,
           "sanadID": 0,
           "shomare_name": 0,
           "salID": parseInt(sessionStorage.getItem("SalMali")),
           "tarikh_name": ""
         }
       }).then(function (response) {
-        // console.log("response : " + response.data);
+        console.log("response : " + response.data);
         toast.success('عملیات با موفقیت انجام پذیرفت', {
           position: toast.POSITION.TOP_LEFT,
           className: 'toast-message'
@@ -298,8 +337,8 @@ export const Expense = () => {
         }, 1000);
 
       }).catch(function (error) {
-        console.log("addSouratHazineHeader:")
-        console.log(error)
+        console.log("addSouratHazineHeader:");
+        console.log(error);
         setIsAction(false);
         //console.log("axois error: " + error);
         toast.error('خطا در انجام عملیات', {
@@ -360,6 +399,8 @@ export const Expense = () => {
   }
 
   const updateSouratHazineHeader = (data) => {
+    const tarikh = moment(data.tarikh, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')
+
     setIsAction(true);
     console.log({
       "soratID": parseInt(soratId),
@@ -370,7 +411,7 @@ export const Expense = () => {
       "total": 0,
       "sharh": data.sharh,
       "tozihat": data.tozihat,
-      "tarikh": headerDate,
+      "tarikh": dateHeader,
       "sanadID": 0,
       "shomare_name": 0,
       "salID": parseInt(sessionStorage.getItem("SalMali")),
@@ -399,7 +440,7 @@ export const Expense = () => {
           "total": 0,
           "sharh": data.sharh,
           "tozihat": data.tozihat,
-          "tarikh": headerDate,
+          "tarikh": dateHeader,
           "sanadID": 0,
           "shomare_name": 0,
           "salID": parseInt(sessionStorage.getItem("SalMali")),
@@ -499,15 +540,19 @@ export const Expense = () => {
                         <DatePicker inputClass='form-control'
                           ref={calendarRef}
                           calendar={persian}
+                          locale={persian_en}
                           // locale={persian_fa}
                           style={tarikhError == true ? { borderColor: "#c4183c", fontFamily: 'tahoma' } : { borderColor: "#e1e5eb", fontFamily: 'tahoma' }}
                           format={"YYYY/MM/DD"}
-                          onChange={handleChangeDate}
+                          value={state}
+                          onChange={convert}
                           id="tarikh" name="tarikh"
-                          value={formik.values.tarikh}
+                          // value={value} onChange={setValue}
                           calendarPosition="bottom-right"
                           disabled={operation == "delete" ? true : false}
                         />
+                        <span>{dateHeader}</span>
+                        {/* <span>{state}</span> */}
                       </div>
                       {tarikhError == true ? <div style={{ marginTop: "0.25rem", fontSize: "80%", color: "#c4183c", fontFamily: 'IRANSans', }}>فیلد تاریخ اجباری است</div> : ''}
                     </Col>

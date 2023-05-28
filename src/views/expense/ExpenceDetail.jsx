@@ -9,8 +9,11 @@ import {
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import axios from 'axios'
 import CurrencyInput from 'react-currency-input-field';
+//import DatePicker, { DateObject } from "react-multi-date-picker";
+import DatePicker, { DateObject } from "react-multi-date-picker"
 import persian from "react-date-object/calendars/persian"
-import DatePicker, { DateObject } from "react-multi-date-picker";
+import persian_en from "react-date-object/locales/persian_en"
+
 import ReactLoading from 'react-loading';
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import 'react-toastify/dist/ReactToastify.css';
@@ -22,9 +25,10 @@ import TextField from "@material-ui/core/TextField";
 import {
     useHistory
 } from 'react-router-dom';
+import * as moment from 'jalali-moment';
 
 export const ExpenceDetail = () => {
-
+    // let persianDate = moment("1989/1/24").locale('fa').format('YYYY/M/D');
     const [isAction, setIsAction] = useState(false);
     const history = useHistory();
     const [operation, setOperation] = useState("add");
@@ -34,7 +38,13 @@ export const ExpenceDetail = () => {
     const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
     const [tarikhError, setTarikhError] = useState(false);
-    const [detailDate, setDetailDate] = useState(new DateObject({ calendar: persian }).format());
+    // console.log()
+    let today = new Date();//.toLocaleDateString('fa-IR');
+    // const newDate = moment(today, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')
+    // const [detailDate, setDetailDate] = useState(newDate);
+    //))
+    //new DateObject({ calendar: persian }).format())
+    //);
     const [rowGrid, setRowGrid] = useState([]);
     const [options, setOptions] = useState([]);
     const [rowIndex, setRowIndex] = useState(0);
@@ -42,7 +52,7 @@ export const ExpenceDetail = () => {
     const [values, setValues] = React.useState(null);
 
     const onChange = (_, a) => {
-        formik.setFieldValue("sharhDetail", a.name)
+        formik.setFieldValue("sharhDetail", a.name);
         setValues(a);
     };
 
@@ -60,9 +70,10 @@ export const ExpenceDetail = () => {
 
     const getAllSoratHazineDetail = () => {
 
-        console.log("getAllSoratHazineDetail")
-        console.log("soratId:")
-        console.log(soratId)
+        console.log("getAllSoratHazineDetail");
+        console.log("soratId:");
+        console.log(soratId);
+
         axios(
             {
                 url: serverAdress + `GetAllSouratHazineDetail?souratId=${soratId}`,
@@ -143,13 +154,18 @@ export const ExpenceDetail = () => {
 
     const handleChangeDate = (date) => {
 
+        console.log(date)
+
         if (date == null)
             setTarikhError(true);
-        else
+        else 
+        {            
             setTarikhError(false);
 
-        setDetailDate(date.format("YYYY/MM/DD"));
-        formik.setFieldValue("tarikhDetail", date.format("YYYY/MM/DD"));
+          //  const newDate = moment(date, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD');         
+          //formik.setFieldValue("tarikhDetail", newDate);
+        }
+
     }
 
 
@@ -159,7 +175,7 @@ export const ExpenceDetail = () => {
 
     const validationSchema = Yup.object().shape({
         sharhDetail: Yup.string().required('فیلد شرح اجباری است'),
-        id:Yup.string().required('فیلد شماره فاکتور اجباری است'),
+        id: Yup.string().required('فیلد شماره فاکتور اجباری است'),
         //.shape({ name: Yup.string().required("sharh detail is required"), value: Yup.number().required("sharh detail is required") }),//.required('At least one skill is required'),// Yup.object().shape({name: Yup.string().required()}).required ('فیلد تاریخ اجباری است') ,//.required('فیلد نام کاربری اجباری است'),//.oneOf(validProductValues),
         tarikhDetail: Yup.string().required('فیلد تاریخ اجباری است'),
         price: Yup.string().required('فیلد مبلغ پرداختی اجباری است'),
@@ -180,7 +196,11 @@ export const ExpenceDetail = () => {
         isInitialValid: true,
 
         onSubmit: (data) => {
-
+            alert(1)
+            console.log("data ...")  
+            console.log(data)
+            const dateDetai = moment(data.tarikhDetail, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD');
+            console.log(dateDetai)
             console.log("submit ....")
             console.log(operation)
             console.log(data);
@@ -203,7 +223,7 @@ export const ExpenceDetail = () => {
                 }
 
                 setRowGrid([...rowGrid, {
-                    "ID": max + 1, "SoratID": parseInt(soratId), "ShomareBarge": parseInt(data.id) == NaN ? null : parseInt(data.id), "TarikhPardakht": detailDate, "Sharh": values.name, "CodeHesab": values.codeHesab, "Mrkaz1Code": values.markaz1, "Mrkaz2Code": values.markaz2, "Mrkaz3Code": values.markaz3, "Mablagh": parseInt(data.price), "Tozihat": data.tozihatDetail
+                    "ID": max + 1, "SoratID": parseInt(soratId), "ShomareBarge": parseInt(data.id) == NaN ? null : parseInt(data.id), "TarikhPardakht": dateDetai, "Sharh": values.name, "CodeHesab": values.codeHesab, "Mrkaz1Code": values.markaz1, "Mrkaz2Code": values.markaz2, "Mrkaz3Code": values.markaz3, "Mablagh": parseInt(data.price), "Tozihat": data.tozihatDetail
                     , "item_ID": values?.value, "State": 0
                 }]);
 
@@ -220,12 +240,12 @@ export const ExpenceDetail = () => {
             }
 
             if (operation == "edit") {
-
                 console.log("update")
                 console.log("data")
                 console.log(data)
                 console.log(selectedRow)
                 console.log("edit ....")
+
                 var dataa = {
                     "ID": parseInt(selectedRow.ID),
                     "hazine_ID": parseInt(soratId),
@@ -355,10 +375,10 @@ export const ExpenceDetail = () => {
                                             <Row>
                                                 <Col md="3" className="form-group">
                                                     <label htmlFor="title">شماره فاکتور/دستور :</label>
-                                                    <FormInput type="text" name="id" id="id"   className={'form-control' + (formik.errors.id && formik.touched.id ? ' is-invalid' : '')} maxLength="4"
-                                                        onChange={(e) => handleChangeShmare(e.target.value)} value={formik.values.id}                                                         
+                                                    <FormInput type="text" name="id" id="id" className={'form-control' + (formik.errors.id && formik.touched.id ? ' is-invalid' : '')} maxLength="4"
+                                                        onChange={(e) => handleChangeShmare(e.target.value)} value={formik.values.id}
                                                         placeholder="شماره فاکتور" />
-                                                         <div className="invalid-feedback">
+                                                    <div className="invalid-feedback">
                                                         {
                                                             formik.errors.id && formik.touched.id
                                                                 ? formik.errors.id
@@ -369,12 +389,18 @@ export const ExpenceDetail = () => {
                                                 <Col md="3" className="form-group">
                                                     <label htmlFor="tarikhDetail">تاریخ *:</label>
                                                     <div>
+                                                        {/* <DatePicker
+      calendar={persian}
+      locale={persian_en}
+      calendarPosition="bottom-right"
+    /> */}
                                                         <DatePicker inputClass='form-control'
                                                             ref={calendarRef}
                                                             calendar={persian}
+                                                            locale={persian_en}
                                                             style={tarikhError == true ? { borderColor: "#c4183c" } : { borderColor: "#e1e5eb" }}
                                                             format={"YYYY/MM/DD"}
-                                                            onChange={handleChangeDate}
+                                                            onChange={(date)=>handleChangeDate(date)}
                                                             id="tarikhDetail" name="tarikhDetail"
                                                             value={formik.values.tarikhDetail}
                                                             calendarPosition="bottom-right" />

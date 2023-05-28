@@ -25,6 +25,7 @@ import { EmployeeComponent } from "./views/expense/EmployeeComponent";
 import { ExpenceDetail } from "./views/expense/ExpenceDetail";
 import { Home, home } from "./views/Home";
 import { Designer, stimulreport } from "./views/stimulreport";
+import { TestReport } from "./views/TestReport";
 
 export default [
   // {
@@ -126,9 +127,9 @@ export default [
 
   },
   {
-    path:"/stimulreport",
+    path:"/report",
     layout: DefaultLayout,
-    component: Designer
+    component: TestReport
   }
  
 ];

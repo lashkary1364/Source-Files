@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter, BrowserRouter as Router, Route } from "react-router-dom";
-
 // import routes from "./routes";
 // import withTracker from "./withTracker";
 import Login from "./login"
@@ -14,6 +13,8 @@ import PrivateRoute from "./PrivateRoute";
 
 import {Home2} from './home2'
 import { NotFound } from "./views/NotFound";
+import { Picker } from "./views/Picker";
+
 // import { ToastProvider } from 'react-toast-notifications'
 
 export default () => (
@@ -22,7 +23,6 @@ export default () => (
     <div>
     {/* <ToastProvider> */}
       <PrivateRoute></PrivateRoute>
-
       {/* {routes.map((route, index) => {
   return (
     <PrivateRoute
@@ -41,9 +41,10 @@ export default () => (
 })} */}
 
       <Route path="/" key={100000} exact component={Login} />
-      <Route path="*" component={NotFound}></Route>
+      {/* <Route path="/picker" key={100000} exact component={Picker} /> */}
+      {/* <Route path="*" component={NotFound}></Route> */}
       {/* <Route path="/home2" key={100001} exact component={Home2} /> */}
-{/* </ToastProvider> */}
+      {/* </ToastProvider> */}
     </div>
 
   </Router>
