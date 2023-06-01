@@ -60,6 +60,12 @@ export default function () {
         // '<i class="material-icons">error</i>',
       to: "/report",
     },
+    {
+      title: "گزارش مرور تنخواه",
+      htmlBefore: '<i class="material-icons">note_add</i>',
+        // '<i class="material-icons">error</i>',
+      to: "/moror",
+    },
     // {
     //   title: "دیتیل مدیریت هزینه",
     //   htmlBefore: '<i class="material-icons">error</i>',

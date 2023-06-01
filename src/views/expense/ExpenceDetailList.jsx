@@ -35,9 +35,9 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
     { field: 'TarikhPardakht', headerName: 'تاریخ پرداخت', },
     { field: 'Mablagh1', headerName: 'مبلغ', },
     { field: 'Sharh', headerName: 'شرح', },
-    { field: 'State', hide:true},
+    { field: 'State', hide: true },
     { field: 'Tozihat', headerName: 'توضیحات', },
-
+    { field: 'ok', headerName: 'وضعیت', },
   ])
 
   useEffect(() => {
@@ -46,16 +46,16 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
     setRowData([])
 
     gridData.map((data, index) => {
-      
+
       console.log("data....")
       console.log(data)
-      setRowData(rowData=>[...rowData, {
+      setRowData(rowData => [...rowData, {
         "ID": data?.ID,
         "RowIndex": index,
         "ShomareBarge": data?.ShomareBarge,
         "TarikhPardakht": data?.TarikhPardakht,
         "Mablagh1": data?.Mablagh.toLocaleString(),
-        "Mablagh":data?.Mablagh,
+        "Mablagh": data?.Mablagh,
         "CodeHesab": data?.CodeHesab,
         "Mrkaz1Code": data?.Mrkaz1Code,
         "Mrkaz2Code": data?.Mrkaz2Code,
@@ -65,6 +65,7 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
         "Tozihat": data?.Tozihat,
         "item_ID": data?.item_ID,
         "State": data?.State,
+        "ok": data?.ok == 0 ? 'بررسی نشده' : data?.ok == 1 ? 'تایید شده' : 'رد شده'
       }]);
     });
 
@@ -121,7 +122,7 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
     console.log(rowData)
     axios(
       {
-        url: serverAdress +"InsertSoratHazineDetail",
+        url: serverAdress + "InsertSoratHazineDetail",
         method: "post",
         headers:
         {
@@ -130,12 +131,12 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
         },
         data: rowData,
       }).then(function (response) {
-        
+
         toast.success('عملیات با موفقیت انجام پذیرفت', {
           position: toast.POSITION.TOP_LEFT,
           className: 'toast-message'
         });
-        
+
         setTimeout(() => {
           setIsAction(false);
           history.push("/expencelist");
@@ -152,6 +153,8 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
   }
 
   const deleteSouratHazineDetail = (id) => {
+
+
     const headers = {
       Authorization: `Bearer ${localStorage.getItem("access-tocken")}`
     };
@@ -166,6 +169,11 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
   }
 
   const handleDelete = (row) => {
+
+    console.log("row ...")
+    console.log(row)
+
+
 
     confirmAlert({
       closeOnEscape: false,
@@ -185,12 +193,12 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
                 setRowData(newRowData);
 
 
-                gridData=[]
+                gridData = []
                 console.log(gridData)
                 console.log("row data on delete ... ")
                 console.log(rowData)
-                gridData=rowData;
-                
+                gridData = rowData;
+
                 console.log("gridData")
                 console.log(gridData)
 

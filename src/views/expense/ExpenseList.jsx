@@ -39,9 +39,9 @@ export const ExpenseList = () => {
     { field: 'sharh', headerName: 'شرح', },
     { field: 'tarikh', headerName: 'تاریخ', },
     { field: 'str_status', headerName: 'وضعیت', },
-    // { field: 'shomare_name', headerName: 'شماره نامه', filter: 'agNumberColumnFilter', },
-    // { field: 'tarikh_name', headerName: 'تاریخ نامه', filter: 'agNumberColumnFilter', },
-    // { field: 'shomare_sanad', headerName: 'شماره سند', filter: 'agNumberColumnFilter', },
+    { field: 'shomare_name', headerName: 'شماره نامه', filter: 'agNumberColumnFilter', },
+    { field: 'tarikh_name', headerName: 'تاریخ نامه', filter: 'agNumberColumnFilter', },
+    { field: 'sanadID', headerName: 'شماره سند', filter: 'agNumberColumnFilter', },
     // { field: 'total', headerName: 'جمع مبالغ ثبت شده', filter: 'agNumberColumnFilter', },
     // { field: 'taeed_shode', headerName: 'جمع مبالغ تایید شده', filter: 'agNumberColumnFilter', },
     // { field: 'taeed_Nashode', headerName: 'جمع مبالغ تایید نشده', filter: 'agNumberColumnFilter', },
@@ -141,7 +141,7 @@ export const ExpenseList = () => {
         console.log("get all tankhah ...")
         const resultItems = response.data;
         resultItems.map(data => {
-          setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID }]);
+          setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID , shomare_name:data.shomare_name , tarikh_name:data.tarikh_name , sanadID:data.sanadID }]);
         });
 
       }).catch(function (error) {

@@ -26,6 +26,7 @@ import { ExpenceDetail } from "./views/expense/ExpenceDetail";
 import { Home, home } from "./views/Home";
 import { Designer, stimulreport } from "./views/stimulreport";
 import { TestReport } from "./views/TestReport";
+import { TankhahMoror } from "./views/TankhahMoror";
 
 export default [
   // {
@@ -130,6 +131,11 @@ export default [
     path:"/report",
     layout: DefaultLayout,
     component: TestReport
+  },
+  {
+    path:"/moror",
+    layout: DefaultLayout,
+    component: TankhahMoror
   }
  
 ];

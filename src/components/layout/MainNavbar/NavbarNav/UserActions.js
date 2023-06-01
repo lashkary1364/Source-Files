@@ -47,7 +47,7 @@ export default class UserActions extends React.Component {
       console.log(sessionStorage.getItem("LoginTocken"))
 
      
-      window.location.replace('/n')
+      window.location.replace('/')
       window.location.clear()
 
      //  window.location.href='http://localhost:3000/'

@@ -28,34 +28,36 @@ import {
 import * as moment from 'jalali-moment';
 
 export const Expense = () => {
- 
+
   const history = useHistory();
   const [isAction, setIsAction] = useState(false);
 
   const queryParameters = new URLSearchParams(window.location.search);
   const soratId = queryParameters.get("id");
- 
+
   const [operation, setOperation] = useState(queryParameters.get("operation"));
   const calendarRef = useRef();
-  
+
   const [tarikhError, setTarikhError] = useState(false);
   const [tankhahItems, setTankhahItems] = useState([]);
   const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
   const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
   const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }))
   const date = new DateObject({ calendar: persian, locale: persian_en })
-  const [dateHeader,setDateHeader]=useState(date.format());
-  console.log(date.format()) 
-  
- 
- 
- 
+  const [dateHeader, setDateHeader] = useState(date.format());
+  const [shomareName, setShomareName] = useState(0);
+  const [status, setStatus] = useState(0);
+  const [sanadId, setSanadId] = useState(0);
+  const [tarikhName, setTarikhName] = useState('');
+
+
+  console.log(date.format())
 
   const convert = (date, format = state.format) => {
     console.log("convert....")
     console.log(date.format)
     console.log(state)
-console.log(format)
+    console.log(format)
     let object = { date, format }
     console.log("object")
     console.log(object)
@@ -71,10 +73,6 @@ console.log(format)
     //   ...object
 
   }
-
-
-
-
 
   useEffect(() => {
 
@@ -250,6 +248,14 @@ console.log(format)
         formik.setFieldValue("tarikh", response.data.tarikh);
         formik.setFieldValue("shomare", response.data.shomare);
         formik.setFieldValue("tankhah", response.data.tankhah_ID);
+        setState(response.data.tarikh);
+        setDateHeader(response.data.tarikh);
+
+        setSanadId(response.data.sanadID);
+        setTarikhName(response.data.tarikh_name);
+        setShomareName(response.data.shomare_name);
+        setState(response.data.status);
+
 
         GetAllTankhahInfo(response.data.tankhah_ID);
 
@@ -349,6 +355,16 @@ console.log(format)
   }
 
   const deleteSouratHazineHeader = (id) => {
+
+    if (status != 0) {
+      alert("این سند قابل حذف نمیباشد")
+      return;
+    }
+
+
+
+
+
     setIsAction(true);
     // console.log("delete sorat hazine ....");
 
@@ -399,6 +415,13 @@ console.log(format)
   }
 
   const updateSouratHazineHeader = (data) => {
+   
+    if (status != 0 ) {
+      alert("این سند قابل ویرایش نمی باشد")
+      return;
+    }
+   
+   
     const tarikh = moment(data.tarikh, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')
 
     setIsAction(true);

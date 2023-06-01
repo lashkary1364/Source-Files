@@ -13,7 +13,6 @@ import CurrencyInput from 'react-currency-input-field';
 import DatePicker, { DateObject } from "react-multi-date-picker"
 import persian from "react-date-object/calendars/persian"
 import persian_en from "react-date-object/locales/persian_en"
-
 import ReactLoading from 'react-loading';
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import 'react-toastify/dist/ReactToastify.css';
@@ -25,7 +24,7 @@ import TextField from "@material-ui/core/TextField";
 import {
     useHistory
 } from 'react-router-dom';
-import * as moment from 'jalali-moment';
+// import * as moment from 'jalali-moment';
 
 export const ExpenceDetail = () => {
     // let persianDate = moment("1989/1/24").locale('fa').format('YYYY/M/D');
@@ -38,7 +37,10 @@ export const ExpenceDetail = () => {
     const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
     const [tarikhError, setTarikhError] = useState(false);
-    // console.log()
+    const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }))
+    const date = new DateObject({ calendar: persian, locale: persian_en })
+    const [dateDetail, setDateDetail] = useState(date.format());
+    console.log(date.format());
     let today = new Date();//.toLocaleDateString('fa-IR');
     // const newDate = moment(today, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')
     // const [detailDate, setDetailDate] = useState(newDate);
@@ -50,6 +52,27 @@ export const ExpenceDetail = () => {
     const [rowIndex, setRowIndex] = useState(0);
     const [selectedRow, setSelectedRow] = useState();
     const [values, setValues] = React.useState(null);
+
+    const convert = (date, format = state.format) => {
+        console.log("convert....")
+        console.log(date.format)
+        console.log(state)
+        console.log(format)
+        let object = { date, format }
+        console.log("object")
+        console.log(object)
+        setState(new DateObject(object).convert(persian, persian_en).format())
+        console.log("state ... ")
+        console.log(new DateObject(object).convert(persian, persian_en).format())
+        setDateDetail(new DateObject(object).convert(persian, persian_en).format())
+        //gregorian: new DateObject(object).format(),
+
+        // arabic: new DateObject(object).convert(arabic, arabic_en).format(),
+        //  indian: new DateObject(object).convert(indian, indian_en).format(),
+        //  jsDate: date.toDate(),
+        //   ...object
+
+    }
 
     const onChange = (_, a) => {
         formik.setFieldValue("sharhDetail", a.name);
@@ -100,7 +123,8 @@ export const ExpenceDetail = () => {
                         , "Mrkaz1Code": data?.mrkaz1_code, "Mrkaz2Code": data?.mrkaz2_code, "Mrkaz3Code": data?.mrkaz3_code
                         , "Mablagh": data?.mab, "Tozihat": data?.tozihat,
                         "item_ID": data?.item_ID,
-                        "State": data?.state
+                        "State": data?.state,
+                        "ok": data?.ok == 0 ? 'بررسی نشده' : data?.ok == 1 ? 'تایید شده' : 'رد شده'
                     }]);
                 });
 
@@ -158,12 +182,11 @@ export const ExpenceDetail = () => {
 
         if (date == null)
             setTarikhError(true);
-        else 
-        {            
+        else {
             setTarikhError(false);
 
-          //  const newDate = moment(date, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD');         
-          //formik.setFieldValue("tarikhDetail", newDate);
+            //  const newDate = moment(date, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD');         
+            //formik.setFieldValue("tarikhDetail", newDate);
         }
 
     }
@@ -196,11 +219,13 @@ export const ExpenceDetail = () => {
         isInitialValid: true,
 
         onSubmit: (data) => {
-            alert(1)
-            console.log("data ...")  
-            console.log(data)
-            const dateDetai = moment(data.tarikhDetail, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD');
-            console.log(dateDetai)
+
+            console.log("data ...")
+            console.log(data);
+            console.log("date detail ...")
+            console.log(dateDetail);
+            // const dateDetai = moment(data.tarikhDetail, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD');
+            // console.log(dateDetai)
             console.log("submit ....")
             console.log(operation)
             console.log(data);
@@ -223,8 +248,8 @@ export const ExpenceDetail = () => {
                 }
 
                 setRowGrid([...rowGrid, {
-                    "ID": max + 1, "SoratID": parseInt(soratId), "ShomareBarge": parseInt(data.id) == NaN ? null : parseInt(data.id), "TarikhPardakht": dateDetai, "Sharh": values.name, "CodeHesab": values.codeHesab, "Mrkaz1Code": values.markaz1, "Mrkaz2Code": values.markaz2, "Mrkaz3Code": values.markaz3, "Mablagh": parseInt(data.price), "Tozihat": data.tozihatDetail
-                    , "item_ID": values?.value, "State": 0
+                    "ID": max + 1, "SoratID": parseInt(soratId), "ShomareBarge": parseInt(data.id) == NaN ? null : parseInt(data.id), "TarikhPardakht": dateDetail, "Sharh": values.name, "CodeHesab": values.codeHesab, "Mrkaz1Code": values.markaz1, "Mrkaz2Code": values.markaz2, "Mrkaz3Code": values.markaz3, "Mablagh": parseInt(data.price), "Tozihat": data.tozihatDetail
+                    , "item_ID": values?.value, "State": 0, "ok": 0
                 }]);
 
                 setValues(null);
@@ -240,6 +265,12 @@ export const ExpenceDetail = () => {
             }
 
             if (operation == "edit") {
+
+
+                if (data.ok != 0) {
+                    alert("این سند قابل ویرایش نیست")
+                    return;
+                }
                 console.log("update")
                 console.log("data")
                 console.log(data)
@@ -258,6 +289,7 @@ export const ExpenceDetail = () => {
                     "mrkaz3_code": values.markaz3,
                     "mab": parseInt(data.price),
                     "tozihat": data.tozihatDetail,
+
                 }
 
                 console.log(dataa)
@@ -389,26 +421,20 @@ export const ExpenceDetail = () => {
                                                 <Col md="3" className="form-group">
                                                     <label htmlFor="tarikhDetail">تاریخ *:</label>
                                                     <div>
-                                                        {/* <DatePicker
-      calendar={persian}
-      locale={persian_en}
-      calendarPosition="bottom-right"
-    /> */}
                                                         <DatePicker inputClass='form-control'
                                                             ref={calendarRef}
                                                             calendar={persian}
                                                             locale={persian_en}
-                                                            style={tarikhError == true ? { borderColor: "#c4183c" } : { borderColor: "#e1e5eb" }}
+                                                            style={tarikhError == true ? { borderColor: "#c4183c", fontFamily: 'tahoma' } : { borderColor: "#e1e5eb", fontFamily: 'tahoma' }}
                                                             format={"YYYY/MM/DD"}
-                                                            onChange={(date)=>handleChangeDate(date)}
-                                                            id="tarikhDetail" name="tarikhDetail"
-                                                            value={formik.values.tarikhDetail}
-                                                            calendarPosition="bottom-right" />
+                                                            value={state}
+                                                            onChange={convert}
+                                                            id="tarikh" name="tarikh"
+                                                            calendarPosition="bottom-right"
+                                                            disabled={operation == "delete" ? true : false} />
+                                                        <span>{dateDetail}</span>
                                                     </div>
-                                                    <div>
-                                                        {tarikhError == true ? <div style={{ marginTop: "0.25rem", fontSize: "80%", color: "#c4183c", fontFamily: 'IRANSans', }}>فیلد تاریخ اجباری است</div> : ''}
-                                                    </div>
-
+                                                    {tarikhError == true ? <div style={{ marginTop: "0.25rem", fontSize: "80%", color: "#c4183c", fontFamily: 'IRANSans', }}>فیلد تاریخ اجباری است</div> : ''}
                                                 </Col>
                                                 <Col md="3" className="form-group">
                                                     <label htmlFor="price">مبلغ پرداختی *: </label>

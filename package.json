@@ -46,6 +46,7 @@
     "react-fontawesome": "^1.7.1",
     "react-ga": "^2.5.6",
     "react-hook-form": "^7.43.1",
+    "react-html2pdf": "^1.0.1",
     "react-loading": "^2.0.3",
     "react-multi-date-picker": "^4.0.0",
     "react-notifications": "^1.7.4",
