@@ -62,7 +62,7 @@ export default class Notifications extends React.Component {
         resultItems.map((data) => {
           //   self.setState(state => { return { FinanceYear: [{ Id: data.salId, Name: data.salMali }] } });
           self.setState(prevState => ({
-            FinanceYear: [...prevState.FinanceYear, { Id: data.salId, Name: data.salMali }]
+            FinanceYear: [...prevState.FinanceYear, { Id: data.salId, Name: data.salMali  }]
           }));
         });
 
