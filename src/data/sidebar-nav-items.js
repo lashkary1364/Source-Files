@@ -61,7 +61,25 @@ export default function () {
       to: "/report",
     },
     {
-      title: "گزارش مرور تنخواه",
+      title: "گزارش مرور - گردش حساب تنخواه",
+      htmlBefore: '<i class="material-icons">note_add</i>',
+        // '<i class="material-icons">error</i>',
+      to: "/moror",
+    },
+    {
+      title: "گزارش مرور - لیست هزینه های ثبت شده",
+      htmlBefore: '<i class="material-icons">note_add</i>',
+        // '<i class="material-icons">error</i>',
+      to: "/moror",
+    },
+    {
+      title: "گزارش مرور - لیست دریافتی ها",
+      htmlBefore: '<i class="material-icons">note_add</i>',
+        // '<i class="material-icons">error</i>',
+      to: "/moror",
+    },
+    {
+      title: "گزارش مرور - نوع هزینه ها",
       htmlBefore: '<i class="material-icons">note_add</i>',
         // '<i class="material-icons">error</i>',
       to: "/moror",

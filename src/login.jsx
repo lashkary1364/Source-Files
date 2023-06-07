@@ -58,7 +58,13 @@ const Login = () => {
         validationSchema,
         // validateOnChange: false,
         // validateOnBlur: false,
-        onSubmit: (data) => {
+        onSubmit: (data) => {           
+           console.log({
+            "UserName": data.userName,
+            "UserPasss": data.password,
+            "Imei": "1",
+            "LastMohitId":parseInt(data.mohit)
+        })
             axios(
                 {
                     url: serverAdress + 'login',
@@ -67,7 +73,8 @@ const Login = () => {
                     {
                         "UserName": data.userName,
                         "UserPasss": data.password,
-                        "Imei": "1"
+                        "Imei": "1",
+                        "LastMohitId":parseInt(data.mohit)
                     },
                     headers: {
                         'Content-Type': 'application/json',
@@ -88,12 +95,13 @@ const Login = () => {
                         userLastName: response.data.userLName,
                         UserId: response.data.userId,
                         userTocken: response.data.access_token,
-                        lastMohitID: response.data.lastMohitID
+                        lastMohitID: response.data.lastMohitID,
+                        LastMohitName:response.data.lastMohitName
                     }));
 
                     console.log("login token")
-                    console.log(sessionStorage.getItem("LoginTocken"))
-
+                  //  console.log(sessionStorage.getItem("LoginTocken"))
+                    console.log(JSON.parse(sessionStorage.getItem("LoginTocken")).LastMohitName)
 
                     const date = new DateObject({ calendar: persian })
                     console.log(date.year)
@@ -103,13 +111,13 @@ const Login = () => {
                     // console.log("get session item:")
                     // const xxx=sessionStorage.getItem("LoginTocken");
                     // console.log("xxx:");
-                    // console.log(JSON.parse(xxx).userFirstName)
+                   
 
                     if (response.data.access_token != null) {
                         //  window.location = '/blog-overview'
                         //  this.props.history.replace('/blog-overview')
-                        console.log("acess tocken")
-                        console.log(response.data.access_token)
+                        console.log("acess tocken");
+                        console.log(response.data.access_token);
                         localStorage.setItem("access-tocken", response.data.access_token);
                         window.location.replace('/home')
                         // history.push("/home");
