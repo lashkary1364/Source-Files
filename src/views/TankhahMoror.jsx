@@ -17,14 +17,19 @@ export const TankhahMoror = () => {
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
     const [tankhahItems, setTankhahItems] = useState([]);
     const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }));
-    const [dateFrom,setDateFrom]=useState(new DateObject({ calendar: persian, locale: persian_en }));
-    const[dateTo,setDateTo]=useState(new DateObject({ calendar: persian, locale: persian_en }));
+    const [dateFrom, setDateFrom] = useState(null);
+    //new DateObject({ calendar: persian, locale: persian_en })
+    const [dateTo, setDateTo] = useState(null);
+    //new DateObject({ calendar: persian, locale: persian_en })
     const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
     const calendarRef = useRef();
     const [items, setItems] = useState([]);
-    
-    useEffect(() => {
+    const [salId,setSalId]=useState()
+    const [tankhahId,setTankhahId]=useState();
+    const[mandeKhat,setMandeKhat]=useState(false);
 
+    useEffect(() => {
+        //console.log(sessionStorage.getItem("SalId"))
         GetAllTankhah();
         GetCurrentFinanceYear();
     }, []);
@@ -42,54 +47,34 @@ export const TankhahMoror = () => {
     }
 
     const GetAllTankhahInfo = (tankhahId) => {
-
-
-        console.log("sal mali")
-        console.log(sessionStorage.getItem("SalMali"))
-
-        axios(
-            {
-                url: serverAdress + `GetAllTankhahFinanceInfo?tankhahId=${tankhahId}&salId=${sessionStorage.getItem("SalMali")}`,
-                method: "get",
-                headers:
-                {
-                    Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache',
-                    'Expires': '0',
-                }
-            }).then(function (response) {
-                console.log(response)
-
-            }).catch(function (error) {
-                // handle error
-                console.log("axois error: ");
-                console.log(error)
-            })
+     //console.log(tankhahId);
+     setTankhahId(tankhahId);       
     }
 
 
-    const GetCurrentFinanceYear=()=>{
+    const GetCurrentFinanceYear = () => {
         axios(
             {
-                url: serverAdress + `GetFinanceYearById?salId=${sessionStorage.getItem("SalId")}`,
+                url: serverAdress + "GetFinanceYearById?salMali=" + parseInt(sessionStorage.getItem("SalMali")),
                 method: "get",
                 headers:
                 {
                     Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache',
-                    'Expires': '0',
+                    // 'Cache-Control': 'no-cache',
+                    // 'Pragma': 'no-cache',
+                    // 'Expires': '0',
                 }
             }).then(function (response) {
-
+                //console.log("GetCurrentFinanceYear")
                 const resultItems = response.data;
-                if(response.data!=null){
-                    setDateFrom(response.data.SalStart);
-                    setDateTo(response.data.SalEnd);
+                //console.log(response.data)
+                //console.log(response.data.salStart);
+                //console.log(response.data.salEnd);
+                if (response.data != null) {
+                    setDateFrom(response.data.salStart);
+                    setDateTo(response.data.salEnd);
+                    setSalId(response.data.salId);
                 }
-               
-                
 
             }).catch(function (error) {
                 // handle error
@@ -98,8 +83,6 @@ export const TankhahMoror = () => {
             })
     }
     const GetAllTankhah = () => {
-
-
         axios(
             {
                 url: serverAdress + `GetAllTankhah?userId=${user.UserId}`,
@@ -114,8 +97,10 @@ export const TankhahMoror = () => {
             }).then(function (response) {
 
                 const resultItems = response.data;
-                console.log("tankhah get all ...")
-                console.log(resultItems)
+                //console.log("tankhah get all ...")
+                //console.log(resultItems)
+                //console.log(resultItems[0].tankhah_ID);
+                setTankhahId(resultItems[0].tankhah_ID)
                 resultItems.map(data => {
                     setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID }]);
                 });
@@ -129,8 +114,15 @@ export const TankhahMoror = () => {
 
     const getAllTankhahMoror = (e) => {
         e.preventDefault();
-        console.log(serverAdress + "GetTankhahMoror");
-        
+    //     console.log(serverAdress + "GetTankhahMoror");
+    //     console.log(dateFrom);
+    //     console.log(dateTo);
+    //     console.log(salId);
+    //     console.log(tankhahId);
+    //     console.log(mandeKhat)
+    //     console.log(tankhahItems[0].tankhah_ID)
+       
+
         axios(
             {
                 url: serverAdress + "GetTankhahMoror",
@@ -146,30 +138,25 @@ export const TankhahMoror = () => {
                 },
                 params:
                 {
-                    "fromDate": "1402/01/30",
-                    "toDate": "1402/12/30",
-                    "salId": 12,
-                    "tankhahId": 55,
+                    "fromDate":dateFrom,
+                    "toDate": dateTo,
+                    "salId": salId,
+                    "tankhahId": tankhahId,
                     "showMande": false
                 }
             }).then(function (response) {
 
-                console.log(response)
+                //console.log(response)
                 const resultItems = response.data;
-                console.log(resultItems);
-
+                //console.log(resultItems);
                 resultItems.map((item) => {
-                    console.log(item.bed)
-                    console.log(item.radif)
-
+                    //console.log(item.bed)
+                    //console.log(item.radif)
                     setItems([{ ...items, bed: item.bed, bes: item.bes, radif: item.radif, sharh: item.tpSHarh, tarikh: item.dptarikh }])
-                })
-
-                console.log(items.length)
-                console.log("11111111111");
-                console.log(items);
-
-
+                });
+                //console.log(items.length)
+                //console.log("11111111111");
+                //console.log(items);
             }).catch(function (error) {
                 // handle error
                 console.log("axois error: ");
@@ -199,7 +186,7 @@ export const TankhahMoror = () => {
                                         <Col md="4" className="form-inline"> */}
                                     <div class="form-group mb-2">
                                         <label htmlFor="tankhah">اتتخاب تنخواه*:</label>
-                                        <FormSelect id="tankhah" name="tankhah" className='form-control'>
+                                        <FormSelect id="tankhah" name="tankhah" className='form-control'  onChange={(e) => GetAllTankhahInfo(e.target.value)}>
                                             {/* <option value={""}>یک موردانتخاب کنید</option> */}
                                             {
                                                 tankhahItems.map((item, index) => (
@@ -210,8 +197,6 @@ export const TankhahMoror = () => {
                                                 ))
                                             }
                                         </FormSelect>
-
-
                                     </div>
 
                                     <div class="form-group mx-sm-3 mb-2">
@@ -243,11 +228,9 @@ export const TankhahMoror = () => {
                                     </div>
 
                                     <div class="form-group mx-sm-3 mb-2">
-                                        <input type="checkbox" defaultValue={true} name="vehicle1" />
+                                        <input type="checkbox"  name="vehicle1" onChange={(e)=>setMandeKhat(e.target.checked)} />
                                         <label for="vehicle1"> محاسبه مانده در خط</label>
                                     </div>
-
-
 
                                     <Button theme="primary" className="mb-2 mr-1" type="submit" onClick={(e) => getAllTankhahMoror(e)} >
                                         <span className='form-inline'>
@@ -255,15 +238,14 @@ export const TankhahMoror = () => {
                                         </span>
                                     </Button>
 
-
                                 </form>
                             </ListGroupItem>
                         </ListGroup>
                     </Card>
                     {
-                
+
                     }
-                    {items.length>0? <TankhahMororInfo resultItems={items} dateFrom={dateFrom} dateTo={dateTo}></TankhahMororInfo> :''}
+                    {items.length > 0 ? <TankhahMororInfo resultItems={items} dateFrom={dateFrom} dateTo={dateTo}></TankhahMororInfo> : ''}
                 </Col>
             </Row>
 

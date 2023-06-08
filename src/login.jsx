@@ -87,7 +87,7 @@ const Login = () => {
                     //     + "Access-Control-Request-Method, Access-Control-Request-Headers, Authorization");
 
                     console.log("response: ")
-                    console.log(response);
+                    console.log(response.data);
                     console.log(response.data.access_token)
 
                     sessionStorage.setItem("LoginTocken", JSON.stringify({
