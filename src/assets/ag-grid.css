@@ -75,3 +75,20 @@
      height: 90%;
     }
 }
+
+
+.table-to-xls{
+    width: 210mm;
+    height: 297mm ;
+    font-family: IRANSans;
+    margin-left: auto;
+    margin-right: auto;
+    padding:80px;
+}
+
+.border-tankhah-header{
+ 
+    border:1px solid #3f3f41;
+    /* padding-top:5px;
+    padding-bottom:5px; */
+}

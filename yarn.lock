@@ -10769,7 +10769,7 @@ react-dom-factories@^1.0.0:
   version "1.0.2"
   resolved "https://registry.npmjs.org/react-dom-factories/-/react-dom-factories-1.0.2.tgz"
 
-"react-dom@^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^18.0.0", "react-dom@^0.14.7 || ^15.0.0-0 || ^16.0.0-0", "react-dom@^15.5.x || ^16.x", react-dom@^16.0.0, react-dom@^16.13.0, react-dom@^16.14.0, "react-dom@^16.3.0 || ^17.0.0 || ^18.0.0", react-dom@^16.5.2, react-dom@^16.6.3, "react-dom@^16.8.0 || ^17 || ^18", "react-dom@^16.8.0 || ^17.0.0", react-dom@^16.8.6, "react-dom@^17.0.2 || ^16.0.2 || ^18.0.0", "react-dom@>= 16.8.0", react-dom@>=15.0.0, react-dom@>=16, react-dom@>=16.0.0, react-dom@>=16.14.0, react-dom@>=16.6.0, react-dom@>=16.8.0:
+"react-dom@^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^18.0.0", "react-dom@^0.14.7 || ^15.0.0-0 || ^16.0.0-0", "react-dom@^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react-dom@^15.5.x || ^16.x", react-dom@^16.0.0, react-dom@^16.13.0, react-dom@^16.14.0, "react-dom@^16.3.0 || ^17.0.0 || ^18.0.0", react-dom@^16.5.2, react-dom@^16.6.3, "react-dom@^16.8.0 || ^17 || ^18", "react-dom@^16.8.0 || ^17.0.0", react-dom@^16.8.6, "react-dom@^17.0.2 || ^16.0.2 || ^18.0.0", "react-dom@>= 16.8.0", react-dom@>=15.0.0, react-dom@>=16, react-dom@>=16.0.0, react-dom@>=16.14.0, react-dom@>=16.6.0, react-dom@>=16.8.0:
   version "16.14.0"
   resolved "https://registry.npmjs.org/react-dom/-/react-dom-16.14.0.tgz"
   integrity sha512-1gCeQXDLoIqMgqD3IO2Ah9bnf0w9kzhwN5q4FGnHZ67hBm9yePzB5JJAIQCc8x3pFnNlwFq4RidZggNAAkzWWw==
@@ -11073,6 +11073,11 @@ react-to-pdf@^0.0.14:
     html2canvas "1.0.0-alpha.12"
     jspdf "^2.3.1"
 
+react-to-print@^2.14.13:
+  version "2.14.13"
+  resolved "https://registry.npmjs.org/react-to-print/-/react-to-print-2.14.13.tgz"
+  integrity sha512-PqUGgTRZvkyBzWgaZHVBECWPX2nGEc3HOUy6WNXof6HT4yTFI92wtIkqQtr4jfvHbadqjwTgzgh6vgN8KXlWWw==
+
 react-toast-notifications@^2.5.1:
   version "2.5.1"
   resolved "https://registry.npmjs.org/react-toast-notifications/-/react-toast-notifications-2.5.1.tgz"
@@ -11127,7 +11132,7 @@ react-transition-group@^4.4.2:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-"react@^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^18.0.0", "react@^0.14.0 || ^15.0.0 || ^16.0.0", "react@^0.14.7 || ^15.0.0-0 || ^16.0.0-0", "react@^0.14.9 || ^15.3.0 || ^16.0.0", "react@^15.0.2 || ^16.0.0-beta || ^16.0.0", "react@^15.5.x || ^16.x", "react@^15.6.2 || ^16.0", react@^16.0.0, react@^16.13.0, react@^16.14.0, "react@^16.3.0 || ^17.0.0 || ^18.0.0", react@^16.5.2, react@^16.6.3, "react@^16.8.0 || ^17 || ^18", "react@^16.8.0 || ^17.0.0", "react@^16.8.0 || ^17.0.0-rc.1 || ^18.0.0", "react@^16.8.3 || ^17.0.0-0 || ^18.0.0", react@^16.8.6, "react@^16.9.0 || ^17.0.0 || ^18.0.0", "react@^17.0.2 || ^16.0.2 || ^18.0.0", "react@>= 16", "react@>= 16.8.0", react@>=0.12.0, react@>=0.14.0, "react@>=0.14.0 || ^15.6.1 || ^16.0.0", react@>=15, react@>=15.0.0, react@>=16, react@>=16.0.0, react@>=16.14.0, react@>=16.3, react@>=16.3.0, react@>=16.6.0, react@>=16.8.0, "react@0.14.x || ^15.0.0 || ^16.0.0":
+"react@^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^18.0.0", "react@^0.14.0 || ^15.0.0 || ^16.0.0", "react@^0.14.7 || ^15.0.0-0 || ^16.0.0-0", "react@^0.14.9 || ^15.3.0 || ^16.0.0", "react@^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react@^15.0.2 || ^16.0.0-beta || ^16.0.0", "react@^15.5.x || ^16.x", "react@^15.6.2 || ^16.0", react@^16.0.0, react@^16.13.0, react@^16.14.0, "react@^16.3.0 || ^17.0.0 || ^18.0.0", react@^16.5.2, react@^16.6.3, "react@^16.8.0 || ^17 || ^18", "react@^16.8.0 || ^17.0.0", "react@^16.8.0 || ^17.0.0-rc.1 || ^18.0.0", "react@^16.8.3 || ^17.0.0-0 || ^18.0.0", react@^16.8.6, "react@^16.9.0 || ^17.0.0 || ^18.0.0", "react@^17.0.2 || ^16.0.2 || ^18.0.0", "react@>= 16", "react@>= 16.8.0", react@>=0.12.0, react@>=0.14.0, "react@>=0.14.0 || ^15.6.1 || ^16.0.0", react@>=15, react@>=15.0.0, react@>=16, react@>=16.0.0, react@>=16.14.0, react@>=16.3, react@>=16.3.0, react@>=16.6.0, react@>=16.8.0, "react@0.14.x || ^15.0.0 || ^16.0.0":
   version "16.14.0"
   resolved "https://registry.npmjs.org/react/-/react-16.14.0.tgz"
   integrity sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g==

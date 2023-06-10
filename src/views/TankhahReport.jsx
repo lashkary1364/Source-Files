@@ -3,7 +3,7 @@ import {
     Card, ListGroup,
     ListGroupItem,
 } from "shards-react";
-import Pdf from 'react-to-pdf';
+import ReactToPrint from 'react-to-print';
 import { useRef, useState } from 'react';
 import * as FileSaver from 'file-saver'
 import XLSX from 'sheetjs-style'
@@ -12,13 +12,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileExcel, faFilePdf, faFileExport } from '@fortawesome/free-solid-svg-icons';
 
 
-export const TankhahMororInfo = ({ resultItems, dateFrom, dateTo }) => {
+export const TankhahReport = ({ resultItems, dateFrom, dateTo }) => {
 
     const fileType = "application/vnd.openxmlformats-officedocumnet.spreadsheetml.sheet;charset=UTF-8";
     const fileExtension = ".xlsx";
     //const excelData = [{ id: 1, name: "shabnam", family: "lashkary" }, { id: 2, name: "arezoo", family: "asadzadeh" }, { id: 3, name: "hamid", family: "soltani" }]
     const ref = useRef(null);
-
     const exportToExcel = async (e) => {
 
         e.preventDefault();
@@ -47,19 +46,17 @@ export const TankhahMororInfo = ({ resultItems, dateFrom, dateTo }) => {
     return (
 
         <div >
-            <Card small className="mb-2">
+            <Card small >
                 <ListGroup flush>
                     <ListGroupItem >
                         <div class="form-inline">
                             <div>
-                                <Pdf targetRef={ref} filename="document.pdf" >
-                                    {({ toPdf }) => (
-                                        <button onClick={toPdf} type="button" className="btn btn-primary mb-2 mr-1">
-                                            <FontAwesomeIcon icon={faFilePdf} className="text-warning mr-2" />
-                                            خروجی پی دی اف
-                                        </button>
-                                    )}
-                                </Pdf>
+                                <ReactToPrint
+                                    trigger={() => <button className="btn btn-primary mb-2 mr-1">
+                                        <FontAwesomeIcon icon={faFilePdf} className="text-warning mr-2" />
+                                        خروجی پی دی اف</button>}
+                                    content={() => ref.current}
+                                />
                             </div>
 
                             <div>
@@ -86,9 +83,8 @@ export const TankhahMororInfo = ({ resultItems, dateFrom, dateTo }) => {
                     </ListGroupItem>
                 </ListGroup>
             </Card>
-            <div id="table-to-xls" ref={ref} style={{ width: "210mm", height: "297mm", fontFamily: "IRANSans", marginLeft: "auto", marginRight: "auto", padding: "20px" }}>
-                <div style={{ border: "1px solid #a0a2ac", paddingTop: "5px", paddingBottom: "5px" }}>
-
+            <div id="table-to-xls" ref={ref} className="table-to-xls" >
+                <div className="border-tankhah-header">
                     <div className="text-center">{JSON.parse(sessionStorage.getItem("LoginTocken")).LastMohitName}</div>
                     <div className="text-center">
                         <span >لیست گردش حساب:تنخواه </span>
@@ -102,7 +98,7 @@ export const TankhahMororInfo = ({ resultItems, dateFrom, dateTo }) => {
                     </div>
                 </div>
 
-                <table class="table table-bordered  table-hover" >
+                <table class="table table-bordered  table-hover" dir="rtl" >
                     <thead>
                         <tr class="table-secondary" >
                             <th scope="col">#</th>
@@ -135,3 +131,4 @@ export const TankhahMororInfo = ({ resultItems, dateFrom, dateTo }) => {
 
     )
 }
+

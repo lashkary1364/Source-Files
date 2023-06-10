@@ -1,0 +1,14 @@
+#table-to-xlsP{
+    width: "210mm";
+    height: "297mm" ;
+    font-family: "IRANSans";
+    margin-left: "auto";
+    margin-right: "auto";
+    padding:"20px"
+}
+
+.border-tankhah-header{
+    border:"1px solid #a0a2ac";
+    padding-top:"5px" ;
+    padding-bottom:"5px"
+}

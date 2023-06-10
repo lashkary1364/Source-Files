@@ -9,7 +9,7 @@ import axios from 'axios';
 import DatePicker, { DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian"
 import persian_en from "react-date-object/locales/persian_en"
-import { TankhahMororInfo } from './TankhahMororInfo'
+import { TankhahReport } from './TankhahReport';
 
 
 export const TankhahMoror = () => {
@@ -245,7 +245,7 @@ export const TankhahMoror = () => {
                     {
 
                     }
-                    {items.length > 0 ? <TankhahMororInfo resultItems={items} dateFrom={dateFrom} dateTo={dateTo}></TankhahMororInfo> : ''}
+                    {items.length > 0 ? <TankhahReport resultItems={items} dateFrom={dateFrom} dateTo={dateTo}></TankhahReport> : ''}
                 </Col>
             </Row>
 

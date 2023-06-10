@@ -10,7 +10,6 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import '../src/login/css/fontiran.css'
 import './assets/ag-grid.css'
 import PrivateRoute from "./PrivateRoute";
-
 import {Home2} from './home2'
 import { NotFound } from "./views/NotFound";
 import { Picker } from "./views/Picker";

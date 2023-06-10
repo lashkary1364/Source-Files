@@ -61,6 +61,7 @@
     "react-search-autocomplete": "^8.3.1",
     "react-table": "^7.8.0",
     "react-to-pdf": "^0.0.14",
+    "react-to-print": "^2.14.13",
     "react-toast-notifications": "^2.5.1",
     "react-toastify": "^9.1.1",
     "reactstrap": "^9.1.5",
@@ -73,8 +74,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build:prod": "cross-env REACT_APP_BASENAME=/demo/shards-dashboard-lite-react REACT_APP_GAID=UA-115105611-1 npm run build",
-    "build": "cross-env REACT_APP_BASENAME=/demo/shards-dashboard-lite-react react-scripts build",
+    "build:prod": "cross-env  REACT_APP_GAID=UA-115105611-1 npm run build",
+    "build": "cross-env  react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "start-sw": "http-server ./build"
