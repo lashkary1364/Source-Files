@@ -189,19 +189,15 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
                 deleteSouratHazineDetail(selectedRow.ID);
                 gridRef.current.api.redrawRows();
                 gridRef.current.api.redrawRows({ rowNodes: rowData });
-                const newRowData = rowData.filter(m => m.ID !== selectedRow.ID)
+                const newRowData = rowData.filter(m => m.ID !== selectedRow.ID);
                 setRowData(newRowData);
-
-
-                gridData = []
-                console.log(gridData)
-                console.log("row data on delete ... ")
-                console.log(rowData)
+                gridData = [];
+                console.log(gridData);
+                console.log("row data on delete ... ");
+                console.log(rowData);
                 gridData = rowData;
-
-                console.log("gridData")
-                console.log(gridData)
-
+                console.log("gridData");
+                console.log(gridData);
                 onClose();
               }}
             > بلی

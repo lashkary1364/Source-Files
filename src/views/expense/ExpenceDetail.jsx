@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useFormik } from 'formik'
-import * as Yup from 'yup'
+import * as Yup from 'yup';
 import {
     Container, Row, Col, Card,
     FormInput,
     Button, CardBody
 } from "shards-react";
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
-import axios from 'axios'
+import axios from 'axios';
 import CurrencyInput from 'react-currency-input-field';
 //import DatePicker, { DateObject } from "react-multi-date-picker";
 import DatePicker, { DateObject } from "react-multi-date-picker"
@@ -21,9 +21,7 @@ import { toast } from 'react-toastify';
 import { ExpenseDetailList } from './ExpenceDetailList';
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
-import {
-    useHistory
-} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 // import * as moment from 'jalali-moment';
 
 export const ExpenceDetail = () => {
@@ -190,7 +188,6 @@ export const ExpenceDetail = () => {
         }
 
     }
-
 
     const handleChangePrice = (value) => {
         formik.setFieldValue("price", value);

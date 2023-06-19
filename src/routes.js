@@ -27,7 +27,9 @@ import { Home, home } from "./views/Home";
 import { Designer, stimulreport } from "./views/stimulreport";
 import { TestReport } from "./views/TestReport";
 import { TankhahMoror } from "./views/TankhahMoror";
-
+import { MororListHaineha } from "./views/MororListHaineha";
+import { MororListDaryaftiha } from "./views/MororListDaryaftiha";
+import { MororListExpenseType } from "./views/MororListExpenseType";
 export default [
   // {
   //   path: "/",
@@ -136,6 +138,23 @@ export default [
     path:"/moror",
     layout: DefaultLayout,
     component: TankhahMoror
-  }
+  },
+  {
+    path:"/listExpense",
+    layout: DefaultLayout,
+    component: MororListHaineha
+  },
+  {
+    path:"/daryaftiha",
+    layout: DefaultLayout,
+    component: MororListDaryaftiha
+  },
+  {
+    path:"/expenseTypes",
+    layout: DefaultLayout,
+    component: MororListExpenseType
+  },
+ 
+ 
  
 ];

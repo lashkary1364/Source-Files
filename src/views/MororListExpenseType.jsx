@@ -1,18 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react'
 import {
     Container, Row, Col, Card, ListGroup,
-    FormCheckbox,
     ListGroupItem,
     Button, FormSelect
 } from "shards-react";
 import axios from 'axios';
 import DatePicker, { DateObject } from "react-multi-date-picker";
-import persian from "react-date-object/calendars/persian"
-import persian_en from "react-date-object/locales/persian_en"
-import { TankhahReport } from './TankhahReport';
+import persian from "react-date-object/calendars/persian";
+import persian_en from "react-date-object/locales/persian_en";
+import { TankhahMororListDaryaftiha } from './TankhahMororListDaryaftiha';
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import TextField from "@material-ui/core/TextField";
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { TankhahMororListExpenseType } from "./TankhahMororListExpenseType";
 
-
-export const TankhahMoror = () => {
+export const MororListExpenseType = () => {
 
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
     const [tankhahItems, setTankhahItems] = useState([]);
@@ -24,15 +27,42 @@ export const TankhahMoror = () => {
     const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
     const calendarRef = useRef();
     const [items, setItems] = useState([]);
-    const [salId,setSalId]=useState()
-    const [tankhahId,setTankhahId]=useState();
-    const[mandeKhat,setMandeKhat]=useState(false);
-
+    const [salId, setSalId] = useState()
+    const [tankhahId, setTankhahId] = useState();
+    const [mandeKhat, setMandeKhat] = useState(false);
+    const [options, setOptions] = useState([]);
+    const [values, setValues] = React.useState(null);
     useEffect(() => {
-        //console.log(sessionStorage.getItem("SalId"))
         GetAllTankhah();
         GetCurrentFinanceYear();
+        GetAllSoratHazineSharh();
     }, []);
+
+    const validationSchema = Yup.object().shape({
+        sharhDetail: Yup.string().required('فیلد شرح اجباری است'),
+
+    });
+
+    const formik = useFormik({
+        initialValues:
+        {
+            sharhDetail: options,
+        },
+        validationSchema,
+        validateOnChange: true,
+        validateOnBlur: true,
+        isInitialValid: true,
+        onSubmit: (data) => {
+
+            getAllTankhahMoror();
+
+        }
+    });
+
+    const onChange = (_, a) => {
+        formik.setFieldValue("sharhDetail", a.name);
+        setValues(a);
+    };
 
     const convertFrom = (date, format = state.format) => {
         let object = { date, format }
@@ -47,10 +77,9 @@ export const TankhahMoror = () => {
     }
 
     const GetAllTankhahInfo = (tankhahId) => {
-     //console.log(tankhahId);
-     setTankhahId(tankhahId);       
+        //console.log(tankhahId);
+        setTankhahId(tankhahId);
     }
-
 
     const GetCurrentFinanceYear = () => {
         axios(
@@ -83,7 +112,6 @@ export const TankhahMoror = () => {
             })
     }
 
-    
     const GetAllTankhah = () => {
         axios(
             {
@@ -114,17 +142,62 @@ export const TankhahMoror = () => {
             })
     }
 
-    const getAllTankhahMoror = (e) => {
-        e.preventDefault();
- 
+    const GetAllSoratHazineSharh = () => {
+
         axios(
             {
-                url: serverAdress + "GetTankhahMoror",
+                url: serverAdress + `GetAllSouratHazineSharh?mohitId=${user.lastMohitID} &sharh=${"11111"}`,
                 method: "get",
                 headers:
                 {
                     Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-                    //'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache',
+                    'Expires': '0',
+                }
+            }).then(function (response) {
+
+                const resultItems = response.data;
+                resultItems.map(data => {
+                    setOptions(options => [...options,
+                    {
+                        codeHesab: data.code_Hesab,
+                        value: data.item_ID,
+                        name: data.item_Title_text,
+                        markaz1: data.markaz1,
+                        markaz2: data.markaz2,
+                        markaz3: data.markaz3
+                    }]);
+
+                });
+
+            }).catch(function (error) {
+                // handle error
+                console.log("axois error: ");
+                console.log(error)
+            })
+
+    }
+
+    const getAllTankhahMoror = (e) => {
+       // e.preventDefault();
+        console.log({
+            "fromDate": dateFrom,
+            "toDate": dateTo,
+            "salId": salId,
+            "tankhahId": tankhahId,
+            "showMande": false
+
+        });
+
+        axios(
+            {
+                url: serverAdress + "GetMororListHazineType",
+                method: "get",
+                headers:
+                {
+                    Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
+                    // 'Content-Type': 'application/json',
                     // "Content-Type": "multipart/form-data"
                     // 'Cache-Control': 'no-cache',
                     // 'Pragma': 'no-cache',
@@ -132,32 +205,25 @@ export const TankhahMoror = () => {
                 },
                 params:
                 {
-                    "fromDate":dateFrom,
-                    "toDate": dateTo,
-                    "salId": salId,
+                    "dateFrom": dateFrom,
+                    "dateTo": dateTo,
                     "tankhahId": tankhahId,
-                    "showMande": false
+                    "hazine": ""
+
                 }
             }).then(function (response) {
-
-                //console.log(response)
-                const resultItems = response.data;
-                //console.log(resultItems);
+                console.log("'chva ....")
+                console.log(response)
+                const resultItems = response.data;              
                 resultItems.map((item) => {
-                    //console.log(item.bed)
-                    //console.log(item.radif)
-                    setItems([{ ...items, bed: item.bed, bes: item.bes, radif: item.radif, sharh: item.tpSHarh, tarikh: item.dptarikh }])
-                });
-                //console.log(items.length)
-                //console.log("11111111111");
-                //console.log(items);
+                    console.log(item);                  
+                    setItems([{ ...items, radif: item.radif, Mablagh: item.mab, Sharh: item.sharh, Shomare: item.shomare, ShomareBarge: item.shomare_barge, TarikhPardakht: item.tarikh_pardakht }])
+                });                
             }).catch(function (error) {
                 // handle error
                 console.log("axois error: ");
                 console.log(error)
-            })
-
-
+            });
 
     }
 
@@ -167,7 +233,7 @@ export const TankhahMoror = () => {
                 <Col lg="12" >
                     <nav className="breadcrumb">
                         <a className="breadcrumb-item" href="#">خانه</a>
-                        <span className="breadcrumb-item active">گزارش مرور تنخواه</span>
+                        <span className="breadcrumb-item active">گزارش مرور- لیست نوع هزینه ها</span>
                     </nav>
                 </Col>
 
@@ -175,12 +241,11 @@ export const TankhahMoror = () => {
                     <Card small className="mb-2">
                         <ListGroup flush>
                             <ListGroupItem >
-                                <form class="form-inline">
-                                    {/* <Row>
-                                        <Col md="4" className="form-inline"> */}
-                                    <div class="form-group mb-2">
+                                <form class="form-inline" onSubmit={formik.handleSubmit}>
+                                                                      
+                                    <div class="form-group mx-sm-3 mb-2">
                                         <label htmlFor="tankhah">اتتخاب تنخواه*:</label>
-                                        <FormSelect id="tankhah" name="tankhah" className='form-control'  onChange={(e) => GetAllTankhahInfo(e.target.value)}>
+                                        <FormSelect id="tankhah" name="tankhah" className='form-control' onChange={(e) => GetAllTankhahInfo(e.target.value)}>
                                             {/* <option value={""}>یک موردانتخاب کنید</option> */}
                                             {
                                                 tankhahItems.map((item, index) => (
@@ -221,12 +286,32 @@ export const TankhahMoror = () => {
                                         />
                                     </div>
 
-                                    <div class="form-group mx-sm-3 mb-2">
-                                        <input type="checkbox"  name="vehicle1" onChange={(e)=>setMandeKhat(e.target.checked)} />
-                                        <label for="vehicle1"> محاسبه مانده در خط</label>
+                                    <div class="form-group mx-sm-3 mb-2" >
+                                        <label htmlFor="sharhDetail">شرح *:</label>
+                                        <Autocomplete style={{ width: "300px" }}
+                                            id="tags-outlined"
+                                            options={options}
+                                            getOptionLabel={(option) => option.name || ""}
+                                            className={'form-control' + (formik?.errors?.sharhDetail && formik?.touched?.sharhDetail ? ' is-invalid' : '')}
+                                            value={values}
+                                            getOptionSelected={(option, value) => option.name === value.name}
+                                            onChange={onChange}
+                                            filterSelectedOptions
+                                            renderInput={(params) => (
+                                                <TextField {...params} variant="outlined" placeholder="شرح" />
+                                            )}
+                                        />
+                                        {
+                                            values == null ? <div className="invalid-feedback">
+                                                {
+                                                    'فیلد شرح الزامی است'
+                                                }
+
+                                            </div> : ''
+                                        }
                                     </div>
 
-                                    <Button theme="primary" className="mb-2 mr-1" type="submit" onClick={(e) => getAllTankhahMoror(e)} >
+                                    <Button theme="primary" className="mb-2 mr-1" type="submit"  >
                                         <span className='form-inline'>
                                             گزارش
                                         </span>
@@ -236,13 +321,9 @@ export const TankhahMoror = () => {
                             </ListGroupItem>
                         </ListGroup>
                     </Card>
-                    {
-
-                    }
-                    {items.length > 0 ? <TankhahReport resultItems={items} dateFrom={dateFrom} dateTo={dateTo}></TankhahReport> : ''}
+                    {items.length > 0 ? <TankhahMororListExpenseType resultItems={items} dateFrom={dateFrom} dateTo={dateTo}></TankhahMororListExpenseType> : ''}
                 </Col>
             </Row>
-
         </Container>
     )
 }
