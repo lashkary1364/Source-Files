@@ -1,8 +1,5 @@
 import React, { useEffect } from 'react'
-import {
-    Card, ListGroup,
-    ListGroupItem,
-} from "shards-react";
+import { Card, ListGroup,ListGroupItem,} from "shards-react";
 import ReactToPrint from 'react-to-print';
 import { useRef, useState } from 'react';
 import * as FileSaver from 'file-saver'
@@ -18,7 +15,7 @@ export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) =>
     const fileExtension = ".xlsx";
     //const excelData = [{ id: 1, name: "shabnam", family: "lashkary" }, { id: 2, name: "arezoo", family: "asadzadeh" }, { id: 3, name: "hamid", family: "soltani" }]
     const ref = useRef(null);
-   
+    
     const exportToExcel = async (e) => {
         e.preventDefault();
         const ws = XLSX.utils.json_to_sheet(resultItems);
@@ -27,7 +24,6 @@ export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) =>
         const data = new Blob([excelBuffer], { type: fileType });
         FileSaver.saveAs(data, "exportexcel" + fileExtension);
     };
-
 
     const [inputValue, setInputValue] = useState({
         note: '',
@@ -42,14 +38,13 @@ export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) =>
         });
     };
 
-
     return (
 
         <div >
             <Card small >
                 <ListGroup flush>
                     <ListGroupItem >
-                        <div class="form-inline">
+                        <div className="form-inline">
                             <div>
                                 <ReactToPrint
                                     trigger={() => <button className="btn btn-primary mb-2 mr-1">
@@ -98,9 +93,9 @@ export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) =>
                     </div>
                 </div>
 
-                <table class="table table-bordered  table-hover" dir="rtl" >
+                <table className="table table-bordered  table-hover" dir="rtl" >
                     <thead>
-                        <tr class="table-secondary" >
+                        <tr className="table-secondary" >
                             <th scope="col">#</th>
                             <th scope="col">تاریخ</th>
                             <th scope="col">نوع دریافت / پرداخت</th>
@@ -117,10 +112,10 @@ export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) =>
                     </thead>
                     <tbody>
                         {
-
+                          resultItems.length==0 ?<tr><td className='text-center' colSpan={12}> داده ای برای نمایش وجود ندارد </td></tr>:
                             resultItems.map((item, index) =>
-                                <tr key={index}>
-                                    <td>{item.radif}</td>
+                                <tr  key={index}>
+                                    <td>{item.radif}</td>                                    
                                     <td>{item.dpTarikh}</td>
                                     <td>{item.vajh_type_title}</td>
                                     <td>{item.SHarh}</td>
@@ -130,8 +125,8 @@ export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) =>
                                     <td>{item.SHobe}</td>
                                     <td>{item.CkSerial}</td>
                                     <td>{item.CkSerial}</td>                                   
-                                    <td>{item.daryafti_be_tankhah}</td>
-                                    <td>{item.pardakhti_az_tankhah}</td>
+                                    <td>{item.daryafti_be_tankhah.toLocaleString()}</td>
+                                    <td>{item.pardakhti_az_tankhahdata.toLocaleString()}</td>                                   
                                 </tr>
                             )
                         }

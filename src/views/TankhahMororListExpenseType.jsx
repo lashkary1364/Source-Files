@@ -49,7 +49,7 @@
                 <Card small >
                     <ListGroup flush>
                         <ListGroupItem >
-                            <div class="form-inline">
+                            <div className="form-inline">
                                 <div>
                                     <ReactToPrint
                                         trigger={() => <button className="btn btn-primary mb-2 mr-1">
@@ -97,9 +97,9 @@
                         </div>
                     </div>
     
-                    <table class="table table-bordered  table-hover" dir="rtl" >
+                    <table className="table table-bordered  table-hover" dir="rtl" >
                         <thead>
-                            <tr class="table-secondary" >
+                            <tr className="table-secondary" >
                                 <th scope="col">#</th>
                                 <th scope="col">شماره صورت هزینه</th>
                                 <th scope="col">شماره برگه </th>
@@ -109,7 +109,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {    
+                         {
+                            console.log( resultItems.length)
+                         } 
+                            { 
+                            
+                            resultItems.length==0 ? <tr><td colSpan={6} className="text-center">داده ای برای نمایش وجود ندارد</td></tr>  :
                                 resultItems.map((item, index) =>
                                     <tr key={index}>
                                         <td>{item.radif}</td>                                       
@@ -117,7 +122,7 @@
                                         <td>{item.ShomareBarge}</td>
                                         <td>{item.Sharh}</td>
                                         <td>{item.TarikhPardakht}</td>
-                                        <td>{item.Mablagh}</td>                                        
+                                        <td>{item.Mablagh.toLocaleString()}</td>                                        
                                     </tr>
                                 )
                             }

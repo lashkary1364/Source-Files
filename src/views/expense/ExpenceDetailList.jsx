@@ -16,7 +16,8 @@ import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { useHistory } from 'react-router-dom';
 
 
-export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
+
+export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSouratHazineDetail }) => {
 
   const [isAction, setIsAction] = useState(false);
   const history = useHistory();
@@ -37,7 +38,7 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
     { field: 'Sharh', headerName: 'شرح', },
     { field: 'State', hide: true },
     { field: 'Tozihat', headerName: 'توضیحات', },
-    { field: 'ok', headerName: 'وضعیت', },
+    { field: 'okDesc', headerName: 'وضعیت', },
   ])
 
   useEffect(() => {
@@ -65,7 +66,8 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
         "Tozihat": data?.Tozihat,
         "item_ID": data?.item_ID,
         "State": data?.State,
-        "ok": data?.ok == 0 ? 'بررسی نشده' : data?.ok == 1 ? 'تایید شده' : 'رد شده'
+        "ok": data?.ok,// == 0 ? 'بررسی نشده' : data?.ok == 1 ? 'تایید شده' : 'رد شده'
+        "okDesc":data?.okDesc
       }]);
     });
 
@@ -146,34 +148,24 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
         console.log("axios error insert:")
         console.log(error)
         setIsAction(false);
-        toast.error('خطا در انجام عملیات', {
-          position: toast.POSITION.TOP_LEFT
-        });
+        alert(error);
+        // toast.error('خطا در انجام عملیات', {
+        //   position: toast.POSITION.TOP_LEFT
+        // });
       })
   }
 
-  const deleteSouratHazineDetail = (id) => {
 
-
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem("access-tocken")}`
-    };
-
-    axios.delete(serverAdress + `DeleteSouratHazineDetail?id=${id}`, { headers })
-      .then(function (res) {
-        toast.success('عملیات با موفقیت انجام پذیرفت', {
-          position: toast.POSITION.TOP_LEFT,
-          className: 'toast-message'
-        });
-      });
+  function onRowSelected(event) {
+    console.log("event")
+    console.log(event.data)
+    setSelectedRow(event.data)
   }
 
   const handleDelete = (row) => {
 
     console.log("row ...")
     console.log(row)
-
-
 
     confirmAlert({
       closeOnEscape: false,
@@ -186,18 +178,17 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
             <button className='btn btn-sm btn-secondary mr-2' onClick={onClose}>خیر</button>
             <button className='btn btn-sm btn-danger'
               onClick={() => {
-                deleteSouratHazineDetail(selectedRow.ID);
+
+                if (selectedRow.ok!=0){
+                  alert("این سند قابل حذف نیست");
+                  onClose();
+                  return;
+                }
                 gridRef.current.api.redrawRows();
                 gridRef.current.api.redrawRows({ rowNodes: rowData });
-                const newRowData = rowData.filter(m => m.ID !== selectedRow.ID);
-                setRowData(newRowData);
-                gridData = [];
-                console.log(gridData);
-                console.log("row data on delete ... ");
-                console.log(rowData);
-                gridData = rowData;
-                console.log("gridData");
-                console.log(gridData);
+                console.log("row.ID");
+                console.log(selectedRow.ID);
+                deleteSouratHazineDetail(selectedRow.ID);
                 onClose();
               }}
             > بلی
@@ -208,26 +199,6 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
     })
   }
 
-  function onRowSelected(event) {
-    console.log("event")
-    console.log(event.data)
-    setSelectedRow(event.data)
-  }
-
-  // function onSelectionChanged(event) {
-  //   // var rowCount = event.api.getSelectedNodes().length;
-  //   // window.alert('selection changed, ' + rowCount + ' rows selected');
-  // }
-
-  // const onSelectionChanged = useCallback(() => {
-  //   console.log("fdssfdsdsf");
-  //   const selectedRows = gridRef.current.api.getSelectedRows();
-  //   console.log("selected:");
-  //   console.log(selectedRows);
-  //   // document.querySelector('#selectedRows').innerHTML =
-  //   //   selectedRows.length === 1 ? selectedRows[0].athlete : '';
-  // }, []);
-
 
   return (
 
@@ -235,13 +206,13 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
       <Col lg="12" >
         <div style={{ borderStyle: "solid", padding: "10px", borderColor: "#d9d9d9" }}>
           <div class="btn-group mb-2" role="group" aria-label="Basic example">
-            <button type="button" class="btn btn-secondary" onClick={handleNew}>جدید</button>
-            <button type="button" class="btn btn-secondary" onClick={handleSaveDetail} disabled={isAction == true ? true : false}>  <span className='form-inline'>
+            <button type="button" className="btn btn-secondary" onClick={handleNew}>جدید</button>
+            <button type="button" className="btn btn-secondary" onClick={handleSaveDetail} disabled={isAction == true ? true : false}>  <span className='form-inline'>
               ذخیره
               {isAction == true ? <ReactLoading type="spin" color="red" height={20} width={20} className="ml-2" /> : ''}
             </span>
             </button>
-            <button type="submit" class="btn btn-secondary" onClick={() => {
+            <button type="submit" className="btn btn-secondary" onClick={() => {
               console.log("selectedRow")
               console.log(selectedRow)
               if (selectedRow.State == 1)
@@ -249,7 +220,7 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew }) => {
               else
                 alert("این ردیف در دیتابیس ذخیر نشده است دمیتوانید آن را حذف و دوباره وارد نمایید")
             }}>ویرایش</button>
-            <button type="button" class="btn btn-secondary" onClick={handleDelete}>حذف</button>
+            <button type="button" className="btn btn-secondary" onClick={handleDelete}>حذف</button>
           </div>
 
           <div className="ag-theme-alpine mb-5" style={gridStyle}>

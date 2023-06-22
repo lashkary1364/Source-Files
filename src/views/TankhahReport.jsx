@@ -49,7 +49,7 @@ export const TankhahReport = ({ resultItems, dateFrom, dateTo }) => {
             <Card small >
                 <ListGroup flush>
                     <ListGroupItem >
-                        <div class="form-inline">
+                        <div className="form-inline">
                             <div>
                                 <ReactToPrint
                                     trigger={() => <button className="btn btn-primary mb-2 mr-1">
@@ -98,9 +98,9 @@ export const TankhahReport = ({ resultItems, dateFrom, dateTo }) => {
                     </div>
                 </div>
 
-                <table class="table table-bordered  table-hover" dir="rtl" >
+                <table className="table table-bordered  table-hover" dir="rtl" >
                     <thead>
-                        <tr class="table-secondary" >
+                        <tr className="table-secondary" >
                             <th scope="col">#</th>
                             <th scope="col">شرح</th>
                             <th scope="col">تاریخ</th>
@@ -111,14 +111,14 @@ export const TankhahReport = ({ resultItems, dateFrom, dateTo }) => {
                     </thead>
                     <tbody>
                         {
-
+resultItems.length==0 ?<tr><td className='text-center' colSpan={5}> داده ای برای نمایش وجود ندارد </td></tr>:
                             resultItems.map((item, index) =>
                                 <tr key={index}>
                                     <td>{item.radif}</td>
                                     <td>{item.sharh}</td>
                                     <td>{item.tarikh}</td>
-                                    <td>{item.bed}</td>
-                                    <td>{item.bes}</td>
+                                    <td>{item.bed.toLocaleString()}</td>
+                                    <td>{item.bes.toLocaleString()}</td>
                                 </tr>
                             )
                         }

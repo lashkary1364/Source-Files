@@ -1,20 +1,12 @@
 import React, { useMemo, useCallback, useRef, useState, useEffect } from "react";
 import {
-  Container, Row, Col, Card, CardHeader, ListGroup, FormSelect,
-  ListGroupItem, FormInput,
-  Button, CardBody
+  Container, Row, Col, Card, FormSelect,
+  CardBody
 } from "shards-react";
 import axios from 'axios'
 import { AgGridReact } from 'ag-grid-react';
 import { AG_GRID_LOCALE_FA } from '../../constants/global'
-import { GridViewEdit } from "../GridViewEdit";
-import { GridViewDelete } from "../GridViewDelete";
-import { GridViewDetail } from '../GridViewDetail'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash } from "@fortawesome/fontawesome-free-solid";
-import { faEdit } from '@fortawesome/free-solid-svg-icons';
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-import { Link, useHistory } from "react-router-dom";
+import {  useHistory } from "react-router-dom";
 
 
 export const ExpenseList = () => {
@@ -23,10 +15,8 @@ export const ExpenseList = () => {
   const [selectedRow, setSelectedRow] = useState();
   const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
   const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
-  //const [rowValue, setRowValue] = useState({ index: 0, shomare: 0, sharh: "", tarikh: "", str_status: "", shomare_name: "", tarikh_name: "", shomare_sanad: 0, total: 0, taeed_shode: 0, taeed_Nashode: 0 });
   const [tankhahItems, setTankhahItems] = useState([]);
   const gridRef = useRef();
-  //const make = useRef();
   const [rowData, setRowData] = useState([]);
 
   const [columnDefs] = useState([
@@ -42,61 +32,15 @@ export const ExpenseList = () => {
     { field: 'shomare_name', headerName: 'شماره نامه', filter: 'agNumberColumnFilter', },
     { field: 'tarikh_name', headerName: 'تاریخ نامه', filter: 'agNumberColumnFilter', },
     { field: 'sanadID', headerName: 'شماره سند', filter: 'agNumberColumnFilter', },
-    // { field: 'total', headerName: 'جمع مبالغ ثبت شده', filter: 'agNumberColumnFilter', },
-    // { field: 'taeed_shode', headerName: 'جمع مبالغ تایید شده', filter: 'agNumberColumnFilter', },
-    // { field: 'taeed_Nashode', headerName: 'جمع مبالغ تایید نشده', filter: 'agNumberColumnFilter', },
-    //{
-    // field: 'detail', headerName: 'جزییات',  cellRenderer: GridViewDetail, cellRendererParams:
-    // {
-    //   handleClick: handleClick ,
-    //   path: "/expenceDetail"
-    // }
-
-    // p => <Button size="sm" theme="primary" className="mb-2 mr-1" title="جزئیات" onClick={event => handleClick("detail")} ><FontAwesomeIcon icon={faCircleInfo} /></Button>,
-    // cellRendererParams: {
-    //     color: "jjjjjj"
-    // },
-    // },
-    // {
-    //   field: 'edit', maxWidth: 80, headerName: 'ویرایش', cellRenderer: GridViewEdit,
-    //   cellRendererParams:
-    //   {
-    //     handleClick: handleClick,
-    //     path: "/expense"
-    //   }
-    //   //      p=> <Button size="sm" theme="warning" className="mb-2 mr-1"  title="ویرایش"  onClick={event => handleClick("edit")}><FontAwesomeIcon icon={faEdit} />
-    //   // </Button>
-
-    // },
-    // {
-    //   field: 'delete', maxWidth: 80, headerName: 'حذف', cellRenderer: GridViewDelete,
-    //   cellRendererParams: {
-    //     handleClick: handleClick,
-    //     path: "/expense"
-    //   },
-    //   // p=>  <Button size="sm" theme="danger" className="mb-2 mr-1" title="حذف" onClick={event => handleClick("delete")}>  
-    //   // <FontAwesomeIcon icon={faTrash} />
-    //   // </Button> 
-
-    // }
-
+ 
   ]);
-
-  // const onSelectionChanged = useCallback(() => {
-  //   // const selectedRows = gridRef.current.api.getSelectedRows();
-  //   // console.log("selected:");
-  //   // console.log(selectedRows);
-  //   // document.querySelector('#selectedRows').innerHTML =
-  //   //   selectedRows.length === 1 ? selectedRows[0].athlete : '';
-  // }, []);
-
 
   const gridStyle = useMemo(() => ({ height: '600px', width: '100%', }), []);
 
   const getAllData = (tankhahId) => {
 
     console.log("tankhahId: " + tankhahId);
-
+    console.log( 'salId'+ sessionStorage.getItem("SalMali"))
     axios({
       'method': 'GET',
       'url': serverAdress + 'GetAllTankhahHazine',
@@ -112,14 +56,15 @@ export const ExpenseList = () => {
         'salId': sessionStorage.getItem("SalMali")
       },
     }).then(function (response) {
+      console.log("response for getAllData")
+      console.log(response);
       console.table(response.data);
       setRowData(response.data);
       console.log("row data ===>");
       console.table(rowData);
     }).catch(function (error) {
-      
       console.log("axois error: " + error);
-
+      alert(error);
     })
   }
 
@@ -147,16 +92,13 @@ export const ExpenseList = () => {
       }).catch(function (error) {
         // handle error
         console.log("axois error: ");
-        console.log(error)
+        console.log(error);
+        alert(error);
       })
   }
 
   useEffect(() => {
-    // fetch('https://www.ag-grid.com/example-assets/row-data.json')
-    //     .then(result => result.json())
-    //     .then(rowData => setRowData(rowData))
-    //getAllData()
-    getAllTankhah();
+   getAllTankhah();
   }, []);
 
   //DefaultColDef sets props common to all Columns
@@ -186,15 +128,9 @@ export const ExpenseList = () => {
     );
   }, []);
 
-  //const history=useHistory();
-  // const onCellClicked = (e) => {
-  // }
-
-
   const handleAdd = () => {
     history.push("/expense?operation=add");
   }
-
 
   const handleEdit = () => {
     console.log("selectedRow")
@@ -231,17 +167,17 @@ export const ExpenseList = () => {
     console.log(selectedRow)
   }
 
-  function onSelectionChanged(event) {
-    // var rowCount = event.api.getSelectedNodes().length;
-    // window.alert('selection changed, ' + rowCount + ' rows selected');
-  }
+  // function onSelectionChanged(event) {
+  //   // var rowCount = event.api.getSelectedNodes().length;
+  //   // window.alert('selection changed, ' + rowCount + ' rows selected');
+  // }
 
   return (
     <Container fluid className="main-content-container">
       <Row className="page-header mt-2 ">
         <Col lg="12" >
           <nav className="breadcrumb">
-            <a className="breadcrumb-item" href="#">خانه</a>
+          <a className="breadcrumb-item" href="/home">خانه</a>
             <span className="breadcrumb-item active">مدیریت صورت هزینه ها</span>
           </nav>
         </Col>
@@ -254,13 +190,7 @@ export const ExpenseList = () => {
                 <label htmlFor="tankhah" className="mr-2"> انتخاب تنخواه*:</label>
                 <FormSelect className="form-control" id="tankhah" name="tankhah" onChange={(e) => getAllData(e.target.value)}>
                   <option value={""}>یک موردانتخاب کنید</option>
-                  {/* 
-                  {mohitItems.map((item) => (
-
-<option key={item.Id} value={item.Id}>{item.Name}</option>
-
-))} */}
-                  {
+                    {
                     tankhahItems.map((item, index) => (
                       <option key={index}
                         value={item.tankhah_ID}>
@@ -275,13 +205,11 @@ export const ExpenseList = () => {
           </Row>
 
           <div style={{ borderStyle: "solid", padding: "5px", borderColor: "#d9d9d9" }}>
-            {/* <Link className="mb-2  btn btn-primary" to="/expense?operation=add" theme="primary" >جدید</Link> */}
-
-            <div class="btn-group mb-2" role="group" aria-label="Basic example">
-              <button type="button" class="btn btn-secondary" onClick={handleAdd}>جدید</button>
-              <button type="button" class="btn btn-secondary" onClick={handleEdit}>ویرایش</button>
-              <button type="button" class="btn btn-secondary" onClick={handleDetail}>جزئیات</button>
-              <button type="button" class="btn btn-secondary" onClick={handleDelete}>حذف</button>
+              <div className="btn-group mb-2" role="group" aria-label="Basic example">
+              <button type="button" className="btn btn-secondary" onClick={handleAdd}>جدید</button>
+              <button type="button" className="btn btn-secondary" onClick={handleEdit}>ویرایش</button>
+              <button type="button" className="btn btn-secondary" onClick={handleDetail}>جزئیات</button>
+              <button type="button" className="btn btn-secondary" onClick={handleDelete}>حذف</button>
             </div>
 
             <div className="ag-theme-alpine mb-5" style={gridStyle}>
@@ -320,7 +248,7 @@ export const ExpenseList = () => {
                 caseSensitive={false}
                 checkboxSelection={true}
                 animateRows={true}
-                onSelectionChanged={onSelectionChanged}
+               // onSelectionChanged={onSelectionChanged}
                 onRowSelected={onRowSelected}
               // onCellClicked={onCellClicked}
               >

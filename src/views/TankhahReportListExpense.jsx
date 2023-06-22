@@ -26,7 +26,7 @@ export const TankhahReportListExpense = ({ resultItems, dateFrom, dateTo }) => {
         const data = new Blob([excelBuffer], { type: fileType });
         FileSaver.saveAs(data, "exportexcel" + fileExtension);
     };
-
+    const[mandeKhat,setMandeKhat]=useState(false);
 
     const [inputValue, setInputValue] = useState({
         note: '',
@@ -48,7 +48,7 @@ export const TankhahReportListExpense = ({ resultItems, dateFrom, dateTo }) => {
             <Card small >
                 <ListGroup flush>
                     <ListGroupItem >
-                        <div class="form-inline">
+                        <div className="form-inline">
                             <div>
                                 <ReactToPrint
                                     trigger={() => <button className="btn btn-primary mb-2 mr-1">
@@ -69,15 +69,13 @@ export const TankhahReportListExpense = ({ resultItems, dateFrom, dateTo }) => {
                                 <DownloadTableExcel
                                     filename="export-html-pdf"
                                     sheet="tankhah"
-                                    currentTableRef={ref.current}
-                                >
+                                    currentTableRef={ref.current}>
                                     <button type="button" className="btn btn-primary mb-2 mr-1" >
                                         <FontAwesomeIcon icon={faFileExcel} className="text-warning mr-2" />
                                         صدور html به اکسل
                                     </button>
                                 </DownloadTableExcel>
                             </div>
-
                         </div>
                     </ListGroupItem>
                 </ListGroup>
@@ -97,9 +95,9 @@ export const TankhahReportListExpense = ({ resultItems, dateFrom, dateTo }) => {
                     </div>
                 </div>
 
-                <table class="table table-bordered  table-hover" dir="rtl" >
+                <table className="table table-bordered  table-hover" dir="rtl" >
                     <thead>
-                        <tr class="table-secondary" >
+                        <tr className="table-secondary" >
                             <th scope="col">#</th>
                             <th scope="col">تاریخ</th>
                             <th scope="col">شماره</th>
@@ -111,7 +109,6 @@ export const TankhahReportListExpense = ({ resultItems, dateFrom, dateTo }) => {
                     </thead>
                     <tbody>
                         {
-
                             resultItems.map((item, index) =>
                                 <tr key={index}>
                                     <td>{index}</td>
@@ -119,8 +116,8 @@ export const TankhahReportListExpense = ({ resultItems, dateFrom, dateTo }) => {
                                     <td>{item.shomare}</td>
                                     <td>{item.proname}</td>
                                     <td>{item.sharh}</td>
-                                    <td>{item.tankhah}</td>
-                                    <td>{item.total}</td>
+                                    <td>{item.tankhah.toLocaleString()}</td>
+                                    <td>{item.total.toLocaleString()}</td>
                                 </tr>
                             )
                         }

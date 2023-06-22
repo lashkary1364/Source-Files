@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import {
-    Container, Row, Col, Card, ListGroup,
-    FormCheckbox,
+    Container, Row, Col, Card, ListGroup,    
     ListGroupItem,
     Button, FormSelect
 } from "shards-react";
@@ -18,18 +17,15 @@ export const TankhahMoror = () => {
     const [tankhahItems, setTankhahItems] = useState([]);
     const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }));
     const [dateFrom, setDateFrom] = useState(null);
-    //new DateObject({ calendar: persian, locale: persian_en })
     const [dateTo, setDateTo] = useState(null);
-    //new DateObject({ calendar: persian, locale: persian_en })
     const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
     const calendarRef = useRef();
     const [items, setItems] = useState([]);
-    const [salId,setSalId]=useState()
-    const [tankhahId,setTankhahId]=useState();
-    const[mandeKhat,setMandeKhat]=useState(false);
+    const [salId, setSalId] = useState()
+    const [tankhahId, setTankhahId] = useState();
+    const [mandeKhat, setMandeKhat] = useState(false);
 
     useEffect(() => {
-        //console.log(sessionStorage.getItem("SalId"))
         GetAllTankhah();
         GetCurrentFinanceYear();
     }, []);
@@ -47,8 +43,7 @@ export const TankhahMoror = () => {
     }
 
     const GetAllTankhahInfo = (tankhahId) => {
-     //console.log(tankhahId);
-     setTankhahId(tankhahId);       
+        setTankhahId(tankhahId);
     }
 
 
@@ -60,16 +55,12 @@ export const TankhahMoror = () => {
                 headers:
                 {
                     Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-                    // 'Cache-Control': 'no-cache',
-                    // 'Pragma': 'no-cache',
-                    // 'Expires': '0',
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache',
+                    'Expires': '0',
                 }
             }).then(function (response) {
-                //console.log("GetCurrentFinanceYear")
-                const resultItems = response.data;
-                //console.log(response.data)
-                //console.log(response.data.salStart);
-                //console.log(response.data.salEnd);
+
                 if (response.data != null) {
                     setDateFrom(response.data.salStart);
                     setDateTo(response.data.salEnd);
@@ -79,11 +70,12 @@ export const TankhahMoror = () => {
             }).catch(function (error) {
                 // handle error
                 console.log("axois error: ");
-                console.log(error)
+                console.log(error);
+                alert(error);
             })
     }
 
-    
+
     const GetAllTankhah = () => {
         axios(
             {
@@ -99,9 +91,6 @@ export const TankhahMoror = () => {
             }).then(function (response) {
 
                 const resultItems = response.data;
-                //console.log("tankhah get all ...")
-                //console.log(resultItems)
-                //console.log(resultItems[0].tankhah_ID);
                 setTankhahId(resultItems[0].tankhah_ID)
                 resultItems.map(data => {
                     setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID }]);
@@ -110,13 +99,21 @@ export const TankhahMoror = () => {
             }).catch(function (error) {
                 // handle error
                 console.log("axois error: ");
-                console.log(error)
+                console.log(error);
+                alert(error);
             })
     }
 
     const getAllTankhahMoror = (e) => {
         e.preventDefault();
- 
+
+        console.log( {
+            "fromDate": dateFrom,
+            "toDate": dateTo,
+            "salId": salId,
+            "tankhahId": tankhahId,
+            "showMande": mandeKhat
+        });
         axios(
             {
                 url: serverAdress + "GetTankhahMoror",
@@ -132,30 +129,27 @@ export const TankhahMoror = () => {
                 },
                 params:
                 {
-                    "fromDate":dateFrom,
+                    "fromDate": dateFrom,
                     "toDate": dateTo,
                     "salId": salId,
                     "tankhahId": tankhahId,
-                    "showMande": false
+                    "showMande": mandeKhat
                 }
             }).then(function (response) {
 
-                //console.log(response)
+                console.log("gfhjghghghghghgghghghghghghghghhhg")
                 const resultItems = response.data;
-                //console.log(resultItems);
+                console.log(resultItems);
                 resultItems.map((item) => {
-                    //console.log(item.bed)
-                    //console.log(item.radif)
-                    setItems([{ ...items, bed: item.bed, bes: item.bes, radif: item.radif, sharh: item.tpSHarh, tarikh: item.dptarikh }])
+                    setItems(items=>[...items ,{bed: item.bed.toLocaleString(), bes: item.bes.toLocaleString(), radif: item.radif, sharh: item.tpSHarh, tarikh: item.dptarikh }])
                 });
-                //console.log(items.length)
-                //console.log("11111111111");
-                //console.log(items);
+
             }).catch(function (error) {
                 // handle error
                 console.log("axois error: ");
-                console.log(error)
-            })
+                console.log(error);
+                alert(error);
+            });
 
 
 
@@ -166,7 +160,7 @@ export const TankhahMoror = () => {
             <Row className="page-header mt-2 ">
                 <Col lg="12" >
                     <nav className="breadcrumb">
-                        <a className="breadcrumb-item" href="#">خانه</a>
+                        <a className="breadcrumb-item" href="/home">خانه</a>
                         <span className="breadcrumb-item active">گزارش مرور تنخواه</span>
                     </nav>
                 </Col>
@@ -175,12 +169,10 @@ export const TankhahMoror = () => {
                     <Card small className="mb-2">
                         <ListGroup flush>
                             <ListGroupItem >
-                                <form class="form-inline">
-                                    {/* <Row>
-                                        <Col md="4" className="form-inline"> */}
-                                    <div class="form-group mb-2">
+                                <form className="form-inline">
+                                    <div className="form-group mb-2">
                                         <label htmlFor="tankhah">اتتخاب تنخواه*:</label>
-                                        <FormSelect id="tankhah" name="tankhah" className='form-control'  onChange={(e) => GetAllTankhahInfo(e.target.value)}>
+                                        <FormSelect id="tankhah" name="tankhah" className='form-control' onChange={(e) => GetAllTankhahInfo(e.target.value)}>
                                             {/* <option value={""}>یک موردانتخاب کنید</option> */}
                                             {
                                                 tankhahItems.map((item, index) => (
@@ -193,7 +185,7 @@ export const TankhahMoror = () => {
                                         </FormSelect>
                                     </div>
 
-                                    <div class="form-group mx-sm-3 mb-2">
+                                    <div className="form-group mx-sm-3 mb-2">
                                         <label htmlFor="mande" > از تاریخ :</label>
                                         <DatePicker inputClass='form-control'
                                             ref={calendarRef}
@@ -207,7 +199,7 @@ export const TankhahMoror = () => {
                                         />
                                     </div>
 
-                                    <div class="form-group mx-sm-3 mb-2">
+                                    <div className="form-group mx-sm-3 mb-2">
                                         <label htmlFor="etebarMax">تا تاریخ:</label>
                                         <DatePicker inputClass='form-control'
                                             ref={calendarRef}
@@ -221,9 +213,9 @@ export const TankhahMoror = () => {
                                         />
                                     </div>
 
-                                    <div class="form-group mx-sm-3 mb-2">
-                                        <input type="checkbox"  name="vehicle1" onChange={(e)=>setMandeKhat(e.target.checked)} />
-                                        <label for="vehicle1"> محاسبه مانده در خط</label>
+                                    <div className="form-group mx-sm-3 mb-2">
+                                        <input type="checkbox" name="vehicle1" onChange={(e) => setMandeKhat(e.target.checked)} />
+                                        <label > محاسبه مانده در خط</label>
                                     </div>
 
                                     <Button theme="primary" className="mb-2 mr-1" type="submit" onClick={(e) => getAllTankhahMoror(e)} >
@@ -236,10 +228,13 @@ export const TankhahMoror = () => {
                             </ListGroupItem>
                         </ListGroup>
                     </Card>
-                    {
+                    {/* {
+                        console.log(items)
 
                     }
-                    {items.length > 0 ? <TankhahReport resultItems={items} dateFrom={dateFrom} dateTo={dateTo}></TankhahReport> : ''}
+                    {items.length > 0 ?  */}
+                    <TankhahReport resultItems={items} dateFrom={dateFrom} dateTo={dateTo}></TankhahReport>
+                     {/* : ''} */}
                 </Col>
             </Row>
 

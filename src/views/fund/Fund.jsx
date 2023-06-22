@@ -193,9 +193,9 @@ export const Fund = () => {
                           </div>
                         </Col>
                         <Col md="4" className="form-group" >
-                          <div class="form-check mt-3 ml-3">
-                            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" defaultChecked="true" />
-                            <label class="form-check-label" for="defaultCheck1">
+                          <div className="form-check mt-3 ml-3">
+                            <input className="form-check-input" type="checkbox" value="" id="defaultCheck1" defaultChecked="true" />
+                            <label className="form-check-label" for="defaultCheck1">
                               حساب فعال است
                             </label>
                           </div>
@@ -251,9 +251,9 @@ export const Fund = () => {
                     </div>
                   </Col>
                   <Col md="4" className="form-group" >
-                    <div class="form-check mt-3 ml-3">
-                      <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" defaultChecked="true" />
-                      <label class="form-check-label" for="defaultCheck1">
+                    <div className="form-check mt-3 ml-3">
+                      <input className="form-check-input" type="checkbox" value="" id="defaultCheck1" defaultChecked="true" />
+                      <label className="form-check-label" for="defaultCheck1">
                         کنتربل سقف اعتبار
                       </label>
                     </div>

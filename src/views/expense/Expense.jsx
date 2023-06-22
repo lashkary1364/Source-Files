@@ -12,7 +12,6 @@ import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import { faHouseMedicalCircleCheck, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios';
-//import persian_fa from "react-date-object/locales/persian_fa"
 import DatePicker, { DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian"
 import persian_en from "react-date-object/locales/persian_en"
@@ -45,13 +44,7 @@ export const Expense = () => {
   const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }))
   const date = new DateObject({ calendar: persian, locale: persian_en })
   const [dateHeader, setDateHeader] = useState(date.format());
-  const [shomareName, setShomareName] = useState(0);
   const [status, setStatus] = useState(0);
-  const [sanadId, setSanadId] = useState(0);
-  const [tarikhName, setTarikhName] = useState('');
-
-
-  console.log(date.format())
 
   const convert = (date, format = state.format) => {
     console.log("convert....")
@@ -65,20 +58,12 @@ export const Expense = () => {
     console.log("state ... ")
     console.log(new DateObject(object).convert(persian, persian_en).format())
     setDateHeader(new DateObject(object).convert(persian, persian_en).format())
-    //gregorian: new DateObject(object).format(),
-
-    // arabic: new DateObject(object).convert(arabic, arabic_en).format(),
-    //  indian: new DateObject(object).convert(indian, indian_en).format(),
-    //  jsDate: date.toDate(),
-    //   ...object
-
+    
   }
 
   useEffect(() => {
 
     GetAllTankhah();
-    //GetAllSoratHazineSharh();
-
     if (operation == "delete" || operation == "edit")
       setInfo();
 
@@ -184,8 +169,6 @@ export const Expense = () => {
 
   const validationSchema = Yup.object().shape({
     tankhah: Yup.string().required('فیلد نام کاربری اجباری است'),
-    //.oneOf(validProductValues),
-    //tarikh: Yup.date().required('فیلد تاریخ اجباری است'),
     sharh: Yup.string().required('فیلد شرح اجباری است'),
   });
 
@@ -240,7 +223,7 @@ export const Expense = () => {
         }
       }).then(function (response) {
 
-        console.log("response: ")
+        console.log("response GetAllSouratHazineHeader: ")
         console.log(response)
 
         formik.setFieldValue("tozihat", response.data.tozihat);
@@ -248,21 +231,18 @@ export const Expense = () => {
         formik.setFieldValue("tarikh", response.data.tarikh);
         formik.setFieldValue("shomare", response.data.shomare);
         formik.setFieldValue("tankhah", response.data.tankhah_ID);
+       
         setState(response.data.tarikh);
         setDateHeader(response.data.tarikh);
-
-        setSanadId(response.data.sanadID);
-        setTarikhName(response.data.tarikh_name);
-        setShomareName(response.data.shomare_name);
-        setState(response.data.status);
-
+        setStatus(response.data.status);
 
         GetAllTankhahInfo(response.data.tankhah_ID);
 
       }).catch(function (error) {
         // handle error
         console.log("axois error: ");
-        console.log(error)
+        console.log(error);
+        alert(error);
       })
   }
 
@@ -271,20 +251,10 @@ export const Expense = () => {
 
     console.log("tarikh ... ")
     console.log(dateHeader)
-
     console.log("hhhhh")
     console.log(data)
-
-    // console.log("value")
-    // console.log(value)
-    //const tarikh=moment(data.tarikh, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')
-
-    // console.log("tarikh....")
-    // console.log(tarikh)
-
     setIsAction(true);
     console.log("data");
-
     console.log({
       "SoratID": 0,
       "MohidID": user.lastMohitID,
@@ -346,10 +316,11 @@ export const Expense = () => {
         console.log("addSouratHazineHeader:");
         console.log(error);
         setIsAction(false);
+        alert(error);
         //console.log("axois error: " + error);
-        toast.error('خطا در انجام عملیات', {
-          position: toast.POSITION.TOP_LEFT
-        });
+        // toast.error('خطا در انجام عملیات', {
+        //   position: toast.POSITION.TOP_LEFT
+        // });
       });
 
   }
@@ -361,13 +332,8 @@ export const Expense = () => {
       return;
     }
 
-
-
-
-
     setIsAction(true);
-    // console.log("delete sorat hazine ....");
-
+ 
     confirmAlert({
       closeOnEscape: false,
       closeOnClickOutside: false,
@@ -421,9 +387,6 @@ export const Expense = () => {
       return;
     }
    
-   
-    const tarikh = moment(data.tarikh, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')
-
     setIsAction(true);
     console.log({
       "soratID": parseInt(soratId),
@@ -484,9 +447,10 @@ export const Expense = () => {
       }).catch(function (error) {
         setIsAction(false);
         console.log("axois error: " + error);
-        toast.error('خطا در انجام عملیات', {
-          position: toast.POSITION.TOP_LEFT
-        });
+        alert(error);
+        // toast.error('خطا در انجام عملیات', {
+        //   position: toast.POSITION.TOP_LEFT
+        // });
       });
   }
 
@@ -570,7 +534,7 @@ export const Expense = () => {
                           value={state}
                           onChange={convert}
                           id="tarikh" name="tarikh"
-                          // value={value} onChange={setValue}
+                          //value={value} onChange={setValue}
                           calendarPosition="bottom-right"
                           disabled={operation == "delete" ? true : false}
                         />
@@ -586,8 +550,7 @@ export const Expense = () => {
                       <textarea id="sharh" name="sharh" className={'form-control' + (formik.errors.sharh && formik.touched.sharh ? ' is-invalid' : '')}
                         onChange={formik.handleChange} value={formik.values.sharh}
                         disabled={operation == "delete" ? true : false}
-                        maxLength="250"
-                      >
+                        maxLength="250">                      
                       </textarea>
                       <div className="invalid-feedback">
                         {

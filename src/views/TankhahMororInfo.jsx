@@ -18,7 +18,7 @@ export const TankhahMororInfo = ({ resultItems, dateFrom, dateTo }) => {
     const fileExtension = ".xlsx";
     //const excelData = [{ id: 1, name: "shabnam", family: "lashkary" }, { id: 2, name: "arezoo", family: "asadzadeh" }, { id: 3, name: "hamid", family: "soltani" }]
     const ref = useRef(null);
-
+    const[mandeKhat,setMandeKhat]=useState(false);
     const exportToExcel = async (e) => {
 
         e.preventDefault();
@@ -50,7 +50,7 @@ export const TankhahMororInfo = ({ resultItems, dateFrom, dateTo }) => {
             <Card small className="mb-2">
                 <ListGroup flush>
                     <ListGroupItem >
-                        <div class="form-inline">
+                        <div className="form-inline">
                             <div>
                                 <Pdf targetRef={ref} filename="document.pdf" >
                                     {({ toPdf }) => (
@@ -102,20 +102,19 @@ export const TankhahMororInfo = ({ resultItems, dateFrom, dateTo }) => {
                     </div>
                 </div>
 
-                <table class="table table-bordered  table-hover" >
+                <table className="table table-bordered  table-hover" >
                     <thead>
-                        <tr class="table-secondary" >
+                        <tr className="table-secondary" >
                             <th scope="col">#</th>
                             <th scope="col">شرح</th>
                             <th scope="col">تاریخ</th>
                             <th scope="col">بدهکار</th>
-                            <th scope="col">بستانکار</th>
-                            <th scope="col">مانده</th>
+                            <th scope="col">بستانکار</th>                          
                         </tr>
                     </thead>
                     <tbody>
                         {
-
+resultItems.length==0 ?<tr><td className='text-center' colSpan={5}> داده ای برای نمایش وجود ندارد </td></tr>:
                             resultItems.map((item, index) =>
                                 <tr key={index}>
                                     <td>{item.radif}</td>

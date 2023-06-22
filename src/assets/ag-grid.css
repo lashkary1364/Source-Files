@@ -78,8 +78,7 @@
 
 
 .table-to-xls{
-    width: 210mm;
-    height: 297mm ;
+   
     font-family: IRANSans;
     margin-left: auto;
     margin-right: auto;
@@ -91,4 +90,8 @@
     border:1px solid #3f3f41;
     /* padding-top:5px;
     padding-bottom:5px; */
+}
+nav{
+    font-family: iransans;
+    font-size: 14px;
 }

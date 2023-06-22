@@ -8,7 +8,6 @@ import axios from 'axios';
 import DatePicker, { DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_en from "react-date-object/locales/persian_en";
-import { TankhahMororListDaryaftiha } from './TankhahMororListDaryaftiha';
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import { useFormik } from 'formik';
@@ -21,17 +20,14 @@ export const MororListExpenseType = () => {
     const [tankhahItems, setTankhahItems] = useState([]);
     const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }));
     const [dateFrom, setDateFrom] = useState(null);
-    //new DateObject({ calendar: persian, locale: persian_en })
     const [dateTo, setDateTo] = useState(null);
-    //new DateObject({ calendar: persian, locale: persian_en })
     const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
     const calendarRef = useRef();
     const [items, setItems] = useState([]);
-    const [salId, setSalId] = useState()
-    const [tankhahId, setTankhahId] = useState();
-    const [mandeKhat, setMandeKhat] = useState(false);
+    const [tankhahId, setTankhahId] = useState();  
     const [options, setOptions] = useState([]);
     const [values, setValues] = React.useState(null);
+
     useEffect(() => {
         GetAllTankhah();
         GetCurrentFinanceYear();
@@ -40,7 +36,6 @@ export const MororListExpenseType = () => {
 
     const validationSchema = Yup.object().shape({
         sharhDetail: Yup.string().required('فیلد شرح اجباری است'),
-
     });
 
     const formik = useFormik({
@@ -61,7 +56,9 @@ export const MororListExpenseType = () => {
 
     const onChange = (_, a) => {
         formik.setFieldValue("sharhDetail", a.name);
+
         setValues(a);
+       
     };
 
     const convertFrom = (date, format = state.format) => {
@@ -77,8 +74,7 @@ export const MororListExpenseType = () => {
     }
 
     const GetAllTankhahInfo = (tankhahId) => {
-        //console.log(tankhahId);
-        setTankhahId(tankhahId);
+       setTankhahId(tankhahId);
     }
 
     const GetCurrentFinanceYear = () => {
@@ -94,21 +90,17 @@ export const MororListExpenseType = () => {
                     // 'Expires': '0',
                 }
             }).then(function (response) {
-                //console.log("GetCurrentFinanceYear")
-                const resultItems = response.data;
-                //console.log(response.data)
-                //console.log(response.data.salStart);
-                //console.log(response.data.salEnd);
+            
                 if (response.data != null) {
                     setDateFrom(response.data.salStart);
                     setDateTo(response.data.salEnd);
-                    setSalId(response.data.salId);
-                }
+                   }
 
             }).catch(function (error) {
                 // handle error
                 console.log("axois error: ");
-                console.log(error)
+                console.log(error);
+                alert(error);
             })
     }
 
@@ -126,10 +118,7 @@ export const MororListExpenseType = () => {
                 }
             }).then(function (response) {
 
-                const resultItems = response.data;
-                //console.log("tankhah get all ...")
-                //console.log(resultItems)
-                //console.log(resultItems[0].tankhah_ID);
+                const resultItems = response.data;              
                 setTankhahId(resultItems[0].tankhah_ID)
                 resultItems.map(data => {
                     setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID }]);
@@ -138,7 +127,8 @@ export const MororListExpenseType = () => {
             }).catch(function (error) {
                 // handle error
                 console.log("axois error: ");
-                console.log(error)
+                console.log(error);
+                alert(error);
             })
     }
 
@@ -174,22 +164,15 @@ export const MororListExpenseType = () => {
             }).catch(function (error) {
                 // handle error
                 console.log("axois error: ");
-                console.log(error)
+                console.log(error);
+                alert(error);
             })
 
     }
 
-    const getAllTankhahMoror = (e) => {
-       // e.preventDefault();
-        console.log({
-            "fromDate": dateFrom,
-            "toDate": dateTo,
-            "salId": salId,
-            "tankhahId": tankhahId,
-            "showMande": false
-
-        });
-
+    const getAllTankhahMoror = () => {
+        console.log("values.name")
+       console.log(values.name)
         axios(
             {
                 url: serverAdress + "GetMororListHazineType",
@@ -208,21 +191,20 @@ export const MororListExpenseType = () => {
                     "dateFrom": dateFrom,
                     "dateTo": dateTo,
                     "tankhahId": tankhahId,
-                    "hazine": ""
+                    "hazine": values.name
 
                 }
             }).then(function (response) {
-                console.log("'chva ....")
-                console.log(response)
                 const resultItems = response.data;              
                 resultItems.map((item) => {
                     console.log(item);                  
-                    setItems([{ ...items, radif: item.radif, Mablagh: item.mab, Sharh: item.sharh, Shomare: item.shomare, ShomareBarge: item.shomare_barge, TarikhPardakht: item.tarikh_pardakht }])
+                    setItems( items=>[ ...items,{ radif: item.radif, Mablagh: item.mab, Sharh: item.sharh, Shomare: item.shomare, ShomareBarge: item.shomare_barge, TarikhPardakht: item.tarikh_pardakht }])
                 });                
             }).catch(function (error) {
                 // handle error
                 console.log("axois error: ");
-                console.log(error)
+                console.log(error);
+                alert(error);
             });
 
     }
@@ -232,7 +214,7 @@ export const MororListExpenseType = () => {
             <Row className="page-header mt-2 ">
                 <Col lg="12" >
                     <nav className="breadcrumb">
-                        <a className="breadcrumb-item" href="#">خانه</a>
+                        <a className="breadcrumb-item" href="/home">خانه</a>
                         <span className="breadcrumb-item active">گزارش مرور- لیست نوع هزینه ها</span>
                     </nav>
                 </Col>
@@ -241,9 +223,9 @@ export const MororListExpenseType = () => {
                     <Card small className="mb-2">
                         <ListGroup flush>
                             <ListGroupItem >
-                                <form class="form-inline" onSubmit={formik.handleSubmit}>
+                                <form className="form-inline" onSubmit={formik.handleSubmit}>
                                                                       
-                                    <div class="form-group mx-sm-3 mb-2">
+                                    <div className="form-group mx-sm-3 mb-2">
                                         <label htmlFor="tankhah">اتتخاب تنخواه*:</label>
                                         <FormSelect id="tankhah" name="tankhah" className='form-control' onChange={(e) => GetAllTankhahInfo(e.target.value)}>
                                             {/* <option value={""}>یک موردانتخاب کنید</option> */}
@@ -258,7 +240,7 @@ export const MororListExpenseType = () => {
                                         </FormSelect>
                                     </div>
 
-                                    <div class="form-group mx-sm-3 mb-2">
+                                    <div className="form-group mx-sm-3 mb-2">
                                         <label htmlFor="mande" > از تاریخ :</label>
                                         <DatePicker inputClass='form-control'
                                             ref={calendarRef}
@@ -272,7 +254,7 @@ export const MororListExpenseType = () => {
                                         />
                                     </div>
 
-                                    <div class="form-group mx-sm-3 mb-2">
+                                    <div className="form-group mx-sm-3 mb-2">
                                         <label htmlFor="etebarMax">تا تاریخ:</label>
                                         <DatePicker inputClass='form-control'
                                             ref={calendarRef}
@@ -286,7 +268,7 @@ export const MororListExpenseType = () => {
                                         />
                                     </div>
 
-                                    <div class="form-group mx-sm-3 mb-2" >
+                                    <div className="form-group mx-sm-3 mb-2" >
                                         <label htmlFor="sharhDetail">شرح *:</label>
                                         <Autocomplete style={{ width: "300px" }}
                                             id="tags-outlined"
@@ -321,7 +303,9 @@ export const MororListExpenseType = () => {
                             </ListGroupItem>
                         </ListGroup>
                     </Card>
-                    {items.length > 0 ? <TankhahMororListExpenseType resultItems={items} dateFrom={dateFrom} dateTo={dateTo}></TankhahMororListExpenseType> : ''}
+                    {/* {items.length > 0 ?  */}
+                    <TankhahMororListExpenseType resultItems={items} dateFrom={dateFrom} dateTo={dateTo}></TankhahMororListExpenseType> 
+                    {/* : ''} */}
                 </Col>
             </Row>
         </Container>

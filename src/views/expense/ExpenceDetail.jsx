@@ -9,7 +9,6 @@ import {
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import axios from 'axios';
 import CurrencyInput from 'react-currency-input-field';
-//import DatePicker, { DateObject } from "react-multi-date-picker";
 import DatePicker, { DateObject } from "react-multi-date-picker"
 import persian from "react-date-object/calendars/persian"
 import persian_en from "react-date-object/locales/persian_en"
@@ -21,11 +20,11 @@ import { toast } from 'react-toastify';
 import { ExpenseDetailList } from './ExpenceDetailList';
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
-import {useHistory} from 'react-router-dom';
-// import * as moment from 'jalali-moment';
+import { useHistory } from 'react-router-dom';
+
 
 export const ExpenceDetail = () => {
-    // let persianDate = moment("1989/1/24").locale('fa').format('YYYY/M/D');
+
     const [isAction, setIsAction] = useState(false);
     const history = useHistory();
     const [operation, setOperation] = useState("add");
@@ -38,19 +37,13 @@ export const ExpenceDetail = () => {
     const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }))
     const date = new DateObject({ calendar: persian, locale: persian_en })
     const [dateDetail, setDateDetail] = useState(date.format());
-    console.log(date.format());
-    let today = new Date();//.toLocaleDateString('fa-IR');
-    // const newDate = moment(today, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')
-    // const [detailDate, setDetailDate] = useState(newDate);
-    //))
-    //new DateObject({ calendar: persian }).format())
-    //);
     const [rowGrid, setRowGrid] = useState([]);
     const [options, setOptions] = useState([]);
     const [rowIndex, setRowIndex] = useState(0);
     const [selectedRow, setSelectedRow] = useState();
     const [values, setValues] = React.useState(null);
-
+    const [ok, setOk] = useState();
+    const [tankhahSoratHazineH, setTankhahSoratHazineH] = useState();
     const convert = (date, format = state.format) => {
         console.log("convert....")
         console.log(date.format)
@@ -59,17 +52,10 @@ export const ExpenceDetail = () => {
         let object = { date, format }
         console.log("object")
         console.log(object)
-        setState(new DateObject(object).convert(persian, persian_en).format())
+        setState(new DateObject(object).convert(persian, persian_en).format());
         console.log("state ... ")
-        console.log(new DateObject(object).convert(persian, persian_en).format())
-        setDateDetail(new DateObject(object).convert(persian, persian_en).format())
-        //gregorian: new DateObject(object).format(),
-
-        // arabic: new DateObject(object).convert(arabic, arabic_en).format(),
-        //  indian: new DateObject(object).convert(indian, indian_en).format(),
-        //  jsDate: date.toDate(),
-        //   ...object
-
+        console.log(new DateObject(object).convert(persian, persian_en).format());
+        setDateDetail(new DateObject(object).convert(persian, persian_en).format());
     }
 
     const onChange = (_, a) => {
@@ -84,10 +70,37 @@ export const ExpenceDetail = () => {
 
     useEffect(() => {
 
+        getSouratHazineHeader();
         GetAllSoratHazineSharh();
         getAllSoratHazineDetail();
 
     }, []);
+
+    const getSouratHazineHeader = () => {
+        axios(
+            {
+                url: serverAdress + `GetAllSouratHazineHeader?souratId=${soratId}`,
+                method: "get",
+                headers:
+                {
+                    Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache',
+                    'Expires': '0',
+                }
+            }).then(function (response) {
+
+                const resultItems = response.data;
+
+                setTankhahSoratHazineH({ "status": resultItems.status })
+
+            }).catch(function (error) {
+                // handle error
+                console.log("axois error: ");
+                console.log(error)
+            });
+
+    }
 
     const getAllSoratHazineDetail = () => {
 
@@ -122,7 +135,8 @@ export const ExpenceDetail = () => {
                         , "Mablagh": data?.mab, "Tozihat": data?.tozihat,
                         "item_ID": data?.item_ID,
                         "State": data?.state,
-                        "ok": data?.ok == 0 ? 'بررسی نشده' : data?.ok == 1 ? 'تایید شده' : 'رد شده'
+                        "ok": data?.ok,
+                        "okDesc": data?.ok == 0 ? 'بررسی نشده' : data?.ok == 1 ? 'تایید شده' : 'رد شده'
                     }]);
                 });
 
@@ -131,6 +145,7 @@ export const ExpenceDetail = () => {
 
             }).catch(function (error) {
                 // handle error
+                alert(error);
                 console.log("axois error: ");
                 console.log(error)
             });
@@ -168,6 +183,7 @@ export const ExpenceDetail = () => {
 
             }).catch(function (error) {
                 // handle error
+                alert(error);
                 console.log("axois error: ");
                 console.log(error)
             })
@@ -183,8 +199,6 @@ export const ExpenceDetail = () => {
         else {
             setTarikhError(false);
 
-            //  const newDate = moment(date, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD');         
-            //formik.setFieldValue("tarikhDetail", newDate);
         }
 
     }
@@ -196,7 +210,6 @@ export const ExpenceDetail = () => {
     const validationSchema = Yup.object().shape({
         sharhDetail: Yup.string().required('فیلد شرح اجباری است'),
         id: Yup.string().required('فیلد شماره فاکتور اجباری است'),
-        //.shape({ name: Yup.string().required("sharh detail is required"), value: Yup.number().required("sharh detail is required") }),//.required('At least one skill is required'),// Yup.object().shape({name: Yup.string().required()}).required ('فیلد تاریخ اجباری است') ,//.required('فیلد نام کاربری اجباری است'),//.oneOf(validProductValues),
         tarikhDetail: Yup.string().required('فیلد تاریخ اجباری است'),
         price: Yup.string().required('فیلد مبلغ پرداختی اجباری است'),
     });
@@ -217,19 +230,21 @@ export const ExpenceDetail = () => {
 
         onSubmit: (data) => {
 
-            console.log("data ...")
+            console.log("data ...");
             console.log(data);
-            console.log("date detail ...")
+            console.log("date detail ...");
             console.log(dateDetail);
-            // const dateDetai = moment(data.tarikhDetail, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD');
-            // console.log(dateDetai)
-            console.log("submit ....")
-            console.log(operation)
+            console.log("submit ....");
+            console.log(operation);
             console.log(data);
 
 
             if (operation == "add") {
 
+                if (tankhahSoratHazineH.status != 0) {
+                    alert("این سند قابل ویرایش نمیباشد")
+                    return;
+                }
                 console.log("add ....")
                 setRowIndex(rowIndex + 1);
                 const ids = rowGrid.map(object => {
@@ -244,6 +259,8 @@ export const ExpenceDetail = () => {
                     max = Math.max(...ids);
                 }
 
+                console.log("rowGrid ....")
+                console.log(rowGrid);
                 setRowGrid([...rowGrid, {
                     "ID": max + 1, "SoratID": parseInt(soratId), "ShomareBarge": parseInt(data.id) == NaN ? null : parseInt(data.id), "TarikhPardakht": dateDetail, "Sharh": values.name, "CodeHesab": values.codeHesab, "Mrkaz1Code": values.markaz1, "Mrkaz2Code": values.markaz2, "Mrkaz3Code": values.markaz3, "Mablagh": parseInt(data.price), "Tozihat": data.tozihatDetail
                     , "item_ID": values?.value, "State": 0, "ok": 0
@@ -263,8 +280,11 @@ export const ExpenceDetail = () => {
 
             if (operation == "edit") {
 
+                console.log("data.ok");
+                console.log(data.ok);
 
-                if (data.ok != 0) {
+                console.log(data);
+                if (ok != 0) {
                     alert("این سند قابل ویرایش نیست")
                     return;
                 }
@@ -286,7 +306,6 @@ export const ExpenceDetail = () => {
                     "mrkaz3_code": values.markaz3,
                     "mab": parseInt(data.price),
                     "tozihat": data.tozihatDetail,
-
                 }
 
                 console.log(dataa)
@@ -333,9 +352,10 @@ export const ExpenceDetail = () => {
                     }).catch(function (error) {
                         setIsAction(false);
                         console.log("axois error: " + error);
-                        toast.error('خطا در انجام عملیات', {
-                            position: toast.POSITION.TOP_LEFT
-                        });
+                        alert(error);
+                        // toast.error('خطا در انجام عملیات', {
+                        //     position: toast.POSITION.TOP_LEFT
+                        // });
                     });
 
                 return;
@@ -347,6 +367,7 @@ export const ExpenceDetail = () => {
     });
 
     const editSoratHazineDetail = (data, op) => {
+        console.log("******data********")
         console.log(data)
         formik.setFieldValue("id", data?.ShomareBarge);
         formik.setFieldValue("tarikhDetail", data?.TarikhPardakht);
@@ -357,6 +378,7 @@ export const ExpenceDetail = () => {
 
         setSelectedRow(data);
         setOperation(op);
+        setOk(data?.ok);
 
     }
 
@@ -382,12 +404,36 @@ export const ExpenceDetail = () => {
         setOperation("add");
     }
 
+
+    const deleteSouratHazineDetail = (id) => {
+        console.log("id****")
+        console.log(id);
+        const newRowData = rowGrid.filter(m => m.ID !== id);
+        setRowGrid(newRowData);
+
+
+        const headers = {
+            Authorization: `Bearer ${localStorage.getItem("access-tocken")}`
+        };
+
+        axios.delete(serverAdress + `DeleteSouratHazineDetail?id=${id}`, { headers })
+            .then(function (res) {
+                toast.success('عملیات با موفقیت انجام پذیرفت', {
+                    position: toast.POSITION.TOP_LEFT,
+                    className: 'toast-message'
+                });
+            });
+    }
+
+
     return (
         <Container fluid className="main-content-container px-4">
+
             <Row className="page-header mt-2 ">
                 <Col lg="12" >
                     <nav className="breadcrumb">
-                        <a className="breadcrumb-item" href="#">خانه</a>
+                        <a className="breadcrumb-item" href="/home">خانه</a>
+                        <a className="breadcrumb-item" style={{color: "#007bff"}} href="/expencelist">مدیریت صورت هزینه ها</a>
                         <span className="breadcrumb-item active">جزییات صورت هزینه</span>
                     </nav>
                 </Col>
@@ -504,7 +550,7 @@ export const ExpenceDetail = () => {
                                 </Row>
                             </form>
 
-                            <ExpenseDetailList gridData={rowGrid} editDetail={editSoratHazineDetail} handleNew={handleNew} ></ExpenseDetailList>
+                            <ExpenseDetailList gridData={rowGrid} editDetail={editSoratHazineDetail} handleNew={handleNew} deleteSouratHazineDetail={deleteSouratHazineDetail} ></ExpenseDetailList>
 
                         </Col>
                     </Row>
