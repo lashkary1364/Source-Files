@@ -56,28 +56,32 @@ export default function () {
     },
     {
       title: "گزارش مرور - گردش حساب تنخواه",
-      htmlBefore: '<i class="material-icons">note_add</i>',
+      htmlBefore:'<i class="material-icons">table_chart</i>'
+            ,
+      
+      // '<i class="material-icons">chart_data</i>',
       // '<i class="material-icons">error</i>',
       to: "/moror",
     },
     {
       title: "گزارش مرور - لیست هزینه های ثبت شده",
-      htmlBefore: '<i class="material-icons">note_add</i>',
+      htmlBefore: '<i class="material-icons">table_chart</i>',
       // '<i class="material-icons">error</i>',
       to: "/listExpense",
     },
     {
       title: "گزارش مرور - لیست دریافتی ها",
-      htmlBefore: '<i class="material-icons">note_add</i>',
+      htmlBefore: '<i class="material-icons">table_chart</i>',
       // '<i class="material-icons">error</i>',
       to: "/daryaftiha",
     },
     {
       title: "گزارش مرور - نوع هزینه ها",
-      htmlBefore: '<i class="material-icons">note_add</i>',
+      htmlBefore: '<i class="material-icons">table_chart</i>',
       // '<i class="material-icons">error</i>',
       to: "/expenseTypes",
     },
+   
     // {
     //   title: "دیتیل مدیریت هزینه",
     //   htmlBefore: '<i class="material-icons">error</i>',

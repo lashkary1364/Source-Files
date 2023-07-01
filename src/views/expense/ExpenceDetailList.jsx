@@ -156,11 +156,19 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
   }
 
 
-  function onRowSelected(event) {
-    console.log("event")
-    console.log(event.data)
-    setSelectedRow(event.data)
-  }
+  // function onRowSelected(event) {
+  //   console.log("event000000")
+  //   console.log(event.data)
+  //   setSelectedRow(event.data)
+  // }
+
+
+  const onSelectionChanged = useCallback(() => {
+    var selectedRows = gridRef.current.api.getSelectedRows();
+    console.log("selected row...");
+    console.log(selectedRows);
+    setSelectedRow(selectedRows[0]);
+  });
 
   const handleDelete = (row) => {
 
@@ -213,10 +221,12 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
             </span>
             </button>
             <button type="submit" className="btn btn-secondary" onClick={() => {
-              console.log("selectedRow")
-              console.log(selectedRow)
+              console.log("selectedRow");
+              console.log(selectedRow);
+              console.log(selectedRow.State);
               if (selectedRow.State == 1)
-                editDetail(selectedRow, "edit")
+                editDetail(selectedRow, "edit");
+
               else
                 alert("این ردیف در دیتابیس ذخیر نشده است دمیتوانید آن را حذف و دوباره وارد نمایید")
             }}>ویرایش</button>
@@ -262,7 +272,7 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
               //onSelectionChanged={onSelectionChanged}
               //  onCellClicked={onCellClicked}
               //  onSelectionChanged={onSelectionChanged}
-              onRowSelected={onRowSelected}
+              onSelectionChanged={onSelectionChanged}
             >
             </AgGridReact>
           </div>

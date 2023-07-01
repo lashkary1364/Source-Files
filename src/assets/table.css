@@ -1,0 +1,118 @@
+table {
+    direction: rtl;
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    table-layout: fixed;
+   
+  }
+  
+  table caption {
+    font-size: 1.5em;
+    margin: .5em 0 .75em;
+  }
+  
+  table tr {
+    /* background-color: #f8f8f8; */
+    border: 1px solid #ddd;
+    padding: .35em;
+  }
+  .table thead th,
+  table th,
+  table td {
+    padding: .625em;
+    text-align: center;
+  }
+  
+  table th {
+    font-size: .85em;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+  
+  @media screen and (max-width: 600px) {
+    table {
+      border: 0;
+    }
+  
+    table caption {
+      font-size: 1.3em;
+    }
+    
+    table thead {
+      border: none;
+      clip: rect(0 0 0 0);
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      padding: 0;
+      position: absolute;
+      width: 1px;
+      padding-top: 5px!important;
+      padding-bottom: 5px!important;  
+    }
+    
+    table tr {
+      /* border-bottom: 3px solid #ddd; */
+      display: block;
+      margin-bottom: .625em;
+      font-size: 1em; 
+      
+    }
+    
+    table td {
+      border-bottom: 1px solid #ddd;
+      display: block;
+      font-size: .8em;
+      text-align: right;
+      min-height: 50px !important;
+       
+    } 
+    
+    table td::before {
+      /*
+      * aria-label has no advantage, it won't be read inside a table
+      content: attr(aria-label);
+      */
+      content: attr(data-label);
+      float: right;
+      font-weight: bold;
+      text-transform: uppercase;
+      padding-left: 5px;
+      
+    }
+    
+    table td:last-child {
+      border-bottom: 0;
+    }
+  }
+  
+
+  .table-bordered {
+    border: 1px solid #2b2d2e !important;
+  }
+
+  /* table>thead{
+    background:  "#ebe7e7" !important; 
+  } */
+
+  /* th[scope='row'] {
+    background-color: #d7d9f2;
+} */
+
+  table > thead > tr > th{
+    border:1px solid rgb(40, 39, 39) !important;
+    text-align: center !important;
+    background:  "#ebe7e7" !important; 
+    background-color: #d1d3d5 ! important;
+    font-size: "13pt" !important;
+    font-weight: "bold" !important;
+    font-family: "B Nazanin" !important;
+   
+  }
+  table > tbody > tr > td{
+    border:1px solid rgb(40, 39, 39);
+    text-align: center;
+  }

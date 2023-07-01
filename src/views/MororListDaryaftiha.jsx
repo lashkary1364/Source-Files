@@ -141,8 +141,8 @@ export const MororListDaryaftiha = () => {
                     console.log(item);
                     setItems(items=>[
                         ...items,{ radif: item.radif, SHarh: item.sHarh, BankName: item.bankName,
-                        SHobe: item.sHobe, daryafti_be_tankhah: item.daryafti_be_tankhah,
-                        pardakhti_az_tankhah: item.pardakhti_az_tankhah, dpTarikh: item.dpTarikh,
+                        SHobe: item.sHobe, daryafti_be_tankhah: item.daryafti_be_tankhah.toLocaleString(),
+                        pardakhti_az_tankhah: item.pardakhti_az_tankhah.toLocaleString(), dpTarikh: item.dpTarikh,
                         VajhType: item.vajhType, vajh_type_title: item.vajh_type_title,
                         CkSerial: item.ckSerial, DateNumber: item.dateNumber, SandogName: item.sandogName,
                         SandogNO: item.sandogNO

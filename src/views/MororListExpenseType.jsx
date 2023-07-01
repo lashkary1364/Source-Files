@@ -172,7 +172,13 @@ export const MororListExpenseType = () => {
 
     const getAllTankhahMoror = () => {
         console.log("values.name")
-       console.log(values.name)
+       console.log( {
+        "dateFrom": dateFrom,
+        "dateTo": dateTo,
+        "tankhahId": tankhahId,
+        "hazine": values.name
+
+    });
         axios(
             {
                 url: serverAdress + "GetMororListHazineType",
@@ -195,10 +201,10 @@ export const MororListExpenseType = () => {
 
                 }
             }).then(function (response) {
-                const resultItems = response.data;              
-                resultItems.map((item) => {
-                    console.log(item);                  
-                    setItems( items=>[ ...items,{ radif: item.radif, Mablagh: item.mab, Sharh: item.sharh, Shomare: item.shomare, ShomareBarge: item.shomare_barge, TarikhPardakht: item.tarikh_pardakht }])
+                const resultItems = response.data;  
+                console.log(response.data);            
+                resultItems.map((item) => {                                  
+                    setItems( items=>[ ...items,{ radif: item.radif, Mablagh: item.mab.toLocaleString(), Sharh: item.sharh, Shomare: item.shomare, ShomareBarge: item.shomare_barge, TarikhPardakht: item.tarikh_pardakht }])
                 });                
             }).catch(function (error) {
                 // handle error
@@ -224,7 +230,7 @@ export const MororListExpenseType = () => {
                         <ListGroup flush>
                             <ListGroupItem >
                                 <form className="form-inline" onSubmit={formik.handleSubmit}>
-                                                                      
+                                                                     
                                     <div className="form-group mx-sm-3 mb-2">
                                         <label htmlFor="tankhah">اتتخاب تنخواه*:</label>
                                         <FormSelect id="tankhah" name="tankhah" className='form-control' onChange={(e) => GetAllTankhahInfo(e.target.value)}>

@@ -11,7 +11,7 @@ import axios from 'axios';
 import CurrencyInput from 'react-currency-input-field';
 import DatePicker, { DateObject } from "react-multi-date-picker"
 import persian from "react-date-object/calendars/persian"
-import persian_en from "react-date-object/locales/persian_en"
+import persian_en from "react-date-object/locales/persian_fa"
 import ReactLoading from 'react-loading';
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import 'react-toastify/dist/ReactToastify.css';
@@ -366,16 +366,80 @@ export const ExpenceDetail = () => {
 
     });
 
+    const convertEnglishToPersian = (str) => {
+        var newTarikh="";
+        for (var i = 0; i < str.length; i++) {
+
+            switch (str[i]) {
+                case "1":
+                  var newStr= str[i].replace("1",'۱');
+                    console.log(newStr);
+                    break;
+                case "2":
+                    var newStr=  str[i].replace("2",'۲');
+                    console.log(newStr);
+                    break;
+                case "3":
+                    var newStr= str[i].replace("3",'۳');
+                    console.log(newStr);
+                    break;
+                case "4":
+                    var newStr= str[i].replace("4",'۴');
+                    console.log(newStr);
+                    break;
+                case "5":
+                    var newStr= str[i].replace("5",'۵');
+                    console.log(newStr);
+                    break;
+                case "6":
+                    var newStr=  str[i].replace("6",'۶');
+                    console.log(newStr);
+                    break;
+                case "7":
+                    var newStr= str[i].replace("7",'۷');
+                    console.log(newStr);
+                    break;
+                case "8":
+                    var newStr= str[i].replace("8",'۸');
+                    console.log(newStr);
+                    break;
+                case "9":
+                    var newStr=   str[i].replace("9",'۹');
+                    console.log(newStr);
+                    break;
+                    case "0":
+                        var newStr=   str[i].replace("0",'۰');
+                        console.log(newStr);
+                        break;
+                        case "/":
+                            var newStr=   str[i].replace("/",'/');
+                            console.log(newStr);
+                            break;
+            }
+            
+        newTarikh+=newStr;
+           
+        }
+
+
+        console.log("new tarikh ...")
+        console.log(newTarikh);
+        return newTarikh;
+    }
+  
     const editSoratHazineDetail = (data, op) => {
+      //  var str = "13402/01/01";
+       const str= convertEnglishToPersian(data?.TarikhPardakht);
+        console.log(str);
         console.log("******data********")
         console.log(data)
         formik.setFieldValue("id", data?.ShomareBarge);
-        formik.setFieldValue("tarikhDetail", data?.TarikhPardakht);
+        setState(str);
+        formik.setFieldValue("tarikhDetail",str);
         formik.setFieldValue("price", data?.Mablagh);
         formik.setFieldValue("tozihatDetail", data?.Tozihat);
-        setValues({ codeHesab: data?.CodeHesab, value: data?.item_ID, name: data?.Sharh, markaz1: data?.Mrkaz1Code, markaz2: data?.Mrkaz2Code, markaz3: data?.Mrkaz3Code })
+        setValues({ codeHesab: data?.CodeHesab, value: data?.item_ID, name: data?.Sharh, markaz1: data?.Mrkaz1Code, markaz2: data?.Mrkaz2Code, markaz3: data?.Mrkaz3Code });
         formik.setFieldValue("sharhDetail", data?.Sharh);
-
         setSelectedRow(data);
         setOperation(op);
         setOk(data?.ok);
@@ -403,7 +467,6 @@ export const ExpenceDetail = () => {
         formik.resetForm({ values: formik.initialValues, errors: {}, touched: { message: false } });
         setOperation("add");
     }
-
 
     const deleteSouratHazineDetail = (id) => {
         console.log("id****")
@@ -433,7 +496,7 @@ export const ExpenceDetail = () => {
                 <Col lg="12" >
                     <nav className="breadcrumb">
                         <a className="breadcrumb-item" href="/home">خانه</a>
-                        <a className="breadcrumb-item" style={{color: "#007bff"}} href="/expencelist">مدیریت صورت هزینه ها</a>
+                        <a className="breadcrumb-item" style={{ color: "#007bff" }} href="/expencelist">مدیریت صورت هزینه ها</a>
                         <span className="breadcrumb-item active">جزییات صورت هزینه</span>
                     </nav>
                 </Col>
@@ -475,7 +538,7 @@ export const ExpenceDetail = () => {
                                                             id="tarikh" name="tarikh"
                                                             calendarPosition="bottom-right"
                                                             disabled={operation == "delete" ? true : false} />
-                                                        <span>{dateDetail}</span>
+                                                        {/* <span>{dateDetail}</span> */}
                                                     </div>
                                                     {tarikhError == true ? <div style={{ marginTop: "0.25rem", fontSize: "80%", color: "#c4183c", fontFamily: 'IRANSans', }}>فیلد تاریخ اجباری است</div> : ''}
                                                 </Col>

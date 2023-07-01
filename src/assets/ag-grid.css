@@ -79,7 +79,7 @@
 
 .table-to-xls{
    
-    font-family: IRANSans;
+    font-family: B Nazanin;   
     margin-left: auto;
     margin-right: auto;
     padding:80px;
@@ -88,6 +88,7 @@
 .border-tankhah-header{
  
     border:1px solid #3f3f41;
+    text-align: center;
     /* padding-top:5px;
     padding-bottom:5px; */
 }
@@ -95,3 +96,14 @@ nav{
     font-family: iransans;
     font-size: 14px;
 }
+
+
+
+ /* table.table-bordered > thead > tr > th{
+    border:1px solid rgb(40, 39, 39);
+    font-weight: bold;
+  }
+  .table-to-xls> table.table-bordered > tbody > tr > td{
+    border:1px solid rgb(40, 39, 39);
+    background-color: rgb(132, 130, 130);
+  }  */

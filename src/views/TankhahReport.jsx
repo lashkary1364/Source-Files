@@ -10,7 +10,7 @@ import XLSX from 'sheetjs-style'
 import { useDownloadExcel, DownloadTableExcel } from "react-export-table-to-excel";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileExcel, faFilePdf, faFileExport } from '@fortawesome/free-solid-svg-icons';
-
+import '../assets/table.css'
 
 export const TankhahReport = ({ resultItems, dateFrom, dateTo }) => {
 
@@ -83,14 +83,14 @@ export const TankhahReport = ({ resultItems, dateFrom, dateTo }) => {
                     </ListGroupItem>
                 </ListGroup>
             </Card>
-            <div id="table-to-xls" ref={ref} className="table-to-xls" >
+            <div id="table-to-xls" ref={ref} className="table-to-xls" style={{margin:"50px"}} >
                 <div className="border-tankhah-header">
-                    <div className="text-center">{JSON.parse(sessionStorage.getItem("LoginTocken")).LastMohitName}</div>
-                    <div className="text-center">
+                    <div >{JSON.parse(sessionStorage.getItem("LoginTocken")).LastMohitName}</div>
+                    <div>
                         <span >لیست گردش حساب:تنخواه </span>
                         <span>{" " + JSON.parse(sessionStorage.getItem("LoginTocken")).userFirstName + " " + JSON.parse(sessionStorage.getItem("LoginTocken")).userLastName + " "} </span>
                     </div>
-                    <div className="text-center">
+                    <div >
                         <span>از : </span>
                         <span>{" " + dateFrom + " "}</span>
                         <span>تا :</span>
@@ -98,29 +98,29 @@ export const TankhahReport = ({ resultItems, dateFrom, dateTo }) => {
                     </div>
                 </div>
 
-                <table className="table table-bordered  table-hover" dir="rtl" >
+                <table>
                     <thead>
-                        <tr className="table-secondary" >
+                        <tr style={{backgroundColor: "#d1d3d5"}} >
                             <th scope="col">#</th>
                             <th scope="col">شرح</th>
                             <th scope="col">تاریخ</th>
                             <th scope="col">بدهکار</th>
                             <th scope="col">بستانکار</th>
-                            <th scope="col">مانده</th>
                         </tr>
                     </thead>
                     <tbody>
                         {
-resultItems.length==0 ?<tr><td className='text-center' colSpan={5}> داده ای برای نمایش وجود ندارد </td></tr>:
-                            resultItems.map((item, index) =>
-                                <tr key={index}>
-                                    <td>{item.radif}</td>
-                                    <td>{item.sharh}</td>
-                                    <td>{item.tarikh}</td>
-                                    <td>{item.bed.toLocaleString()}</td>
-                                    <td>{item.bes.toLocaleString()}</td>
-                                </tr>
-                            )
+                            resultItems.length == 0 ? <tr><td className='text-center' colSpan={5}> داده ای برای نمایش وجود ندارد </td></tr> :
+                                resultItems.map((item, index) =>
+                                    <tr key={index}>
+                                        <td scope="row" data-label="#">{item.radif}</td>
+                                        {/* <td>{item.radif}</td> */}
+                                        <td data-label="شرح:">{item.sharh}</td>
+                                        <td data-label="تاریخ:">{item.tarikh}</td>
+                                        <td data-label="بدهکار:">{item.bed.toLocaleString()}</td>
+                                        <td data-label="بستانکار:">{item.bes.toLocaleString()}</td>
+                                    </tr>
+                                )
                         }
                     </tbody>
                 </table>

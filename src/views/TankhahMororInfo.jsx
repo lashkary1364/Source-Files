@@ -10,7 +10,7 @@ import XLSX from 'sheetjs-style'
 import { useDownloadExcel, DownloadTableExcel } from "react-export-table-to-excel";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileExcel, faFilePdf, faFileExport } from '@fortawesome/free-solid-svg-icons';
-
+import '../assets/table.css'
 
 export const TankhahMororInfo = ({ resultItems, dateFrom, dateTo }) => {
 

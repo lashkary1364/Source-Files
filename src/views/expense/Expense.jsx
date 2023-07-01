@@ -14,7 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios';
 import DatePicker, { DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian"
-import persian_en from "react-date-object/locales/persian_en"
+import persian_en from "react-date-object/locales/persian_fa"
 import 'react-toastify/dist/ReactToastify.css';
 import '../../assets/view-css.css';
 import { ToastContainer, toast } from 'react-toastify';
@@ -538,7 +538,7 @@ export const Expense = () => {
                           calendarPosition="bottom-right"
                           disabled={operation == "delete" ? true : false}
                         />
-                        <span>{dateHeader}</span>
+                        {/* <span>{dateHeader}</span> */}
                         {/* <span>{state}</span> */}
                       </div>
                       {tarikhError == true ? <div style={{ marginTop: "0.25rem", fontSize: "80%", color: "#c4183c", fontFamily: 'IRANSans', }}>فیلد تاریخ اجباری است</div> : ''}

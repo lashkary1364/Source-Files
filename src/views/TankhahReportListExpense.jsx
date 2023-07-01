@@ -10,13 +10,14 @@ import XLSX from 'sheetjs-style'
 import { useDownloadExcel, DownloadTableExcel } from "react-export-table-to-excel";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileExcel, faFilePdf, faFileExport } from '@fortawesome/free-solid-svg-icons';
+import '../assets/table.css';
 
 
 export const TankhahReportListExpense = ({ resultItems, dateFrom, dateTo }) => {
 
     const fileType = "application/vnd.openxmlformats-officedocumnet.spreadsheetml.sheet;charset=UTF-8";
     const fileExtension = ".xlsx";
-    //const excelData = [{ id: 1, name: "shabnam", family: "lashkary" }, { id: 2, name: "arezoo", family: "asadzadeh" }, { id: 3, name: "hamid", family: "soltani" }]
+  
     const ref = useRef(null);
     const exportToExcel = async (e) => {
         e.preventDefault();
@@ -26,7 +27,7 @@ export const TankhahReportListExpense = ({ resultItems, dateFrom, dateTo }) => {
         const data = new Blob([excelBuffer], { type: fileType });
         FileSaver.saveAs(data, "exportexcel" + fileExtension);
     };
-    const[mandeKhat,setMandeKhat]=useState(false);
+    const [mandeKhat, setMandeKhat] = useState(false);
 
     const [inputValue, setInputValue] = useState({
         note: '',
@@ -80,14 +81,14 @@ export const TankhahReportListExpense = ({ resultItems, dateFrom, dateTo }) => {
                     </ListGroupItem>
                 </ListGroup>
             </Card>
-            <div id="table-to-xls" ref={ref} className="table-to-xls" >
+            <div id="table-to-xls" ref={ref} className="table-to-xls" style={{margin:"50px"}} >
                 <div className="border-tankhah-header">
-                    <div className="text-center">{JSON.parse(sessionStorage.getItem("LoginTocken")).LastMohitName}</div>
-                    <div className="text-center">
+                    <div style={{textAlign:"center"}}>{JSON.parse(sessionStorage.getItem("LoginTocken")).LastMohitName}</div>
+                    <div style={{textAlign:"center"}}>
                         <span >لیست گردش حساب:تنخواه </span>
                         <span>{" " + JSON.parse(sessionStorage.getItem("LoginTocken")).userFirstName + " " + JSON.parse(sessionStorage.getItem("LoginTocken")).userLastName + " "} </span>
                     </div>
-                    <div className="text-center">
+                    <div style={{textAlign:"center"}}>
                         <span>از : </span>
                         <span>{" " + dateFrom + " "}</span>
                         <span>تا :</span>
@@ -95,11 +96,11 @@ export const TankhahReportListExpense = ({ resultItems, dateFrom, dateTo }) => {
                     </div>
                 </div>
 
-                <table className="table table-bordered  table-hover" dir="rtl" >
+                <table >
                     <thead>
-                        <tr className="table-secondary" >
-                            <th scope="col">#</th>
-                            <th scope="col">تاریخ</th>
+                        <tr style={{backgroundColor: "#d1d3d5"}}   >
+                            <th scope="col" >#</th>
+                            <th scope="col" >تاریخ</th>
                             <th scope="col">شماره</th>
                             <th scope="col">نام پروژه</th>
                             <th scope="col">شرح</th>
@@ -111,13 +112,13 @@ export const TankhahReportListExpense = ({ resultItems, dateFrom, dateTo }) => {
                         {
                             resultItems.map((item, index) =>
                                 <tr key={index}>
-                                    <td>{index}</td>
-                                    <td>{item.tarikh}</td>
-                                    <td>{item.shomare}</td>
-                                    <td>{item.proname}</td>
-                                    <td>{item.sharh}</td>
-                                    <td>{item.tankhah.toLocaleString()}</td>
-                                    <td>{item.total.toLocaleString()}</td>
+                                    <td scope="row" data-label="#:">{index+1}</td>
+                                     <td data-label="تاریخ:">{item.tarikh}</td>
+                                    <td data-label="شماره:">{item.shomare}</td>
+                                    <td style={{paddingTop:"5px"}}   data-label="نام پروژه:">{item.proname}</td>
+                                    <td data-label="شرح:">{item.sharh}</td>
+                                    <td data-label="تنخواه:">{item.tankhah.toLocaleString()}</td>
+                                    <td data-label="مبلغ:">{item.total.toLocaleString()}</td>
                                 </tr>
                             )
                         }

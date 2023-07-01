@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Card, ListGroup,ListGroupItem,} from "shards-react";
+import { Card, ListGroup, ListGroupItem, } from "shards-react";
 import ReactToPrint from 'react-to-print';
 import { useRef, useState } from 'react';
 import * as FileSaver from 'file-saver'
@@ -7,7 +7,7 @@ import XLSX from 'sheetjs-style'
 import { useDownloadExcel, DownloadTableExcel } from "react-export-table-to-excel";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileExcel, faFilePdf, faFileExport } from '@fortawesome/free-solid-svg-icons';
-
+import '../assets/table.css'
 
 export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) => {
 
@@ -15,7 +15,7 @@ export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) =>
     const fileExtension = ".xlsx";
     //const excelData = [{ id: 1, name: "shabnam", family: "lashkary" }, { id: 2, name: "arezoo", family: "asadzadeh" }, { id: 3, name: "hamid", family: "soltani" }]
     const ref = useRef(null);
-    
+
     const exportToExcel = async (e) => {
         e.preventDefault();
         const ws = XLSX.utils.json_to_sheet(resultItems);
@@ -78,14 +78,14 @@ export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) =>
                     </ListGroupItem>
                 </ListGroup>
             </Card>
-            <div id="table-to-xls" ref={ref} className="table-to-xls" >
+            <div id="table-to-xls" ref={ref} className="table-to-xls" style={{margin:"50px"}}>
                 <div className="border-tankhah-header">
-                    <div className="text-center">{JSON.parse(sessionStorage.getItem("LoginTocken")).LastMohitName}</div>
-                    <div className="text-center">
+                    <div >{JSON.parse(sessionStorage.getItem("LoginTocken")).LastMohitName}</div>
+                    <div >
                         <span >لیست گردش حساب:تنخواه </span>
                         <span>{" " + JSON.parse(sessionStorage.getItem("LoginTocken")).userFirstName + " " + JSON.parse(sessionStorage.getItem("LoginTocken")).userLastName + " "} </span>
                     </div>
-                    <div className="text-center">
+                    <div >
                         <span>از : </span>
                         <span>{" " + dateFrom + " "}</span>
                         <span>تا :</span>
@@ -93,9 +93,9 @@ export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) =>
                     </div>
                 </div>
 
-                <table className="table table-bordered  table-hover" dir="rtl" >
+                <table  dir="rtl" >
                     <thead>
-                        <tr className="table-secondary" >
+                        <tr  style={{backgroundColor: "#d1d3d5"}}>
                             <th scope="col">#</th>
                             <th scope="col">تاریخ</th>
                             <th scope="col">نوع دریافت / پرداخت</th>
@@ -112,23 +112,24 @@ export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) =>
                     </thead>
                     <tbody>
                         {
-                          resultItems.length==0 ?<tr><td className='text-center' colSpan={12}> داده ای برای نمایش وجود ندارد </td></tr>:
-                            resultItems.map((item, index) =>
-                                <tr  key={index}>
-                                    <td>{item.radif}</td>                                    
-                                    <td>{item.dpTarikh}</td>
-                                    <td>{item.vajh_type_title}</td>
-                                    <td>{item.SHarh}</td>
-                                    <td>{item.SandogNO}</td>
-                                    <td>{item.SandogName}</td>
-                                    <td>{item.BankName}</td>
-                                    <td>{item.SHobe}</td>
-                                    <td>{item.CkSerial}</td>
-                                    <td>{item.CkSerial}</td>                                   
-                                    <td>{item.daryafti_be_tankhah.toLocaleString()}</td>
-                                    <td>{item.pardakhti_az_tankhahdata.toLocaleString()}</td>                                   
-                                </tr>
-                            )
+                            resultItems.length == 0 ? <tr><td className='text-center' colSpan={12}> داده ای برای نمایش وجود ندارد </td></tr> :
+                                resultItems.map((item, index) =>
+                                    <tr key={index}>
+                                        <td scope="row" data-label="#:">{item.radif}</td>                                  
+                                        {/* <td>{item.radif}</td> */}
+                                        <td data-label="تاریخ:">{item.dpTarikh}</td>
+                                        <td data-label="نوع دریافت/پرداخت:">{item.vajh_type_title}</td>
+                                        <td data-label="شرح:">{item.SHarh}</td>
+                                        <td data-label="شماره صندوق:">{item.SandogNO}</td>
+                                        <td data-label="نام صندوق:">{item.SandogName}</td>
+                                        <td data-label="نام بانک:">{item.BankName}</td>
+                                        <td data-label="نام شعبه:">{item.SHobe}</td>
+                                        <td data-label="سریال چک:">{item.CkSerial}</td>
+                                        <td data-label="تاریخ چک:">{item.CkSerial}</td>
+                                        <td data-label="مبلغ دریافتی تنخواه:">{item.daryafti_be_tankhah}</td>
+                                        <td data-label="مبلغ پرداختی تنخواه:">{item.pardakhti_az_tankhahdata}</td>
+                                    </tr>
+                                )
                         }
                     </tbody>
                 </table>
