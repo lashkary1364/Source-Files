@@ -9,6 +9,7 @@ import DatePicker, { DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_en from "react-date-object/locales/persian_en";
 import { TankhahMororListDaryaftiha } from './TankhahMororListDaryaftiha';
+import swal from 'sweetalert';
 
 
 export const MororListDaryaftiha = () => {
@@ -33,13 +34,13 @@ export const MororListDaryaftiha = () => {
     const convertFrom = (date, format = state.format) => {
         let object = { date, format }
         setState(new DateObject(object).convert(persian, persian_en).format());
-        setDateFrom(new DateObject(object).convert(persian, persian_en).format())
+        setDateFrom(new DateObject(object).convert(persian, persian_en).format());
     }
 
     const convertTo = (date, format = state.format) => {
         let object = { date, format }
         setState(new DateObject(object).convert(persian, persian_en).format());
-        setDateTo(new DateObject(object).convert(persian, persian_en).format())
+        setDateTo(new DateObject(object).convert(persian, persian_en).format());
     }
 
     const GetAllTankhahInfo = (tankhahId) => {
@@ -68,9 +69,9 @@ export const MororListDaryaftiha = () => {
 
             }).catch(function (error) {
                 // handle error
-                console.log("axois error: ");
-                console.log(error);
-                alert(error);
+                // console.log("axois error: ");
+                // console.log(error);
+                swal("error",error.message,"error");
             })
     }
 
@@ -96,22 +97,22 @@ export const MororListDaryaftiha = () => {
 
             }).catch(function (error) {
                 // handle error
-                console.log("axois error: ");
-                console.log(error);
-                alert(error);
+                // console.log("axois error: ");
+                // console.log(error);
+                swal("error",error.message,"error");
             })
     }
 
     const getAllTankhahMoror = (e) => {
         e.preventDefault();
-        console.log({
-            "fromDate": dateFrom,
-            "toDate": dateTo,
-            "salId": salId,
-            "tankhahId": tankhahId,
-            "showMande": false
+        // console.log({
+        //     "fromDate": dateFrom,
+        //     "toDate": dateTo,
+        //     "salId": salId,
+        //     "tankhahId": tankhahId,
+        //     "showMande": false
 
-        });
+        // });
         axios(
             {
                 url: serverAdress + "GetMororListDaryaftiha",
@@ -132,13 +133,12 @@ export const MororListDaryaftiha = () => {
                     "salId": salId,
                     "tankhahId": tankhahId,
                     "showMande": mandeKhat
-
                 }
             }).then(function (response) {
 
                 const resultItems = response.data;
                 resultItems.map((item) => {
-                    console.log(item);
+                    //console.log(item);
                     setItems(items=>[
                         ...items,{ radif: item.radif, SHarh: item.sHarh, BankName: item.bankName,
                         SHobe: item.sHobe, daryafti_be_tankhah: item.daryafti_be_tankhah.toLocaleString(),
@@ -151,9 +151,9 @@ export const MororListDaryaftiha = () => {
 
             }).catch(function (error) {
                 // handle error
-                console.log("axois error: ");
-                console.log(error);
-                alert(error);
+                // console.log("axois error: ");
+                // console.log(error);
+                swal("error",error.message,"error");
             })
 
     }

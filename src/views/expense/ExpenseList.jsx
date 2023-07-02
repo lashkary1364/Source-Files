@@ -95,6 +95,7 @@ export const ExpenseList = () => {
       alert(error);
     })
   }
+  
   const getAllTankhah = () => {
 
     axios(
@@ -120,7 +121,7 @@ export const ExpenseList = () => {
         // handle error
         console.log("axois error: ");
         console.log(error);
-        alert(error);
+        swal("error",error.message , "error");
       })
   }
   useEffect(() => {
@@ -162,25 +163,24 @@ export const ExpenseList = () => {
     console.log("selectedRow")
     console.log(selectedRow)
     if (selectedRow == null || selectedRow == undefined) {
-      swal("خطا","لطفا یک ردیف انتخاب نمایید" , "warning")
+      swal("توجه","لطفا یک ردیف انتخاب نمایید" , "warning")
       return;
     }
     if(selectedRow.length>1){
-      swal("خطا","تعداد ردیف های انتخابی برای حذف بیشتر از یک ردیف میباشد" , "warning");
+      swal("توجه","تعداد ردیف های انتخابی برای حذف بیشتر از یک ردیف میباشد" , "warning");
       return;
     }
     history.push("/expense?id=" + selectedRow[0].soratID + "&operation=edit")
   }
 
   const handleDetail = () => {
-    console.log("selectedRow")
-    console.log(selectedRow)
+    
     if (selectedRow == null || selectedRow == undefined) {
-      swal("خطا","لطفا یک ردیف انتخاب نمایید" , "warning")
+      swal("توجه","لطفا یک ردیف انتخاب نمایید" , "warning")
       return;
     }
     if(selectedRow.length>1){
-      swal("خطا","تعداد ردیف های انتخابی برای حذف بیشتر از یک ردیف میباشد" , "warning");
+      swal("توجه","تعداد ردیف های انتخابی برای حذف بیشتر از یک ردیف میباشد" , "warning");
       return;
     }
 
@@ -191,22 +191,18 @@ export const ExpenseList = () => {
    
   
     if (selectedRow == null || selectedRow == undefined || selectedRow.length==0) {
-      swal("خطا","لطفا یک ردیف انتخاب نمایید" , "warning")
+      swal("توجه","لطفا یک ردیف انتخاب نمایید" , "warning")
       return;
     }
     if(selectedRow.length>1){
-      swal("خطا","تعداد ردیف های انتخابی برای حذف بیشتر از یک ردیف میباشد" , "warning");
+      swal("توجه","تعداد ردیف های انتخابی برای حذف بیشتر از یک ردیف میباشد" , "warning");
       return;
     }
     history.push("/expense?id=" + selectedRow[0].soratID + "&operation=delete")
   }
 
-  const handleSodoreName = () => {
-    console.log("sodore name ....")
-    console.log(selectedRow);
-    console.log(ids);
-    console.log(listId);
 
+  const GeShomareName=()=>{
     axios(
       {
         url: serverAdress + `GetAllShomareName?list=${listId}`,
@@ -221,16 +217,8 @@ export const ExpenseList = () => {
       }).then(function (response) {
         console.log("get all tankhah ...");
         const resultItems = response.data;
-        if (resultItems.length > 0) {
-          swal("بعضی از صورت هزینه های انتخابی دارای شماره نامه میباشند ابتدا نامه ها را باطل کنید");
-          return;
-        } else {
-
-          history.push("/sodorename?listId=" + listId+"&tarikh="+dateHeader);
-        }
-        // resultItems.map(data => {
-        //   setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID, shomare_name: data.shomare_name, tarikh_name: data.tarikh_name, sanadID: data.sanadID }]);
-        // });
+        console.log(resultItems);
+        return resultItems;       
 
       }).catch(function (error) {
         // handle error
@@ -238,6 +226,55 @@ export const ExpenseList = () => {
         console.log(error);
         swal("Error", error.message, "error");
       })
+  }
+
+  const handleSodoreName = () => {
+    console.log("sodore name ....")
+    console.log(selectedRow);
+    console.log(ids);
+    console.log(listId);
+
+    const countShomeName=GeShomareName();
+    if(countShomeName>0){
+      swal("توجه","بعضی از صورت هزینه های انتخابی دارای شماره نامه میباشند ابتدا نامه ها را باطل کنید","warning");
+      toggle();
+      return;
+    }else{
+      history.push("/sodorename?listId=" + listId+"&tarikh="+dateHeader);
+    }
+    // axios(
+    //   {
+    //     url: serverAdress + `GetAllShomareName?list=${listId}`,
+    //     method: "get",
+    //     headers:
+    //     {
+    //       Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
+    //       'Cache-Control': 'no-cache',
+    //       'Pragma': 'no-cache',
+    //       'Expires': '0',
+    //     }
+    //   }).then(function (response) {
+    //     console.log("get all tankhah ...");
+    //     const resultItems = response.data;
+    //     console.log(resultItems);
+    //     if (resultItems > 0) {
+    //       swal("توجه","بعضی از صورت هزینه های انتخابی دارای شماره نامه میباشند ابتدا نامه ها را باطل کنید","warning");
+    //       toggle();
+    //       return;
+    //     } else {
+
+    //       history.push("/sodorename?listId=" + listId+"&tarikh="+dateHeader);
+    //     }
+    //     // resultItems.map(data => {
+    //     //   setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID, shomare_name: data.shomare_name, tarikh_name: data.tarikh_name, sanadID: data.sanadID }]);
+    //     // });
+
+    //   }).catch(function (error) {
+    //     // handle error
+    //     console.log("axois error: ");
+    //     console.log(error);
+    //     swal("Error", error.message, "error");
+    //   })
 
   }
 

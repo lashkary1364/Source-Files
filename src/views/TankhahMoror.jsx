@@ -9,6 +9,7 @@ import DatePicker, { DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian"
 import persian_en from "react-date-object/locales/persian_en"
 import { TankhahReport } from './TankhahReport';
+import swal from 'sweetalert';
 
 
 export const TankhahMoror = () => {
@@ -69,9 +70,10 @@ export const TankhahMoror = () => {
 
             }).catch(function (error) {
                 // handle error
-                console.log("axois error: ");
-                console.log(error);
-                alert(error);
+                // console.log("axois error: ");
+                // console.log(error);
+                // alert(error);
+                swal("error",error.meddsgr,"error");                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
             })
     }
 
@@ -98,22 +100,23 @@ export const TankhahMoror = () => {
 
             }).catch(function (error) {
                 // handle error
-                console.log("axois error: ");
-                console.log(error);
-                alert(error);
+                // console.log("axois error: ");
+                // console.log(error);
+                // alert(error);
+                swal("error",error.message,"error");
             })
     }
 
     const getAllTankhahMoror = (e) => {
         e.preventDefault();
 
-        console.log( {
-            "fromDate": dateFrom,
-            "toDate": dateTo,
-            "salId": salId,
-            "tankhahId": tankhahId,
-            "showMande": mandeKhat
-        });
+        // console.log( {
+        //     "fromDate": dateFrom,
+        //     "toDate": dateTo,
+        //     "salId": salId,
+        //     "tankhahId": tankhahId,
+        //     "showMande": mandeKhat
+        // });
         axios(
             {
                 url: serverAdress + "GetTankhahMoror",
@@ -137,18 +140,19 @@ export const TankhahMoror = () => {
                 }
             }).then(function (response) {
 
-                console.log("gfhjghghghghghgghghghghghghghghhhg")
+                //nsole.log("gfhjghghghghghgghghghghghghghghhhg")
                 const resultItems = response.data;
-                console.log(resultItems);
+                //console.log(resultItems);
                 resultItems.map((item) => {
                     setItems(items=>[...items ,{bed: item.bed.toLocaleString(), bes: item.bes.toLocaleString(), radif: item.radif, sharh: item.tpSHarh, tarikh: item.dptarikh }])
                 });
 
             }).catch(function (error) {
                 // handle error
-                console.log("axois error: ");
-                console.log(error);
-                alert(error);
+                // console.log("axois error: ");
+                // console.log(error);
+                // alert(error);
+                swal("error",error.message,"error")
             });
 
 

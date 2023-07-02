@@ -25,6 +25,8 @@ import {
   useHistory
 } from 'react-router-dom';
 import * as moment from 'jalali-moment';
+import swal from 'sweetalert';
+// import ShomareName from './ShomareName';
 
 export const Expense = () => {
 
@@ -47,18 +49,18 @@ export const Expense = () => {
   const [status, setStatus] = useState(0);
 
   const convert = (date, format = state.format) => {
-    console.log("convert....")
-    console.log(date.format)
-    console.log(state)
-    console.log(format)
+    // console.log("convert....")
+    // console.log(date.format)
+    // console.log(state)
+    // console.log(format)
     let object = { date, format }
-    console.log("object")
-    console.log(object)
+    // console.log("object")
+    // console.log(object)
     setState(new DateObject(object).convert(persian, persian_en).format())
-    console.log("state ... ")
-    console.log(new DateObject(object).convert(persian, persian_en).format())
+    // console.log("state ... ")
+    // console.log(new DateObject(object).convert(persian, persian_en).format())
     setDateHeader(new DateObject(object).convert(persian, persian_en).format())
-    
+
   }
 
   useEffect(() => {
@@ -71,7 +73,6 @@ export const Expense = () => {
 
 
   const GetAllTankhah = () => {
-
 
     axios(
       {
@@ -87,27 +88,27 @@ export const Expense = () => {
       }).then(function (response) {
 
         const resultItems = response.data;
-        console.log("tankhah get all ...")
-        console.log(resultItems)
-        console.log(user.UserId)
+        // console.log("tankhah get all ...")
+        // console.log(resultItems)
+        // console.log(user.UserId)
         resultItems.map(data => {
           setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID }]);
         });
 
       }).catch(function (error) {
         // handle error
-        console.log("axois error: ");
-        console.log(error)
+        //console.log("axois error: ");
+        //console.log(error)
+        swal("error", error.message, "error");
       })
   }
 
   const GetAllTankhahInfo = (tankhahId) => {
 
     formik.setFieldValue("tankhah", tankhahId);
-    console.log("GetAllTankhahInfo")
-
-    console.log("sal mali")
-    console.log(sessionStorage.getItem("SalMali"))
+    // console.log("GetAllTankhahInfo")
+    // console.log("sal mali")
+    // console.log(sessionStorage.getItem("SalMali"))
 
     axios(
       {
@@ -127,9 +128,10 @@ export const Expense = () => {
 
       }).catch(function (error) {
         // handle error
-        console.log("axois error: ");
-        console.log(error)
-      })
+        // console.log("axois error: ");
+        swal("error", error.message, "error");
+        //console.log(error)
+      });
   }
 
   // const GetAllSoratHazineSharh = () => {
@@ -223,15 +225,15 @@ export const Expense = () => {
         }
       }).then(function (response) {
 
-        console.log("response GetAllSouratHazineHeader: ")
-        console.log(response)
+        // console.log("response GetAllSouratHazineHeader: ")
+        // console.log(response)
 
         formik.setFieldValue("tozihat", response.data.tozihat);
         formik.setFieldValue("sharh", response.data.sharh);
         formik.setFieldValue("tarikh", response.data.tarikh);
         formik.setFieldValue("shomare", response.data.shomare);
         formik.setFieldValue("tankhah", response.data.tankhah_ID);
-       
+
         setState(response.data.tarikh);
         setDateHeader(response.data.tarikh);
         setStatus(response.data.status);
@@ -240,36 +242,36 @@ export const Expense = () => {
 
       }).catch(function (error) {
         // handle error
-        console.log("axois error: ");
-        console.log(error);
-        alert(error);
+        // console.log("axois error: ");
+        // console.log(error);
+        swal("error", error.message, "error");
       })
   }
 
   const addSouratHazineHeader = (data) => {
 
 
-    console.log("tarikh ... ")
-    console.log(dateHeader)
-    console.log("hhhhh")
-    console.log(data)
+    // console.log("tarikh ... ")
+    // console.log(dateHeader)
+    // console.log("hhhhh")
+    // console.log(data)
     setIsAction(true);
-    console.log("data");
-    console.log({
-      "SoratID": 0,
-      "MohidID": user.lastMohitID,
-      "Shomare": parseInt(data.shomare),
-      "Tankhah_ID": parseInt(data.tankhah),
-      "status": 0,
-      "total": 0,
-      "Sharh": data.sharh,
-      "tozihat": data.tozihat,
-      "tarikh": dateHeader,
-      "sanadID": 0,
-      "shomare_name": 0,
-      "SalID": parseInt(sessionStorage.getItem("SalMali")),
-      "tarikh_name": ""
-    });
+    // console.log("data");
+    // console.log({
+    //   "SoratID": 0,
+    //   "MohidID": user.lastMohitID,
+    //   "Shomare": parseInt(data.shomare),
+    //   "Tankhah_ID": parseInt(data.tankhah),
+    //   "status": 0,
+    //   "total": 0,
+    //   "Sharh": data.sharh,
+    //   "tozihat": data.tozihat,
+    //   "tarikh": dateHeader,
+    //   "sanadID": 0,
+    //   "shomare_name": 0,
+    //   "SalID": parseInt(sessionStorage.getItem("SalMali")),
+    //   "tarikh_name": ""
+    // });
 
 
     axios(
@@ -301,7 +303,7 @@ export const Expense = () => {
           "tarikh_name": ""
         }
       }).then(function (response) {
-        console.log("response : " + response.data);
+        //console.log("response : " + response.data);
         toast.success('عملیات با موفقیت انجام پذیرفت', {
           position: toast.POSITION.TOP_LEFT,
           className: 'toast-message'
@@ -313,10 +315,10 @@ export const Expense = () => {
         }, 1000);
 
       }).catch(function (error) {
-        console.log("addSouratHazineHeader:");
-        console.log(error);
+        // console.log("addSouratHazineHeader:");
+        // console.log(error);
         setIsAction(false);
-        alert(error);
+        swal("error", error.message, "error");
         //console.log("axois error: " + error);
         // toast.error('خطا در انجام عملیات', {
         //   position: toast.POSITION.TOP_LEFT
@@ -325,26 +327,45 @@ export const Expense = () => {
 
   }
 
-  const deleteSouratHazineHeader = (id) => {
+  const deleteSouratHazineHeader = async (id) => {
 
     if (status != 0) {
-      alert("این سند قابل حذف نمیباشد")
+      swal("توجه", "این سند قابل حذف نمیباشد", "warning");
       return;
     }
 
-    setIsAction(true);
- 
-    confirmAlert({
-      closeOnEscape: false,
-      closeOnClickOutside: false,
-      customUI: ({ onClose }) => {
-        return (
-          <div className='custom-ui' dir="rtl">
-            <h3><FontAwesomeIcon icon={faTriangleExclamation} />توجه</h3>
-            <p>آیا از حذف اطمینان دارید ؟</p>
-            <button className='btn btn-sm btn-secondary mr-2' onClick={onClose}>خیر</button>
-            <button className='btn btn-sm btn-danger'
-              onClick={() => {
+
+    axios(
+      {
+        url: serverAdress + `GetAllShomareName?list=${id}`,
+        method: "get",
+        headers:
+        {
+          Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        }
+      }).then(function (response) {
+        console.log("get all tankhah ...");
+        const resultItems = response.data;
+
+        if (resultItems > 0) {
+          swal("توجه", "برای این سند نامه صادر شده است و قابل حذف نمیباشد", "warning");
+          return;
+        } else {
+          setIsAction(true);
+
+          swal({
+            title: "آیا از حذف اطمینان دارید؟",
+            text: "",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          })
+            .then((willDelete) => {
+
+              if (willDelete) {
                 const headers = {
                   Authorization: `Bearer ${localStorage.getItem("access-tocken")}`
                 };
@@ -364,108 +385,133 @@ export const Expense = () => {
                   })
                   .catch(function (error) {
                     setIsAction(false);
-                    console.log("axois error: " + error);
-                    toast.error('خطا در انجام عملیات', {
-                      position: toast.POSITION.TOP_LEFT
-                    });
+                    // console.log("axois error: " + error);
+                    swal("error", error.message, "error");
+                    // toast.error('خطا در انجام عملیات', {
+                    //   position: toast.POSITION.TOP_LEFT
+                    // });
                   });
-                onClose();
-              }}
-            >
-              بلی
-            </button>
-          </div>
-        )
-      }
-    })
+                // onClose();
+              }
+
+              else {
+                setIsAction(false);
+                // swal("Your imaginary file is safe!");
+              }
+            });
+
+        }
+
+      }).catch(function (error) {
+        // handle error
+        console.log("axois error: ");
+        console.log(error);
+        swal("Error", error.message, "error");
+        return null;
+      });
+
+
   }
 
   const updateSouratHazineHeader = (data) => {
-   
-    if (status != 0 ) {
-      alert("این سند قابل ویرایش نمی باشد")
+
+    if (status != 0) {
+      swal("توجه", "این سند قابل ویرایش نمی باشد", "warning");
       return;
     }
-   
-    setIsAction(true);
-    console.log({
-      "soratID": parseInt(soratId),
-      "mohidID": parseInt(user.lastMohitID),
-      "shomare": parseInt(data.shomare),
-      "tankhah_ID": parseInt(data.tankhah),
-      "status": 0,
-      "total": 0,
-      "sharh": data.sharh,
-      "tozihat": data.tozihat,
-      "tarikh": dateHeader,
-      "sanadID": 0,
-      "shomare_name": 0,
-      "salID": parseInt(sessionStorage.getItem("SalMali")),
-      "tarikh_name": ""
-    })
 
     axios(
       {
-        url: serverAdress + 'UpdateSouratHazineHeader',
-        method: "put",
+        url: serverAdress + `GetAllShomareName?list=${parseInt(soratId)}`,
+        method: "get",
         headers:
         {
           Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-          'Content-Type': 'application/json',
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache',
           'Expires': '0',
-        },
-        data:
-        {
-          "soratID": parseInt(soratId),
-          "mohidID": parseInt(user.lastMohitID),
-          "shomare": parseInt(data.shomare),
-          "tankhah_ID": parseInt(data.tankhah),
-          "status": 0,
-          "total": 0,
-          "sharh": data.sharh,
-          "tozihat": data.tozihat,
-          "tarikh": dateHeader,
-          "sanadID": 0,
-          "shomare_name": 0,
-          "salID": parseInt(sessionStorage.getItem("SalMali")),
-          "tarikh_name": ""
         }
       }).then(function (response) {
+        console.log("get all tankhah ...");
+        const resultItems = response.data;
 
-        toast.success('عملیات با موفقیت انجام پذیرفت', {
-          position: toast.POSITION.TOP_LEFT,
-          className: 'toast-message'
-        });
+        if (resultItems > 0) {
+          swal("توجه", "برای این سند نامه صادر شده است و قابل ویرایش نمیباشد", "warning");
+          return;
+        } else {
+          setIsAction(true);
+          axios(
+            {
+              url: serverAdress + 'UpdateSouratHazineHeader',
+              method: "put",
+              headers:
+              {
+                Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache',
+                'Expires': '0',
+              },
+              data:
+              {
+                "soratID": parseInt(soratId),
+                "mohidID": parseInt(user.lastMohitID),
+                "shomare": parseInt(data.shomare),
+                "tankhah_ID": parseInt(data.tankhah),
+                "status": 0,
+                "total": 0,
+                "sharh": data.sharh,
+                "tozihat": data.tozihat,
+                "tarikh": dateHeader,
+                "sanadID": 0,
+                "shomare_name": 0,
+                "salID": parseInt(sessionStorage.getItem("SalMali")),
+                "tarikh_name": ""
+              }
+            }).then(function (response) {
 
-        setTimeout(() => {
-          setIsAction(false);
-          history.push("/expencelist");
-        }, 1000);
+              toast.success('عملیات با موفقیت انجام پذیرفت', {
+                position: toast.POSITION.TOP_LEFT,
+                className: 'toast-message'
+              });
 
+              setTimeout(() => {
+                setIsAction(false);
+                history.push("/expencelist");
+              }, 1000);
+
+            }).catch(function (error) {
+              setIsAction(false);
+              swal("error", error.message, "error");
+            });
+
+
+
+
+        }
       }).catch(function (error) {
-        setIsAction(false);
-        console.log("axois error: " + error);
-        alert(error);
-        // toast.error('خطا در انجام عملیات', {
-        //   position: toast.POSITION.TOP_LEFT
-        // });
+        // handle error
+        console.log("axois error: ");
+        console.log(error);
+        swal("Error", error.message, "error");
+        return null;
       });
+
   }
 
 
   return (
-
     <Container fluid className="main-content-container px-4">
       <Row className="page-header mt-2 ">
         <Col lg="12" >
           <nav className="breadcrumb">
-            <a className="breadcrumb-item" href="#">خانه</a>
-            <span className="breadcrumb-item active">مدیریت صورت هزینه ها</span>
+            <a className="breadcrumb-item" href="/home">خانه</a>
+            <a className="breadcrumb-item" style={{ color: "#007bff" }} href="/expencelist">مدیریت صورت هزینه ها</a>
+            {operation == "delete" ? <span className="breadcrumb-item active">حذف صورت هزینه</span> :
+              operation == "edit" ? <span className="breadcrumb-item active">ویرایش صورت هزینه</span> :
+                <span className="breadcrumb-item active">افزودن صورت هزینه</span>}
           </nav>
         </Col>
-
         <Col lg="12" >
           <Card small className="mb-2">
             <ListGroup flush>
@@ -550,7 +596,7 @@ export const Expense = () => {
                       <textarea id="sharh" name="sharh" className={'form-control' + (formik.errors.sharh && formik.touched.sharh ? ' is-invalid' : '')}
                         onChange={formik.handleChange} value={formik.values.sharh}
                         disabled={operation == "delete" ? true : false}
-                        maxLength="250">                      
+                        maxLength="250">
                       </textarea>
                       <div className="invalid-feedback">
                         {

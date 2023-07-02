@@ -14,6 +14,8 @@ import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { useHistory } from 'react-router-dom';
+import swal from "sweetalert";
+import { Rowing } from "@material-ui/icons";
 
 
 
@@ -25,7 +27,7 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
   const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
   const gridRef = useRef();
   const [rowData, setRowData] = useState([]);
-
+  const [rowInsert, setRowInsert] = useState([]);
   const [columnDefs] = useState([
     {
       field: 'ID', filter: 'agTextColumnFilter', headerName: 'ردیف', headerCheckboxSelection: true,
@@ -39,17 +41,11 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
     { field: 'State', hide: true },
     { field: 'Tozihat', headerName: 'توضیحات', },
     { field: 'okDesc', headerName: 'وضعیت', },
-  ])
+  ]);
 
   useEffect(() => {
-    console.log("grid data .......")
-    console.log(gridData)
-    setRowData([])
-
+    setRowData([]);
     gridData.map((data, index) => {
-
-      console.log("data....")
-      console.log(data)
       setRowData(rowData => [...rowData, {
         "ID": data?.ID,
         "RowIndex": index,
@@ -67,14 +63,10 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
         "item_ID": data?.item_ID,
         "State": data?.State,
         "ok": data?.ok,// == 0 ? 'بررسی نشده' : data?.ok == 1 ? 'تایید شده' : 'رد شده'
-        "okDesc":data?.okDesc
+        "okDesc": data?.okDesc
       }]);
     });
 
-    console.log("grid data .......")
-    console.log(gridData)
-
-    // setRowData(gridData);
   }, [gridData]);
 
   const gridStyle = useMemo(() => ({ height: '600px', width: '100%', }), []);
@@ -106,22 +98,15 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
 
   const handleSaveDetail = () => {
 
-    console.log("handle save detail ... ");
-    console.log(rowData);
-
-    setIsAction(true);
-
+    //setIsAction(true);
     if (gridData.length == 0) {
-      toast.error("ردیفی ثبت نشده است", {
-        position: toast.POSITION.TOP_LEFT
-      });
+      swal("توجه", "ردیفی ثبت نشده است", "error");
       setIsAction(false);
       return;
     }
 
-
-    console.log("row data ...")
-    console.log(rowData)
+   const newRow= rowData.filter(m=>m.State==0);
+    
     axios(
       {
         url: serverAdress + "InsertSoratHazineDetail",
@@ -131,9 +116,9 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
           Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
           'Content-Type': 'application/json',
         },
-        data: rowData,
+        data: newRow,
       }).then(function (response) {
-
+       
         toast.success('عملیات با موفقیت انجام پذیرفت', {
           position: toast.POSITION.TOP_LEFT,
           className: 'toast-message'
@@ -142,69 +127,73 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
         setTimeout(() => {
           setIsAction(false);
           history.push("/expencelist");
-        }, 1000)
+        }, 1000);
 
       }).catch(function (error) {
-        console.log("axios error insert:")
-        console.log(error)
         setIsAction(false);
-        alert(error);
-        // toast.error('خطا در انجام عملیات', {
-        //   position: toast.POSITION.TOP_LEFT
-        // });
+        swal("error", error.message, "error");
+
       })
+
   }
-
-
-  // function onRowSelected(event) {
-  //   console.log("event000000")
-  //   console.log(event.data)
-  //   setSelectedRow(event.data)
-  // }
 
 
   const onSelectionChanged = useCallback(() => {
     var selectedRows = gridRef.current.api.getSelectedRows();
-    console.log("selected row...");
-    console.log(selectedRows);
     setSelectedRow(selectedRows[0]);
   });
 
-  const handleDelete = (row) => {
+  const handleDelete = () => {
+    console.log(selectedRow.SoratID);
+    if (selectedRow.ok != 0) {
+      swal("توجه", "این سند قابل حذف نیست", "warning");
+      return;
+    }
 
-    console.log("row ...")
-    console.log(row)
+    axios(
+      {
+        url: serverAdress + `GetAllShomareName?list=${selectedRow.SoratID}`,
+        method: "get",
+        headers:
+        {
+          Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        }
+      }).then(function (response) {
+        console.log("get all tankhah ...");
+        const resultItems = response.data;
+        if (resultItems > 0) {
+          swal("توجه", "برای این سند نامه صادر شده است و قابل حذف نمیباشد", "warning");
+          return;
+        } else {
+          swal({
+            title: "آیا از حذف اطمینان دارید؟",
+            text: "",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          })
+            .then((willDelete) => {
+              if (willDelete) {
 
-    confirmAlert({
-      closeOnEscape: false,
-      closeOnClickOutside: false,
-      customUI: ({ onClose }) => {
-        return (
-          <div className='custom-ui' dir="rtl">
-            <h3><FontAwesomeIcon icon={faTriangleExclamation} />توجه</h3>
-            <p>آیا از حذف اطمینان دارید ؟</p>
-            <button className='btn btn-sm btn-secondary mr-2' onClick={onClose}>خیر</button>
-            <button className='btn btn-sm btn-danger'
-              onClick={() => {
-
-                if (selectedRow.ok!=0){
-                  alert("این سند قابل حذف نیست");
-                  onClose();
-                  return;
-                }
                 gridRef.current.api.redrawRows();
                 gridRef.current.api.redrawRows({ rowNodes: rowData });
-                console.log("row.ID");
-                console.log(selectedRow.ID);
                 deleteSouratHazineDetail(selectedRow.ID);
-                onClose();
-              }}
-            > بلی
-            </button>
-          </div>
-        )
-      }
-    })
+              }
+              else {
+              }
+            });
+
+        }
+      }).catch(function (error) {
+        // handle error
+        console.log("axois error: ");
+        console.log(error);
+        swal("Error", error.message, "error");
+
+      });
   }
 
 
@@ -221,18 +210,17 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
             </span>
             </button>
             <button type="submit" className="btn btn-secondary" onClick={() => {
-              console.log("selectedRow");
-              console.log(selectedRow);
-              console.log(selectedRow.State);
+              // console.log("selectedRow");
+              // console.log(selectedRow);
+              // console.log(selectedRow.State);
               if (selectedRow.State == 1)
                 editDetail(selectedRow, "edit");
 
               else
-                alert("این ردیف در دیتابیس ذخیر نشده است دمیتوانید آن را حذف و دوباره وارد نمایید")
+                swal("توجه", "این ردیف در دیتابیس ذخیر نشده است دمیتوانید آن را حذف و دوباره وارد نمایید", "warning");
             }}>ویرایش</button>
             <button type="button" className="btn btn-secondary" onClick={handleDelete}>حذف</button>
           </div>
-
           <div className="ag-theme-alpine mb-5" style={gridStyle}>
             <div className="example-wrapper">
               <div className="form-inline m-2">

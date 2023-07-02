@@ -81,7 +81,7 @@ export const TankhahMororListExpenseType = ({ resultItems, dateFrom, dateTo }) =
                     </ListGroupItem>
                 </ListGroup>
             </Card>
-            <div id="table-to-xls" ref={ref} className="table-to-xls" style={{margin:"50px"}} >
+            <div id="table-to-xls" ref={ref} className="table-to-xls" style={{ margin: "50px" }} >
                 <div className="border-tankhah-header">
                     <div  >{JSON.parse(sessionStorage.getItem("LoginTocken")).LastMohitName}</div>
                     <div >
@@ -96,9 +96,9 @@ export const TankhahMororListExpenseType = ({ resultItems, dateFrom, dateTo }) =
                     </div>
                 </div>
 
-                <table  dir="rtl" >
+                <table dir="rtl" >
                     <thead>
-                        <tr style={{backgroundColor: "#d1d3d5"}} >
+                        <tr style={{ backgroundColor: "#d1d3d5" }} >
 
                             <th scope="col" >#</th>
                             <th scope="col">شماره صورت هزینه</th>
@@ -109,9 +109,6 @@ export const TankhahMororListExpenseType = ({ resultItems, dateFrom, dateTo }) =
                         </tr>
                     </thead>
                     <tbody>
-                        {
-                            console.log(resultItems.length)
-                        }
                         {
 
                             resultItems.length == 0 ? <tr><td colSpan={6} className="text-center">داده ای برای نمایش وجود ندارد</td></tr> :

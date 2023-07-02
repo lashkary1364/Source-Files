@@ -29,7 +29,6 @@ export const TankhahSodoreName = () => {
 
 
     useEffect(() => {
-
         setListId(queryParameters.get("listId"));
         sodoreNameReport();
     }, []);
@@ -50,39 +49,39 @@ export const TankhahSodoreName = () => {
                 }
             }).then(function (response) {
 
-                console.log("get all GetAllSodorName ...")
+                //console.log("get all GetAllSodorName ...")
                 const resultItems = response.data;
-                console.log(response);
+                //console.log(response);
                 var tempPrice = 0;            
                 resultItems.map(item => {
-                    console.log(item.SodoreNameDetails);
-                    var sss = [];
+                   // console.log(item.SodoreNameDetails);
+                    var detailSouratHazine = [];
 
                     item.sodoreNameDetails.map(detail => {
-                        sss.push({ sharh: detail.sharh, price: detail.mablagh });
+                        detailSouratHazine.push({ sharh: detail.sharh, price: detail.mablagh });
                     });
 
-                    console.log(item.totalPrice);
+                    // console.log(item.totalPrice);
                     tempPrice += item.totalPrice;
-                    console.log(tempPrice);
+                    // console.log(tempPrice);
 
-                    console.log("details...")
-                    console.log(sss);
+                    // console.log("details...")
+                    // console.log(sss);
                     setShomareName(item.shomareName);
                     setSodoreName(sodoreName => [...sodoreName, {
                         soratId: item.soratId, shomare: item.shomare, ShomareName: item.ShomareName, tarikh: item.tarikh,
-                        totalPrice: item.totalPrice, sharh: item.sharh, mablag: item.mablagh, tozihat: item.tozihat, details: sss
+                        totalPrice: item.totalPrice, sharh: item.sharh, mablag: item.mablagh, tozihat: item.tozihat, details: detailSouratHazine
                     }]);
 
                 });
 
 
-                console.log(tempPrice);
+                //console.log(tempPrice);
                 setTotalPrice(tempPrice);
             }).catch(function (error) {
                 // handle error
-                console.log("axois error: ");
-                console.log(error);
+                // console.log("axois error: ");
+                // console.log(error);
                 swal("Error", error.message, "error");
             })
 
@@ -150,8 +149,7 @@ export const TankhahSodoreName = () => {
                         <tbody>
                             <tr>
                                 <td rowSpan={2} style={{ verticalAlign: "middle", border: "1px solid rgb(40, 39, 39)" }}>
-                                    <img   src={require("./../images/deka.png")}></img>                              
-                                       
+                                    <img   src={require("./../images/deka.png")}></img> 
                                 </td>
                                 <td scope="row" rowSpan={2} style={{ verticalAlign: "middle", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}  ><h3>فرم تنخواه گردان</h3></td>
                                 <td style={{ border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}>شماره :{shomareName}</td>

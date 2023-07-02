@@ -13,6 +13,7 @@ import TextField from "@material-ui/core/TextField";
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { TankhahMororListExpenseType } from "./TankhahMororListExpenseType";
+import swal from 'sweetalert';
 
 export const MororListExpenseType = () => {
 
@@ -98,9 +99,10 @@ export const MororListExpenseType = () => {
 
             }).catch(function (error) {
                 // handle error
-                console.log("axois error: ");
-                console.log(error);
-                alert(error);
+                // console.log("axois error: ");
+                // console.log(error);
+                // alert(error);
+                swal("error",error.message,"error");
             })
     }
 
@@ -126,9 +128,10 @@ export const MororListExpenseType = () => {
 
             }).catch(function (error) {
                 // handle error
-                console.log("axois error: ");
-                console.log(error);
-                alert(error);
+                // console.log("axois error: ");
+                // console.log(error);
+                // alert(error);
+                swal("error",error.message,"error");
             })
     }
 
@@ -163,22 +166,23 @@ export const MororListExpenseType = () => {
 
             }).catch(function (error) {
                 // handle error
-                console.log("axois error: ");
-                console.log(error);
-                alert(error);
+                // console.log("axois error: ");
+                // console.log(error);
+                // alert(error);
+                swal("error",error.message,"error");
             })
 
     }
 
     const getAllTankhahMoror = () => {
-        console.log("values.name")
-       console.log( {
-        "dateFrom": dateFrom,
-        "dateTo": dateTo,
-        "tankhahId": tankhahId,
-        "hazine": values.name
+    //     console.log("values.name")
+    //    console.log( {
+    //     "dateFrom": dateFrom,
+    //     "dateTo": dateTo,
+    //     "tankhahId": tankhahId,
+    //     "hazine": values.name
 
-    });
+    // });
         axios(
             {
                 url: serverAdress + "GetMororListHazineType",
@@ -202,15 +206,16 @@ export const MororListExpenseType = () => {
                 }
             }).then(function (response) {
                 const resultItems = response.data;  
-                console.log(response.data);            
+               // console.log(response.data);            
                 resultItems.map((item) => {                                  
                     setItems( items=>[ ...items,{ radif: item.radif, Mablagh: item.mab.toLocaleString(), Sharh: item.sharh, Shomare: item.shomare, ShomareBarge: item.shomare_barge, TarikhPardakht: item.tarikh_pardakht }])
                 });                
             }).catch(function (error) {
                 // handle error
-                console.log("axois error: ");
-                console.log(error);
-                alert(error);
+                // console.log("axois error: ");
+                // console.log(error);
+                // alert(error);
+                swal("error",error.message,"error");
             });
 
     }

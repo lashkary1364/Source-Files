@@ -56,9 +56,7 @@ export default function () {
     },
     {
       title: "گزارش مرور - گردش حساب تنخواه",
-      htmlBefore:'<i class="material-icons">table_chart</i>'
-            ,
-      
+      htmlBefore:'<i class="material-icons">table_chart</i>',
       // '<i class="material-icons">chart_data</i>',
       // '<i class="material-icons">error</i>',
       to: "/moror",

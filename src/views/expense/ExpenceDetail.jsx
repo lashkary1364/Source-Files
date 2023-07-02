@@ -21,6 +21,7 @@ import { ExpenseDetailList } from './ExpenceDetailList';
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import { useHistory } from 'react-router-dom';
+import swal from 'sweetalert';
 
 
 export const ExpenceDetail = () => {
@@ -34,8 +35,8 @@ export const ExpenceDetail = () => {
     const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
     const [tarikhError, setTarikhError] = useState(false);
-    const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }))
     const date = new DateObject({ calendar: persian, locale: persian_en })
+    const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }))
     const [dateDetail, setDateDetail] = useState(date.format());
     const [rowGrid, setRowGrid] = useState([]);
     const [options, setOptions] = useState([]);
@@ -45,16 +46,17 @@ export const ExpenceDetail = () => {
     const [ok, setOk] = useState();
     const [tankhahSoratHazineH, setTankhahSoratHazineH] = useState();
     const convert = (date, format = state.format) => {
-        console.log("convert....")
-        console.log(date.format)
-        console.log(state)
-        console.log(format)
+
+        console.log(dateDetail);
+
+        if (date == null)
+            setTarikhError(true);
+        else {
+            setTarikhError(false);
+        }
+
         let object = { date, format }
-        console.log("object")
-        console.log(object)
-        setState(new DateObject(object).convert(persian, persian_en).format());
-        console.log("state ... ")
-        console.log(new DateObject(object).convert(persian, persian_en).format());
+        setState(new DateObject(object).convert(persian, persian_en).format())
         setDateDetail(new DateObject(object).convert(persian, persian_en).format());
     }
 
@@ -69,7 +71,7 @@ export const ExpenceDetail = () => {
     }
 
     useEffect(() => {
-
+       
         getSouratHazineHeader();
         GetAllSoratHazineSharh();
         getAllSoratHazineDetail();
@@ -95,18 +97,13 @@ export const ExpenceDetail = () => {
                 setTankhahSoratHazineH({ "status": resultItems.status })
 
             }).catch(function (error) {
-                // handle error
-                console.log("axois error: ");
-                console.log(error)
+
+                swal("error", error.message, "error");
             });
 
     }
 
     const getAllSoratHazineDetail = () => {
-
-        console.log("getAllSoratHazineDetail");
-        console.log("soratId:");
-        console.log(soratId);
 
         axios(
             {
@@ -122,8 +119,6 @@ export const ExpenceDetail = () => {
             }).then(function (response) {
 
                 const resultItems = response.data;
-                console.log("getAllSoratHazineDetail data");
-                console.log(resultItems)
                 setRowGrid([]);
 
                 resultItems.map(data => {
@@ -140,14 +135,9 @@ export const ExpenceDetail = () => {
                     }]);
                 });
 
-                console.log("rowGrid")
-                console.log(rowGrid)
-
             }).catch(function (error) {
-                // handle error
-                alert(error);
-                console.log("axois error: ");
-                console.log(error)
+                swal("error", error.message, "error");
+
             });
 
     }
@@ -182,29 +172,19 @@ export const ExpenceDetail = () => {
                 });
 
             }).catch(function (error) {
-                // handle error
-                alert(error);
-                console.log("axois error: ");
-                console.log(error)
+                swal("error", error.message, "error");
             })
 
     }
 
-    const handleChangeDate = (date) => {
+    const handleChangePrice = (value) => {
 
-        console.log(date)
-
-        if (date == null)
-            setTarikhError(true);
-        else {
-            setTarikhError(false);
-
+        if (value == undefined) {
+            formik.setFieldValue("price", '');
+        } else {
+            formik.setFieldValue("price", value);
         }
 
-    }
-
-    const handleChangePrice = (value) => {
-        formik.setFieldValue("price", value);
     }
 
     const validationSchema = Yup.object().shape({
@@ -227,25 +207,16 @@ export const ExpenceDetail = () => {
         validateOnChange: true,
         validateOnBlur: true,
         isInitialValid: true,
-
         onSubmit: (data) => {
-
-            console.log("data ...");
-            console.log(data);
-            console.log("date detail ...");
-            console.log(dateDetail);
-            console.log("submit ....");
-            console.log(operation);
-            console.log(data);
-
 
             if (operation == "add") {
 
+                console.log(dateDetail);
                 if (tankhahSoratHazineH.status != 0) {
-                    alert("این سند قابل ویرایش نمیباشد")
+                    swal("توجه", "این سند قابل ویرایش نمیباشد", "warning");
                     return;
                 }
-                console.log("add ....")
+
                 setRowIndex(rowIndex + 1);
                 const ids = rowGrid.map(object => {
                     return object.ID;
@@ -259,8 +230,6 @@ export const ExpenceDetail = () => {
                     max = Math.max(...ids);
                 }
 
-                console.log("rowGrid ....")
-                console.log(rowGrid);
                 setRowGrid([...rowGrid, {
                     "ID": max + 1, "SoratID": parseInt(soratId), "ShomareBarge": parseInt(data.id) == NaN ? null : parseInt(data.id), "TarikhPardakht": dateDetail, "Sharh": values.name, "CodeHesab": values.codeHesab, "Mrkaz1Code": values.markaz1, "Mrkaz2Code": values.markaz2, "Mrkaz3Code": values.markaz3, "Mablagh": parseInt(data.price), "Tozihat": data.tozihatDetail
                     , "item_ID": values?.value, "State": 0, "ok": 0
@@ -280,162 +249,147 @@ export const ExpenceDetail = () => {
 
             if (operation == "edit") {
 
-                console.log("data.ok");
-                console.log(data.ok);
-
-                console.log(data);
                 if (ok != 0) {
-                    alert("این سند قابل ویرایش نیست")
+                    swal("توجه", "این سند قابل ویرایش نیست", "warning")
                     return;
                 }
-                console.log("update")
-                console.log("data")
-                console.log(data)
-                console.log(selectedRow)
-                console.log("edit ....")
-
-                var dataa = {
-                    "ID": parseInt(selectedRow.ID),
-                    "hazine_ID": parseInt(soratId),
-                    "shomare_barge": parseInt(data.id),
-                    "tarikh_pardakht": data.tarikhDetail,
-                    "sharh": data.sharhDetail,
-                    "code_hesab": values.codeHesab,
-                    "mrkaz1_code": values.markaz1,
-                    "mrkaz2_code": values.markaz2,
-                    "mrkaz3_code": values.markaz3,
-                    "mab": parseInt(data.price),
-                    "tozihat": data.tozihatDetail,
-                }
-
-                console.log(dataa)
 
                 axios(
                     {
-                        url: serverAdress + 'UpdateSouratHazineDetail',
-                        method: "put",
+                        url: serverAdress + `GetAllShomareName?list=${parseInt(soratId)}`,
+                        method: "get",
                         headers:
                         {
                             Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
                             'Cache-Control': 'no-cache',
                             'Pragma': 'no-cache',
                             'Expires': '0',
-                            //'Content-Type': 'application/json',
-                        },
-                        data:
-                        {
-                            "ID": parseInt(selectedRow.ID),
-                            "hazine_ID": parseInt(soratId),
-                            "shomare_barge": parseInt(data.id),
-                            "tarikh_pardakht": data.tarikhDetail,
-                            "sharh": data.sharhDetail,
-                            "code_hesab": values.codeHesab,
-                            "mrkaz1_code": values.markaz1,
-                            "mrkaz2_code": values.markaz2,
-                            "mrkaz3_code": values.markaz3,
-                            "mab": parseInt(data.price),
-                            "tozihat": data.tozihatDetail,
                         }
                     }).then(function (response) {
-                        console.log("response")
-                        console.log(response)
-                        toast.success('عملیات با موفقیت انجام پذیرفت', {
-                            position: toast.POSITION.TOP_LEFT,
-                            className: 'toast-message'
-                        });
+                        const resultItems = response.data;
 
-                        setTimeout(() => {
-                            setIsAction(false);
-                            history.push("/expencelist");
-                        }, 1000);
+                        if (resultItems > 0) {
+                            swal("توجه", "برای این سند نامه صادر شده است و قابل حذف نمیباشد", "warning");
+                            return;
+                        } else {
+                            axios(
+                                {
+                                    url: serverAdress + 'UpdateSouratHazineDetail',
+                                    method: "put",
+                                    headers:
+                                    {
+                                        Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
+                                        'Cache-Control': 'no-cache',
+                                        'Pragma': 'no-cache',
+                                        'Expires': '0',
+                                        //'Content-Type': 'application/json',
+                                    },
+                                    data:
+                                    {
+                                        "ID": parseInt(selectedRow.ID),
+                                        "hazine_ID": parseInt(soratId),
+                                        "shomare_barge": parseInt(data.id),
+                                        "tarikh_pardakht": dateDetail,
+                                        "sharh": data.sharhDetail,
+                                        "code_hesab": values.codeHesab,
+                                        "mrkaz1_code": values.markaz1,
+                                        "mrkaz2_code": values.markaz2,
+                                        "mrkaz3_code": values.markaz3,
+                                        "mab": parseInt(data.price),
+                                        "tozihat": data.tozihatDetail,
+                                    }
+                                }).then(function (response) {
+                                    toast.success('عملیات با موفقیت انجام پذیرفت', {
+                                        position: toast.POSITION.TOP_LEFT,
+                                        className: 'toast-message'
+                                    });
+
+                                    setTimeout(() => {
+                                        setIsAction(false);
+                                        history.push("/expencelist");
+                                    }, 1000);
+
+                                }).catch(function (error) {
+                                    setIsAction(false);
+                                    swal("error", error.message, "error");
+
+                                });
+
+
+                        }
 
                     }).catch(function (error) {
-                        setIsAction(false);
-                        console.log("axois error: " + error);
-                        alert(error);
-                        // toast.error('خطا در انجام عملیات', {
-                        //     position: toast.POSITION.TOP_LEFT
-                        // });
+
+                        swal("Error", error.message, "error");
+                        return null;
                     });
 
-                return;
-
             }
-
         }
 
     });
 
     const convertEnglishToPersian = (str) => {
-        var newTarikh="";
+        var newTarikh = "";
         for (var i = 0; i < str.length; i++) {
 
             switch (str[i]) {
                 case "1":
-                  var newStr= str[i].replace("1",'۱');
-                    console.log(newStr);
+                    var newStr = str[i].replace("1", '۱');
+
                     break;
                 case "2":
-                    var newStr=  str[i].replace("2",'۲');
-                    console.log(newStr);
+                    var newStr = str[i].replace("2", '۲');
+
                     break;
                 case "3":
-                    var newStr= str[i].replace("3",'۳');
-                    console.log(newStr);
+                    var newStr = str[i].replace("3", '۳');
+
                     break;
                 case "4":
-                    var newStr= str[i].replace("4",'۴');
-                    console.log(newStr);
+                    var newStr = str[i].replace("4", '۴');
+
                     break;
                 case "5":
-                    var newStr= str[i].replace("5",'۵');
-                    console.log(newStr);
+                    var newStr = str[i].replace("5", '۵');
+
                     break;
                 case "6":
-                    var newStr=  str[i].replace("6",'۶');
-                    console.log(newStr);
+                    var newStr = str[i].replace("6", '۶');
+
                     break;
                 case "7":
-                    var newStr= str[i].replace("7",'۷');
-                    console.log(newStr);
+                    var newStr = str[i].replace("7", '۷');
+
                     break;
                 case "8":
-                    var newStr= str[i].replace("8",'۸');
-                    console.log(newStr);
+                    var newStr = str[i].replace("8", '۸');
+
                     break;
                 case "9":
-                    var newStr=   str[i].replace("9",'۹');
-                    console.log(newStr);
+                    var newStr = str[i].replace("9", '۹');
+
                     break;
-                    case "0":
-                        var newStr=   str[i].replace("0",'۰');
-                        console.log(newStr);
-                        break;
-                        case "/":
-                            var newStr=   str[i].replace("/",'/');
-                            console.log(newStr);
-                            break;
+                case "0":
+                    var newStr = str[i].replace("0", '۰');
+
+                    break;
+                case "/":
+                    var newStr = str[i].replace("/", '/');
+
+                    break;
             }
-            
-        newTarikh+=newStr;
-           
+
+            newTarikh += newStr;
         }
 
-
-        console.log("new tarikh ...")
-        console.log(newTarikh);
         return newTarikh;
     }
-  
+
     const editSoratHazineDetail = (data, op) => {
-      //  var str = "13402/01/01";
-       const str= convertEnglishToPersian(data?.TarikhPardakht);
-        console.log(str);
-        console.log("******data********")
-        console.log(data)
-        formik.setFieldValue("id", data?.ShomareBarge);
-        setState(str);
-        formik.setFieldValue("tarikhDetail",str);
+   
+        formik.setFieldValue("id", data?.ShomareBarge);       
+        formik.setFieldValue("tarikhDetail", data?.TarikhPardakht);
         formik.setFieldValue("price", data?.Mablagh);
         formik.setFieldValue("tozihatDetail", data?.Tozihat);
         setValues({ codeHesab: data?.CodeHesab, value: data?.item_ID, name: data?.Sharh, markaz1: data?.Mrkaz1Code, markaz2: data?.Mrkaz2Code, markaz3: data?.Mrkaz3Code });
@@ -443,6 +397,8 @@ export const ExpenceDetail = () => {
         setSelectedRow(data);
         setOperation(op);
         setOk(data?.ok);
+        setState(data?.TarikhPardakht);
+        setDateDetail(data?.TarikhPardakht);
 
     }
 
@@ -469,8 +425,7 @@ export const ExpenceDetail = () => {
     }
 
     const deleteSouratHazineDetail = (id) => {
-        console.log("id****")
-        console.log(id);
+
         const newRowData = rowGrid.filter(m => m.ID !== id);
         setRowGrid(newRowData);
 
@@ -535,7 +490,7 @@ export const ExpenceDetail = () => {
                                                             format={"YYYY/MM/DD"}
                                                             value={state}
                                                             onChange={convert}
-                                                            id="tarikh" name="tarikh"
+                                                            id="tarikhDetail" name="tarikhDetail"
                                                             calendarPosition="bottom-right"
                                                             disabled={operation == "delete" ? true : false} />
                                                         {/* <span>{dateDetail}</span> */}
