@@ -26,7 +26,8 @@ import {
 } from 'react-router-dom';
 import * as moment from 'jalali-moment';
 import swal from 'sweetalert';
-// import ShomareName from './ShomareName';
+import GetAllShomareName from './ShomareName';
+
 
 export const Expense = () => {
 
@@ -88,17 +89,11 @@ export const Expense = () => {
       }).then(function (response) {
 
         const resultItems = response.data;
-        // console.log("tankhah get all ...")
-        // console.log(resultItems)
-        // console.log(user.UserId)
         resultItems.map(data => {
           setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID }]);
         });
 
       }).catch(function (error) {
-        // handle error
-        //console.log("axois error: ");
-        //console.log(error)
         swal("error", error.message, "error");
       })
   }
@@ -106,10 +101,6 @@ export const Expense = () => {
   const GetAllTankhahInfo = (tankhahId) => {
 
     formik.setFieldValue("tankhah", tankhahId);
-    // console.log("GetAllTankhahInfo")
-    // console.log("sal mali")
-    // console.log(sessionStorage.getItem("SalMali"))
-
     axios(
       {
         url: serverAdress + `GetAllTankhahFinanceInfo?tankhahId=${tankhahId}&salId=${sessionStorage.getItem("SalMali")}`,
@@ -127,47 +118,11 @@ export const Expense = () => {
         formik.setFieldValue("mande", response.data.mojodi)
 
       }).catch(function (error) {
-        // handle error
-        // console.log("axois error: ");
+        // handle error      
         swal("error", error.message, "error");
-        //console.log(error)
+
       });
   }
-
-  // const GetAllSoratHazineSharh = () => {
-
-  //   axios(
-  //     {
-  //       url: serverAdress + `GetAllSouratHazineSharh?mohitId=${user.lastMohitID}&sharh=${"11111"}`,
-  //       method: "get",
-  //       headers:
-  //       {
-  //         Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-  //       }
-  //     }).then(function (response) {
-
-  //       const resultItems = response.data;      
-  //       resultItems.map(data => {
-
-  //         setItems(sharhItems => [...sharhItems,
-  //         {
-  //           codeHesab: data.code_Hesab,
-  //           id: data.item_ID,
-  //           name: data.item_Title_text,
-  //           markaz1: data.markaz1,
-  //           markaz2: data.markaz2,
-  //           markaz3: data.markaz3
-  //         }]);
-
-  //       });
-
-  //     }).catch(function (error) {
-  //       // handle error
-  //       console.log("axois error: ");
-  //       console.log(error)
-  //     })
-
-  // }
 
   const validationSchema = Yup.object().shape({
     tankhah: Yup.string().required('فیلد نام کاربری اجباری است'),
@@ -225,15 +180,11 @@ export const Expense = () => {
         }
       }).then(function (response) {
 
-        // console.log("response GetAllSouratHazineHeader: ")
-        // console.log(response)
-
         formik.setFieldValue("tozihat", response.data.tozihat);
         formik.setFieldValue("sharh", response.data.sharh);
         formik.setFieldValue("tarikh", response.data.tarikh);
         formik.setFieldValue("shomare", response.data.shomare);
         formik.setFieldValue("tankhah", response.data.tankhah_ID);
-
         setState(response.data.tarikh);
         setDateHeader(response.data.tarikh);
         setStatus(response.data.status);
@@ -241,39 +192,13 @@ export const Expense = () => {
         GetAllTankhahInfo(response.data.tankhah_ID);
 
       }).catch(function (error) {
-        // handle error
-        // console.log("axois error: ");
-        // console.log(error);
         swal("error", error.message, "error");
       })
   }
 
   const addSouratHazineHeader = (data) => {
 
-
-    // console.log("tarikh ... ")
-    // console.log(dateHeader)
-    // console.log("hhhhh")
-    // console.log(data)
     setIsAction(true);
-    // console.log("data");
-    // console.log({
-    //   "SoratID": 0,
-    //   "MohidID": user.lastMohitID,
-    //   "Shomare": parseInt(data.shomare),
-    //   "Tankhah_ID": parseInt(data.tankhah),
-    //   "status": 0,
-    //   "total": 0,
-    //   "Sharh": data.sharh,
-    //   "tozihat": data.tozihat,
-    //   "tarikh": dateHeader,
-    //   "sanadID": 0,
-    //   "shomare_name": 0,
-    //   "SalID": parseInt(sessionStorage.getItem("SalMali")),
-    //   "tarikh_name": ""
-    // });
-
-
     axios(
       {
         url: serverAdress + 'InsertTankhahSoratHazineHeader',
@@ -315,14 +240,10 @@ export const Expense = () => {
         }, 1000);
 
       }).catch(function (error) {
-        // console.log("addSouratHazineHeader:");
-        // console.log(error);
+
         setIsAction(false);
         swal("error", error.message, "error");
-        //console.log("axois error: " + error);
-        // toast.error('خطا در انجام عملیات', {
-        //   position: toast.POSITION.TOP_LEFT
-        // });
+
       });
 
   }
@@ -334,84 +255,64 @@ export const Expense = () => {
       return;
     }
 
+    GetAllShomareName(soratId).then(response => {
+      console.log("get all tankhah ...");
+      const resultItems = response.data;
 
-    axios(
-      {
-        url: serverAdress + `GetAllShomareName?list=${id}`,
-        method: "get",
-        headers:
-        {
-          Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache',
-          'Expires': '0',
-        }
-      }).then(function (response) {
-        console.log("get all tankhah ...");
-        const resultItems = response.data;
+      if (resultItems > 0) {
+        swal("توجه", "برای این سند نامه صادر شده است و قابل حذف نمیباشد", "warning");
+        return;
+      } else {
+        setIsAction(true);
 
-        if (resultItems > 0) {
-          swal("توجه", "برای این سند نامه صادر شده است و قابل حذف نمیباشد", "warning");
-          return;
-        } else {
-          setIsAction(true);
+        swal({
+          title: "آیا از حذف اطمینان دارید؟",
+          text: "",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        })
+          .then((willDelete) => {
 
-          swal({
-            title: "آیا از حذف اطمینان دارید؟",
-            text: "",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-          })
-            .then((willDelete) => {
+            if (willDelete) {
+              const headers = {
+                Authorization: `Bearer ${localStorage.getItem("access-tocken")}`
+              };
 
-              if (willDelete) {
-                const headers = {
-                  Authorization: `Bearer ${localStorage.getItem("access-tocken")}`
-                };
-
-                axios.delete(serverAdress + `DeleteSouratHazineHeader?id=${id}`, { headers })
-                  .then(function (res) {
-                    toast.success('عملیات با موفقیت انجام پذیرفت', {
-                      position: toast.POSITION.TOP_LEFT,
-                      className: 'toast-message'
-                    });
-
-                    setTimeout(() => {
-                      setIsAction(false);
-                      history.push("/expencelist");
-                    }, 1000);
-
-                  })
-                  .catch(function (error) {
-                    setIsAction(false);
-                    // console.log("axois error: " + error);
-                    swal("error", error.message, "error");
-                    // toast.error('خطا در انجام عملیات', {
-                    //   position: toast.POSITION.TOP_LEFT
-                    // });
+              axios.delete(serverAdress + `DeleteSouratHazineHeader?id=${id}`, { headers })
+                .then(function (res) {
+                  toast.success('عملیات با موفقیت انجام پذیرفت', {
+                    position: toast.POSITION.TOP_LEFT,
+                    className: 'toast-message'
                   });
-                // onClose();
-              }
 
-              else {
-                setIsAction(false);
-                // swal("Your imaginary file is safe!");
-              }
-            });
+                  setTimeout(() => {
+                    setIsAction(false);
+                    history.push("/expencelist");
+                  }, 1000);
 
-        }
+                })
+                .catch(function (error) {
+                  setIsAction(false);
+                  swal("error", error.message, "error");
+                });
 
-      }).catch(function (error) {
-        // handle error
-        console.log("axois error: ");
-        console.log(error);
-        swal("Error", error.message, "error");
-        return null;
-      });
+            }
 
+            else {
+              setIsAction(false);
+            }
+          });
+
+      }
+
+
+    }).catch(error => {
+      swal("error", error.message, "error");
+    });
 
   }
+
 
   const updateSouratHazineHeader = (data) => {
 
@@ -420,83 +321,62 @@ export const Expense = () => {
       return;
     }
 
-    axios(
-      {
-        url: serverAdress + `GetAllShomareName?list=${parseInt(soratId)}`,
-        method: "get",
-        headers:
-        {
-          Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache',
-          'Expires': '0',
-        }
-      }).then(function (response) {
-        console.log("get all tankhah ...");
-        const resultItems = response.data;
-
-        if (resultItems > 0) {
-          swal("توجه", "برای این سند نامه صادر شده است و قابل ویرایش نمیباشد", "warning");
-          return;
-        } else {
-          setIsAction(true);
-          axios(
+    GetAllShomareName(soratId).then(response => {
+      console.log(response);
+      if (response > 0) {
+        swal("توجه", "برای این سند نامه صادر شده است و قابل ویرایش نمیباشد", "warning");
+        return;
+      } else {
+        setIsAction(true);
+        axios(
+          {
+            url: serverAdress + 'UpdateSouratHazineHeader',
+            method: "put",
+            headers:
             {
-              url: serverAdress + 'UpdateSouratHazineHeader',
-              method: "put",
-              headers:
-              {
-                Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-                'Content-Type': 'application/json',
-                'Cache-Control': 'no-cache',
-                'Pragma': 'no-cache',
-                'Expires': '0',
-              },
-              data:
-              {
-                "soratID": parseInt(soratId),
-                "mohidID": parseInt(user.lastMohitID),
-                "shomare": parseInt(data.shomare),
-                "tankhah_ID": parseInt(data.tankhah),
-                "status": 0,
-                "total": 0,
-                "sharh": data.sharh,
-                "tozihat": data.tozihat,
-                "tarikh": dateHeader,
-                "sanadID": 0,
-                "shomare_name": 0,
-                "salID": parseInt(sessionStorage.getItem("SalMali")),
-                "tarikh_name": ""
-              }
-            }).then(function (response) {
+              Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
+              'Content-Type': 'application/json',
+              'Cache-Control': 'no-cache',
+              'Pragma': 'no-cache',
+              'Expires': '0',
+            },
+            data:
+            {
+              "soratID": parseInt(soratId),
+              "mohidID": parseInt(user.lastMohitID),
+              "shomare": parseInt(data.shomare),
+              "tankhah_ID": parseInt(data.tankhah),
+              "status": 0,
+              "total": 0,
+              "sharh": data.sharh,
+              "tozihat": data.tozihat,
+              "tarikh": dateHeader,
+              "sanadID": 0,
+              "shomare_name": 0,
+              "salID": parseInt(sessionStorage.getItem("SalMali")),
+              "tarikh_name": ""
+            }
+          }).then(function (response) {
 
-              toast.success('عملیات با موفقیت انجام پذیرفت', {
-                position: toast.POSITION.TOP_LEFT,
-                className: 'toast-message'
-              });
-
-              setTimeout(() => {
-                setIsAction(false);
-                history.push("/expencelist");
-              }, 1000);
-
-            }).catch(function (error) {
-              setIsAction(false);
-              swal("error", error.message, "error");
+            toast.success('عملیات با موفقیت انجام پذیرفت', {
+              position: toast.POSITION.TOP_LEFT,
+              className: 'toast-message'
             });
 
+            setTimeout(() => {
+              setIsAction(false);
+              history.push("/expencelist");
+            }, 1000);
 
-
-
-        }
-      }).catch(function (error) {
-        // handle error
-        console.log("axois error: ");
-        console.log(error);
-        swal("Error", error.message, "error");
-        return null;
-      });
-
+          }).catch(function (error) {
+            setIsAction(false);
+            swal("error", error.message, "error");
+          })
+      }
+    }).catch(error => {
+      console.log(error);
+      swal("error", error.message, "error")
+    });
   }
 
 

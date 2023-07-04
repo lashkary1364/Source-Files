@@ -71,7 +71,7 @@ export const ExpenceDetail = () => {
     }
 
     useEffect(() => {
-       
+
         getSouratHazineHeader();
         GetAllSoratHazineSharh();
         getAllSoratHazineDetail();
@@ -387,8 +387,8 @@ export const ExpenceDetail = () => {
     }
 
     const editSoratHazineDetail = (data, op) => {
-   
-        formik.setFieldValue("id", data?.ShomareBarge);       
+
+        formik.setFieldValue("id", data?.ShomareBarge);
         formik.setFieldValue("tarikhDetail", data?.TarikhPardakht);
         formik.setFieldValue("price", data?.Mablagh);
         formik.setFieldValue("tozihatDetail", data?.Tozihat);
@@ -429,7 +429,6 @@ export const ExpenceDetail = () => {
         const newRowData = rowGrid.filter(m => m.ID !== id);
         setRowGrid(newRowData);
 
-
         const headers = {
             Authorization: `Bearer ${localStorage.getItem("access-tocken")}`
         };
@@ -440,6 +439,8 @@ export const ExpenceDetail = () => {
                     position: toast.POSITION.TOP_LEFT,
                     className: 'toast-message'
                 });
+            }).catch(error => {
+                swal("error", error.message, "error");
             });
     }
 

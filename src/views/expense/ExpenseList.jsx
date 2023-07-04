@@ -19,7 +19,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import DatePicker, { DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian"
 import persian_en from "react-date-object/locales/persian_fa"
-
+import GetAllShomareName from "./ShomareName";
 export const ExpenseList = () => {
 
   const history = useHistory();
@@ -124,6 +124,7 @@ export const ExpenseList = () => {
         swal("error",error.message , "error");
       })
   }
+
   useEffect(() => {
     getAllTankhah();
   }, []);
@@ -202,31 +203,31 @@ export const ExpenseList = () => {
   }
 
 
-  const GeShomareName=()=>{
-    axios(
-      {
-        url: serverAdress + `GetAllShomareName?list=${listId}`,
-        method: "get",
-        headers:
-        {
-          Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache',
-          'Expires': '0',
-        }
-      }).then(function (response) {
-        console.log("get all tankhah ...");
-        const resultItems = response.data;
-        console.log(resultItems);
-        return resultItems;       
+  // const GeShomareName=()=>{
+  //   axios(
+  //     {
+  //       url: serverAdress + `GetAllShomareName?list=${listId}`,
+  //       method: "get",
+  //       headers:
+  //       {
+  //         Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
+  //         'Cache-Control': 'no-cache',
+  //         'Pragma': 'no-cache',
+  //         'Expires': '0',
+  //       }
+  //     }).then(function (response) {
+  //       console.log("get all tankhah ...");
+  //       const resultItems = response.data;
+  //       console.log(resultItems);
+  //       return resultItems;       
 
-      }).catch(function (error) {
-        // handle error
-        console.log("axois error: ");
-        console.log(error);
-        swal("Error", error.message, "error");
-      })
-  }
+  //     }).catch(function (error) {
+  //       // handle error
+  //       console.log("axois error: ");
+  //       console.log(error);
+  //       swal("Error", error.message, "error");
+  //     })
+  // }
 
   const handleSodoreName = () => {
     console.log("sodore name ....")
@@ -234,14 +235,20 @@ export const ExpenseList = () => {
     console.log(ids);
     console.log(listId);
 
-    const countShomeName=GeShomareName();
-    if(countShomeName>0){
+
+   GetAllShomareName(listId).then(response=>{
+    if(response>0){
       swal("توجه","بعضی از صورت هزینه های انتخابی دارای شماره نامه میباشند ابتدا نامه ها را باطل کنید","warning");
       toggle();
       return;
     }else{
       history.push("/sodorename?listId=" + listId+"&tarikh="+dateHeader);
     }
+
+   }).catch(response=>{});
+
+    // const countShomeName=GeShomareName();
+   
     // axios(
     //   {
     //     url: serverAdress + `GetAllShomareName?list=${listId}`,
@@ -345,7 +352,6 @@ export const ExpenseList = () => {
 
 
   }
-
 
   function onSelectionChanged(event) {
     var selected = event.api.getSelectedNodes();
