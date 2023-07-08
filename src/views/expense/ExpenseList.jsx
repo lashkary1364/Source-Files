@@ -20,6 +20,7 @@ import DatePicker, { DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian"
 import persian_en from "react-date-object/locales/persian_fa"
 import GetAllShomareName from "./ShomareName";
+
 export const ExpenseList = () => {
 
   const history = useHistory();
@@ -31,6 +32,10 @@ export const ExpenseList = () => {
   const [rowData, setRowData] = useState([]);
   const [ids, setIds] = useState([]);
   const [listId, setListId] = useState("");
+  const [mohitItems, setMohitItems] = useState([]);
+  const [salMali, setSalMali] = useState([]);
+  const [mohitId, setMohitId] = useState();
+  const [salMaliItems, setSalMaliItems] = useState([]);
   const [columnDefs] = useState([
     {
       field: 'index', filter: 'agTextColumnFilter', headerName: 'ردیف', headerCheckboxSelection: true,
@@ -95,7 +100,7 @@ export const ExpenseList = () => {
       alert(error);
     })
   }
-  
+
   const getAllTankhah = () => {
 
     axios(
@@ -121,15 +126,14 @@ export const ExpenseList = () => {
         // handle error
         console.log("axois error: ");
         console.log(error);
-        swal("error",error.message , "error");
+        swal("error", error.message, "error");
       })
   }
 
   useEffect(() => {
-    getAllTankhah();
+    GetAllMohit();
   }, []);
-
-  //DefaultColDef sets props common to all Columns
+  
   const defaultColDef = useMemo(() => ({
     sortable: true,
     // resizable: true,
@@ -156,6 +160,108 @@ export const ExpenseList = () => {
     );
   }, []);
 
+  const GetAllMohit = () => {
+    console.log("user....");
+    console.log(user);
+    console.log(localStorage.getItem("access-tocken"));
+
+    axios(
+      {
+        url: serverAdress + `GetAllMohit?userId=${user.UserId}`,
+        method: "get",
+        headers:
+        {
+          Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        }
+      }).then(function (response) {
+
+        console.log("get all mohit ....")
+        const resultItems = response.data;
+        console.log(resultItems);
+        resultItems.map(data => {
+          setMohitItems(mohitItems => [...mohitItems, { MohitId: data.mohitID, MohitOnvan: data.mohitOnvan }]);
+        });
+
+      }).catch(function (error) {
+        swal("error", error.message, "error");
+      })
+
+
+
+  }
+
+  const GetAllSalMali = (mohitId) => {
+    axios(
+      {
+        url: serverAdress + `GetAllSalMali?mohitId=${mohitId}`,
+        method: "get",
+        headers:
+        {
+          Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        }
+      }).then(function (response) {
+
+        console.log("get all sal mali ....")
+        const resultItems = response.data;
+        resultItems.map(data => {
+          setSalMaliItems(salMaliItems => [...salMaliItems, { SalId: data.salId, SalMali: data.salMali }]);
+        });
+
+      }).catch(function (error) {
+        swal("error", error.message, "error");
+      })
+  }
+
+  const GetAllTankhah = (salId) => {
+
+    console.log(mohitId)
+    console.log(user.UserId)
+    console.log(salId)
+    axios(
+      {
+        url: serverAdress + `GetAllTankhah?mohitId=${mohitId}&userId=${user.UserId}&salId=${salId}`,
+        method: "get",
+        headers:
+        {
+          Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        }
+      }).then(function (response) {
+
+        const resultItems = response.data;
+        resultItems.map(data => {
+          setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID }]);
+        });
+
+      }).catch(function (error) {
+        swal("error", error.message, "error");
+      })
+  }
+
+
+  const changeMohit = (mohitId) => {
+
+    console.log("change mohit ...")
+    setMohitId(mohitId);
+    GetAllSalMali(mohitId);
+  }
+
+  const changeSalMali = (salId) => {
+    console.log("change sal mali");
+
+    setSalMali(salId);
+    GetAllTankhah(salId)
+  }
+
+
   const handleAdd = () => {
     history.push("/expense?operation=add");
   }
@@ -164,24 +270,24 @@ export const ExpenseList = () => {
     console.log("selectedRow")
     console.log(selectedRow)
     if (selectedRow == null || selectedRow == undefined) {
-      swal("توجه","لطفا یک ردیف انتخاب نمایید" , "warning")
+      swal("توجه", "لطفا یک ردیف انتخاب نمایید", "warning")
       return;
     }
-    if(selectedRow.length>1){
-      swal("توجه","تعداد ردیف های انتخابی برای حذف بیشتر از یک ردیف میباشد" , "warning");
+    if (selectedRow.length > 1) {
+      swal("توجه", "تعداد ردیف های انتخابی برای حذف بیشتر از یک ردیف میباشد", "warning");
       return;
     }
     history.push("/expense?id=" + selectedRow[0].soratID + "&operation=edit")
   }
 
   const handleDetail = () => {
-    
+
     if (selectedRow == null || selectedRow == undefined) {
-      swal("توجه","لطفا یک ردیف انتخاب نمایید" , "warning")
+      swal("توجه", "لطفا یک ردیف انتخاب نمایید", "warning")
       return;
     }
-    if(selectedRow.length>1){
-      swal("توجه","تعداد ردیف های انتخابی برای حذف بیشتر از یک ردیف میباشد" , "warning");
+    if (selectedRow.length > 1) {
+      swal("توجه", "تعداد ردیف های انتخابی برای حذف بیشتر از یک ردیف میباشد", "warning");
       return;
     }
 
@@ -189,45 +295,19 @@ export const ExpenseList = () => {
   }
 
   const handleDelete = () => {
-   
-  
-    if (selectedRow == null || selectedRow == undefined || selectedRow.length==0) {
-      swal("توجه","لطفا یک ردیف انتخاب نمایید" , "warning")
+
+
+    if (selectedRow == null || selectedRow == undefined || selectedRow.length == 0) {
+      swal("توجه", "لطفا یک ردیف انتخاب نمایید", "warning")
       return;
     }
-    if(selectedRow.length>1){
-      swal("توجه","تعداد ردیف های انتخابی برای حذف بیشتر از یک ردیف میباشد" , "warning");
+    if (selectedRow.length > 1) {
+      swal("توجه", "تعداد ردیف های انتخابی برای حذف بیشتر از یک ردیف میباشد", "warning");
       return;
     }
     history.push("/expense?id=" + selectedRow[0].soratID + "&operation=delete")
   }
 
-
-  // const GeShomareName=()=>{
-  //   axios(
-  //     {
-  //       url: serverAdress + `GetAllShomareName?list=${listId}`,
-  //       method: "get",
-  //       headers:
-  //       {
-  //         Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-  //         'Cache-Control': 'no-cache',
-  //         'Pragma': 'no-cache',
-  //         'Expires': '0',
-  //       }
-  //     }).then(function (response) {
-  //       console.log("get all tankhah ...");
-  //       const resultItems = response.data;
-  //       console.log(resultItems);
-  //       return resultItems;       
-
-  //     }).catch(function (error) {
-  //       // handle error
-  //       console.log("axois error: ");
-  //       console.log(error);
-  //       swal("Error", error.message, "error");
-  //     })
-  // }
 
   const handleSodoreName = () => {
     console.log("sodore name ....")
@@ -235,53 +315,20 @@ export const ExpenseList = () => {
     console.log(ids);
     console.log(listId);
 
+    GetAllShomareName(listId).then(response => {
+      if (response > 0) {
+        swal("توجه", "بعضی از صورت هزینه های انتخابی دارای شماره نامه میباشند ابتدا نامه ها را باطل کنید", "warning");
+        toggle();
+        return;
+      } else {
+        history.push("/sodorename?listId=" + listId + "&tarikh=" + dateHeader);
+      }
 
-   GetAllShomareName(listId).then(response=>{
-    if(response>0){
-      swal("توجه","بعضی از صورت هزینه های انتخابی دارای شماره نامه میباشند ابتدا نامه ها را باطل کنید","warning");
-      toggle();
-      return;
-    }else{
-      history.push("/sodorename?listId=" + listId+"&tarikh="+dateHeader);
-    }
+    }).catch(error => {
 
-   }).catch(response=>{});
+      swal("error", error.message, "error");
 
-    // const countShomeName=GeShomareName();
-   
-    // axios(
-    //   {
-    //     url: serverAdress + `GetAllShomareName?list=${listId}`,
-    //     method: "get",
-    //     headers:
-    //     {
-    //       Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-    //       'Cache-Control': 'no-cache',
-    //       'Pragma': 'no-cache',
-    //       'Expires': '0',
-    //     }
-    //   }).then(function (response) {
-    //     console.log("get all tankhah ...");
-    //     const resultItems = response.data;
-    //     console.log(resultItems);
-    //     if (resultItems > 0) {
-    //       swal("توجه","بعضی از صورت هزینه های انتخابی دارای شماره نامه میباشند ابتدا نامه ها را باطل کنید","warning");
-    //       toggle();
-    //       return;
-    //     } else {
-
-    //       history.push("/sodorename?listId=" + listId+"&tarikh="+dateHeader);
-    //     }
-    //     // resultItems.map(data => {
-    //     //   setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID, shomare_name: data.shomare_name, tarikh_name: data.tarikh_name, sanadID: data.sanadID }]);
-    //     // });
-
-    //   }).catch(function (error) {
-    //     // handle error
-    //     console.log("axois error: ");
-    //     console.log(error);
-    //     swal("Error", error.message, "error");
-    //   })
+    });
 
   }
 
@@ -391,8 +438,63 @@ export const ExpenseList = () => {
       </Row>
       <Card small className="h-100">
         <CardBody className="pt-0">
-          <Row>
-            <Col md="6" className="form-group">
+          
+            <Row>
+              <Col md="4" className="form-group">
+                <div className="form-inline mt-3 mr-3">
+                  <label htmlFor="mohit"> محیط کاربری*:</label>
+                  <FormSelect id="mohit" name="mohit" onChange={(e) => changeMohit(e.target.value)} className='form-control'
+                  // value={mohit}
+                  >
+                    <option value={""}>یک موردانتخاب کنید</option>
+                    {
+                      mohitItems.map((item, index) => (
+                        <option key={index}
+                          value={item.MohitId}>
+                          {item.MohitOnvan}
+                        </option>
+                      ))
+                    }
+                  </FormSelect>
+                </div>
+              </Col>
+              <Col md="4" className="form-group">
+                <div className="form-inline mt-3 mr-3">
+                  <label htmlFor="salMali">  سال مالی*:</label>
+                  <FormSelect id="salMali" name="salMali" onChange={(e) => changeSalMali(e.target.value)} className='form-control'>
+                    {/* // value={formik.values.salMali}> */}
+                    <option value={""}>یک موردانتخاب کنید</option>
+                    {
+                      salMaliItems.map((item, index) => (
+                        <option key={index}
+                          value={item.SalId}>
+                          {item.SalMali}
+                        </option>
+                      ))
+                    }
+                  </FormSelect>
+                </div>
+              </Col>
+              <Col md="4" className="form-group">
+                <div className="form-inline mt-3 mr-3">
+                  <label htmlFor="tankhah"> تنخواه*:</label>
+                  <FormSelect id="tankhah" name="tankhah" onChange={(e) => getAllData(e.target.value)} className='form-control'
+                  // value={formik.values.tankhah}
+                  >
+                    <option value={""}>یک موردانتخاب کنید</option>
+                    {
+                      tankhahItems.map((item, index) => (
+                        <option key={index}
+                          value={item.tankhah_ID}>
+                          {item.tankhah_name}
+                        </option>
+                      ))
+                    }
+                  </FormSelect>
+                </div>
+              </Col>
+            </Row>
+            {/* <Col md="6" className="form-group">
               <div className="form-inline mt-3 mr-3">
                 <label htmlFor="tankhah" className="mr-2"> انتخاب تنخواه*:</label>
                 <FormSelect className="form-control" id="tankhah" name="tankhah" onChange={(e) => getAllData(e.target.value)}>
@@ -407,8 +509,8 @@ export const ExpenseList = () => {
                   }
                 </FormSelect>
               </div>
-            </Col>
-          </Row>
+            </Col> */}
+        
 
           <div style={{ borderStyle: "solid", padding: "5px", borderColor: "#d9d9d9" }}>
             <div className="btn-group mb-2" role="group" aria-label="Basic example">

@@ -9,6 +9,6 @@ export default () => (
   <Nav navbar className="border-left flex-row">
     {/* <Mohit/> */}   
     <UserActions />
-    <Notifications /> 
+    {/* <Notifications />  */}
   </Nav>
 );

@@ -29,19 +29,21 @@ import swal from 'sweetalert';
 import GetAllShomareName from './ShomareName';
 
 
+
 export const Expense = () => {
 
   const history = useHistory();
   const [isAction, setIsAction] = useState(false);
-
   const queryParameters = new URLSearchParams(window.location.search);
   const soratId = queryParameters.get("id");
-
   const [operation, setOperation] = useState(queryParameters.get("operation"));
   const calendarRef = useRef();
-
   const [tarikhError, setTarikhError] = useState(false);
   const [tankhahItems, setTankhahItems] = useState([]);
+  const [mohitItems, setMohitItems] = useState([]);
+  const [salMaliItems, setSalMaliItems] = useState([]);
+  const [salMali, setSalMali] = useState([]);
+  const [mohitId, setMohitId] = useState();
   const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
   const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
   const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }))
@@ -50,34 +52,34 @@ export const Expense = () => {
   const [status, setStatus] = useState(0);
 
   const convert = (date, format = state.format) => {
-    // console.log("convert....")
-    // console.log(date.format)
-    // console.log(state)
-    // console.log(format)
     let object = { date, format }
-    // console.log("object")
-    // console.log(object)
-    setState(new DateObject(object).convert(persian, persian_en).format())
-    // console.log("state ... ")
-    // console.log(new DateObject(object).convert(persian, persian_en).format())
-    setDateHeader(new DateObject(object).convert(persian, persian_en).format())
+    if (date == null)
+            setTarikhError(true);
+        else {
+            setTarikhError(false);
+        }
+    setState(new DateObject(object).convert(persian, persian_en).format());   
+    setDateHeader(new DateObject(object).convert(persian, persian_en).format());
 
   }
 
   useEffect(() => {
 
-    GetAllTankhah();
+    GetAllMohit();
+   
     if (operation == "delete" || operation == "edit")
-      setInfo();
+    setInfo();
 
   }, []);
 
-
-  const GetAllTankhah = () => {
+  const GetAllMohit = () => {
+    console.log("user....");
+    console.log(user);
+    console.log(localStorage.getItem("access-tocken"));
 
     axios(
       {
-        url: serverAdress + `GetAllTankhah?userId=${user.UserId}`,
+        url: serverAdress + `GetAllMohit?userId=${user.UserId}`,
         method: "get",
         headers:
         {
@@ -88,6 +90,63 @@ export const Expense = () => {
         }
       }).then(function (response) {
 
+        console.log("get all mohit ....")
+        const resultItems = response.data;
+        console.log(resultItems);
+        resultItems.map(data => {
+          setMohitItems(mohitItems => [...mohitItems, { MohitId: data.mohitID, MohitOnvan: data.mohitOnvan }]);
+        });
+
+      }).catch(function (error) {
+        swal("error", error.message, "error");
+      })
+  }
+
+  const GetAllSalMali = (mohitId) => {
+    axios(
+      {
+        url: serverAdress + `GetAllSalMali?mohitId=${mohitId}`,
+        method: "get",
+        headers:
+        {
+          Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        }
+      }).then(function (response) {
+
+        console.log("get all sal mali ....")
+        const resultItems = response.data;
+        resultItems.map(data => {
+          setSalMaliItems(salMaliItems => [...salMaliItems, { SalId: data.salId, SalMali: data.salMali }]);
+        });
+        
+      }).catch(function (error) {
+        swal("error", error.message, "error");
+      })
+  }
+
+  const GetAllTankhah = (mohitId , salId) => {
+
+    console.log(mohitId);
+    console.log(user.UserId);
+    console.log(salId);
+
+    axios(
+      {
+        url: serverAdress + `GetAllTankhah?mohitId=${mohitId}&userId=${user.UserId}&salId=${salId}`,
+        method: "get",
+        headers:
+        {
+          Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        }
+      }).then(function (response) {
+        console.log("GetAllTankhah.....")
+        console.log(response.data);
         const resultItems = response.data;
         resultItems.map(data => {
           setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID }]);
@@ -101,10 +160,36 @@ export const Expense = () => {
   const GetAllTankhahInfo = (tankhahId) => {
 
     formik.setFieldValue("tankhah", tankhahId);
+   
+   
+    axios(
+      {
+        url: serverAdress + `GetMohitId?tankhahId=${tankhahId}`,
+        method: "get",
+        headers:
+        {
+          Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        }
+      }).then(function (response) {
+        console.log(response.data);
+
+        setMohitId(response.data)
+
+      }).catch(function (error) {
+        // handle error      
+        swal("error", error.message, "error");
+
+      });
+
+
     axios(
       {
         url: serverAdress + `GetAllTankhahFinanceInfo?tankhahId=${tankhahId}&salId=${sessionStorage.getItem("SalMali")}`,
         method: "get",
+
         headers:
         {
           Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
@@ -124,8 +209,24 @@ export const Expense = () => {
       });
   }
 
+  const changeMohit = (mohitId) => {
+    formik.setFieldValue("mohit", mohitId);
+    console.log("change mohit ...")
+    setMohitId(mohitId);
+    GetAllSalMali(mohitId);
+  }
+
+  const changeSalMali = (salId) => {
+    console.log("change sal mali");
+    formik.setFieldValue("salMali", salId);
+    setSalMali(salId);
+    GetAllTankhah(mohitId,salId)
+  }
+
   const validationSchema = Yup.object().shape({
-    tankhah: Yup.string().required('فیلد نام کاربری اجباری است'),
+    mohit: Yup.string().required('فیلد اجباری است'),
+    salMali: Yup.string().required('فیلد اجباری است'),
+    tankhah: Yup.string().required('فیلد اجباری است'),
     sharh: Yup.string().required('فیلد شرح اجباری است'),
   });
 
@@ -138,7 +239,9 @@ export const Expense = () => {
       shomare: '',
       tarikh: new Date() || null,
       sharh: '',
-      tozihat: ''
+      tozihat: '',
+      salMali:'',
+      mohit:''
     },
     validationSchema,
     validateOnChange: true,
@@ -179,16 +282,24 @@ export const Expense = () => {
           'Expires': '0',
         }
       }).then(function (response) {
-
+        console.log(response.data.mohidID)
+        console.log("set info ....");
+        console.log(response.data);
         formik.setFieldValue("tozihat", response.data.tozihat);
         formik.setFieldValue("sharh", response.data.sharh);
         formik.setFieldValue("tarikh", response.data.tarikh);
         formik.setFieldValue("shomare", response.data.shomare);
-        formik.setFieldValue("tankhah", response.data.tankhah_ID);
+        
+        formik.setFieldValue("mohit", response.data.mohidID);
+        
+        GetAllSalMali(response.data.mohidID);  
+        GetAllTankhah(response.data.mohidID ,response.data.salID );       
         setState(response.data.tarikh);
         setDateHeader(response.data.tarikh);
         setStatus(response.data.status);
-
+        setMohitId(response.data.mohidId);
+        formik.setFieldValue("salMali", response.data.salID);
+        formik.setFieldValue("tankhah", response.data.tankhah_ID);
         GetAllTankhahInfo(response.data.tankhah_ID);
 
       }).catch(function (error) {
@@ -214,7 +325,7 @@ export const Expense = () => {
         data:
         {
           "soratID": 0,
-          "mohidID": parseInt(user.lastMohitID),
+          "mohidID": parseInt(mohitId),
           "shomare": parseInt(data.shomare),
           "tankhah_ID": parseInt(data.tankhah),
           "status": 0,
@@ -240,10 +351,8 @@ export const Expense = () => {
         }, 1000);
 
       }).catch(function (error) {
-
         setIsAction(false);
         swal("error", error.message, "error");
-
       });
 
   }
@@ -306,13 +415,11 @@ export const Expense = () => {
 
       }
 
-
     }).catch(error => {
       swal("error", error.message, "error");
     });
 
   }
-
 
   const updateSouratHazineHeader = (data) => {
 
@@ -343,7 +450,7 @@ export const Expense = () => {
             data:
             {
               "soratID": parseInt(soratId),
-              "mohidID": parseInt(user.lastMohitID),
+              "mohidID": parseInt(mohitId),
               "shomare": parseInt(data.shomare),
               "tankhah_ID": parseInt(data.tankhah),
               "status": 0,
@@ -399,14 +506,54 @@ export const Expense = () => {
                 <form onSubmit={formik.handleSubmit}>
                   <Row>
                     <Col md="4" className="form-group">
+                      <label htmlFor="mohit">اتتخاب محیط کاربری*:</label>
+                      <FormSelect id="mohit" name="mohit" onChange={(e) => changeMohit(e.target.value)} className={'form-control' + (formik.errors.mohit && formik.touched.mohit ? ' is-invalid' : '')}
+                        value={formik.values.mohit}>
+                        <option value={""}>یک موردانتخاب کنید</option>
+                        {
+                          mohitItems.map((item, index) => (
+                            <option key={index}
+                              value={item.MohitId}>
+                              {item.MohitOnvan}
+                            </option>
+                          ))
+                        }
+                      </FormSelect>
+                      <div className="invalid-feedback">
+                        {
+                          formik.errors.mohit && formik.touched.mohit
+                            ? formik.errors.mohit
+                            : null
+                        }
+                      </div>
+                    </Col>
+                    <Col md="4" className="form-group">
+                      <label htmlFor="salMali">اتتخاب  سال مالی*:</label>
+                      <FormSelect id="salMali" name="salMali" onChange={(e) => changeSalMali(e.target.value)} className={'form-control' + (formik.errors.salMali && formik.touched.salMali ? ' is-invalid' : '')}
+                        value={formik.values.salMali}>
+                        <option value={""}>یک موردانتخاب کنید</option>
+                        {
+                          salMaliItems.map((item, index) => (
+                            <option key={index}
+                              value={item.SalId}>
+                              {item.SalMali}
+                            </option>
+                          ))
+                        }
+                      </FormSelect>
+                      <div className="invalid-feedback">
+                        {
+                          formik.errors.salMali && formik.touched.salMali
+                            ? formik.errors.salMali
+                            : null
+                        }
+                      </div>
+                    </Col>
+                    <Col md="4" className="form-group">
                       <label htmlFor="tankhah">اتتخاب تنخواه*:</label>
                       <FormSelect id="tankhah" name="tankhah" onChange={(e) => GetAllTankhahInfo(e.target.value)} className={'form-control' + (formik.errors.tankhah && formik.touched.tankhah ? ' is-invalid' : '')}
-                        // disabled={operation == "delete" ? true : false}
-                        value={formik.values.tankhah}
-                      >
-                        {/* {operation=="delete"||operation=="edit"? */}
+                        value={formik.values.tankhah}>
                         <option value={""}>یک موردانتخاب کنید</option>
-                        {/* onChange={(e) =>  GetAllTankhahInfo(e.target.value) } */}
                         {
                           tankhahItems.map((item, index) => (
                             <option key={index}
@@ -424,13 +571,13 @@ export const Expense = () => {
                         }
                       </div>
                     </Col>
-
+                  </Row>
+                  <Row>
                     <Col md="4" className="form-group">
                       <label htmlFor="mande" > مانده تنخواه:</label>
                       <FormInput type="text" id="mande" name="mande" disabled="disabled" className={'form-control' + (formik.errors.mande && formik.touched.mande ? ' is-invalid' : '')}
                         onChange={formik.handleChange} value={formik.values.mande} placeholder="مانده" />
                     </Col>
-
                     <Col md="4" className="form-group">
                       <label htmlFor="etebarMax">سقف تنخواه :</label>
                       <FormInput type="text" id="etebarMax" name="etebarMax" disabled="disabled" className={'form-control' + (formik.errors.etebarMax && formik.touched.etebarMax ? ' is-invalid' : '')}
@@ -438,34 +585,27 @@ export const Expense = () => {
                     </Col>
                   </Row>
                   <Row>
-
                     <Col md="4" className="form-group">
                       <label htmlFor="shomare">شماره صورت هزینه:</label>
                       <FormInput type="text" name="shomare" id="shomare" disabled="disabled" className={'form-control' + (formik.errors.shomare && formik.touched.shomare ? ' is-invalid' : '')}
                         onChange={formik.handleChange} value={formik.values.shomare} placeholder="شماره صورت هزینه"
                       />
-
                     </Col>
                     <Col md="4" className="form-group">
                       <label htmlFor="tarikh">تاریخ*:</label>
                       <div>
-                        {/* <PersianCalendar></PersianCalendar> */}
                         <DatePicker inputClass='form-control'
                           ref={calendarRef}
                           calendar={persian}
                           locale={persian_en}
-                          // locale={persian_fa}
                           style={tarikhError == true ? { borderColor: "#c4183c", fontFamily: 'tahoma' } : { borderColor: "#e1e5eb", fontFamily: 'tahoma' }}
                           format={"YYYY/MM/DD"}
                           value={state}
                           onChange={convert}
                           id="tarikh" name="tarikh"
-                          //value={value} onChange={setValue}
                           calendarPosition="bottom-right"
                           disabled={operation == "delete" ? true : false}
                         />
-                        {/* <span>{dateHeader}</span> */}
-                        {/* <span>{state}</span> */}
                       </div>
                       {tarikhError == true ? <div style={{ marginTop: "0.25rem", fontSize: "80%", color: "#c4183c", fontFamily: 'IRANSans', }}>فیلد تاریخ اجباری است</div> : ''}
                     </Col>

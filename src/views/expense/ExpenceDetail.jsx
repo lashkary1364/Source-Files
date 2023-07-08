@@ -45,6 +45,8 @@ export const ExpenceDetail = () => {
     const [values, setValues] = React.useState(null);
     const [ok, setOk] = useState();
     const [tankhahSoratHazineH, setTankhahSoratHazineH] = useState();
+    const [mohitId,setMohitId]=useState();
+
     const convert = (date, format = state.format) => {
 
         console.log(dateDetail);
@@ -73,7 +75,7 @@ export const ExpenceDetail = () => {
     useEffect(() => {
 
         getSouratHazineHeader();
-        GetAllSoratHazineSharh();
+       
         getAllSoratHazineDetail();
 
     }, []);
@@ -93,9 +95,10 @@ export const ExpenceDetail = () => {
             }).then(function (response) {
 
                 const resultItems = response.data;
-
+                console.log(resultItems);
                 setTankhahSoratHazineH({ "status": resultItems.status })
-
+                setMohitId(response.data.mohidID);
+                GetAllSoratHazineSharh(response.data.mohidID);
             }).catch(function (error) {
 
                 swal("error", error.message, "error");
@@ -142,11 +145,11 @@ export const ExpenceDetail = () => {
 
     }
 
-    const GetAllSoratHazineSharh = () => {
-
+    const GetAllSoratHazineSharh = (mohitId) => {
+       console.log(serverAdress + `GetAllSouratHazineSharh?mohitId=${mohitId}`);
         axios(
             {
-                url: serverAdress + `GetAllSouratHazineSharh?mohitId=${user.lastMohitID} &sharh=${"11111"}`,
+                url: serverAdress + `GetAllSouratHazineSharh?mohitId=${mohitId}`,
                 method: "get",
                 headers:
                 {

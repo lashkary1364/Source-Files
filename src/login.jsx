@@ -16,6 +16,7 @@ import DatePicker, { DateObject } from "react-multi-date-picker";
 import {
     useHistory
 } from 'react-router-dom';
+import swal from 'sweetalert';
 
 const Login = () => {
 
@@ -36,7 +37,7 @@ const Login = () => {
         password: Yup.string()
             .required('فیلد پسورد الزامی است')
             .min(1, 'Password must be at least 6 characters'),
-        mohit: Yup.string().required('محیط کاربری الزامی است'),
+        // mohit: Yup.string().required('محیط کاربری الزامی است'),
         //.max(40, 'Password must not exceed 40 characters'),
         // confirmPassword: Yup.string()
         //   .required('Confirm Password is required')
@@ -49,7 +50,7 @@ const Login = () => {
         {
             userName: '',
             password: '',
-            mohit: ''
+            // mohit: ''
             //email: '',
             //password: '',
             // confirmPassword: '',
@@ -63,7 +64,7 @@ const Login = () => {
             "UserName": data.userName,
             "UserPasss": data.password,
             "Imei": "1",
-            "LastMohitId":parseInt(data.mohit)
+           // "LastMohitId":parseInt(data.mohit)
         })
             axios(
                 {
@@ -74,18 +75,25 @@ const Login = () => {
                         "UserName": data.userName,
                         "UserPasss": data.password,
                         "Imei": "1",
-                        "LastMohitId":parseInt(data.mohit)
+                        // "LastMohitId":parseInt(data.mohit)
                     },
                     headers: {
                         'Content-Type': 'application/json',
                     },
                 }).then(function (response) {
+
+
                     // response.setHeader("Access-Control-Allow-Origin", "*");
                     // response.setHeader("Access-Control-Allow-Credentials", "true");
                     // response.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS, HEAD");
                     // response.setHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, "
                     //     + "Access-Control-Request-Method, Access-Control-Request-Headers, Authorization");
+                    if (response.data.isAdmin==true){
+                        swal("توجه" ,"این کاربر مجاز به ورود به سیستم تنخواه تحت وب نمی باشد", "warning");
+                        return;
+                    }else{
 
+                    }
                     console.log("response: ")
                     console.log(response.data);
                     console.log(response.data.access_token)
@@ -95,43 +103,26 @@ const Login = () => {
                         userLastName: response.data.userLName,
                         UserId: response.data.userId,
                         userTocken: response.data.access_token,
-                        lastMohitID: response.data.lastMohitID,
                         LastMohitName:response.data.lastMohitName
                     }));
 
                     console.log("login token")
-                  //  console.log(sessionStorage.getItem("LoginTocken"))
-                    console.log(JSON.parse(sessionStorage.getItem("LoginTocken")).LastMohitName)
-
+                    console.log(JSON.parse(sessionStorage.getItem("LoginTocken")).LastMohitName);
                     const date = new DateObject({ calendar: persian })
                     console.log(date.year)
                     sessionStorage.setItem("SalMali", date.year);
 
-                    // sessionStorage.getItem("LoginTocken");
-                    // console.log("get session item:")
-                    // const xxx=sessionStorage.getItem("LoginTocken");
-                    // console.log("xxx:");
-                   
-
                     if (response.data.access_token != null) {
-                        //  window.location = '/blog-overview'
-                        //  this.props.history.replace('/blog-overview')
                         console.log("acess tocken");
                         console.log(response.data.access_token);
                         localStorage.setItem("access-tocken", response.data.access_token);
                         window.location.replace('/home')
-                        // history.push("/home");
-                        //window.location.replace('http://192.168.0.254:1212/home')
-                        // window.location.replace('/blog-overview')
-                        // window.location.assign('http://localhost:3000/blog-overview')
-                        // window.open('http://localhost:3000/blog-overview')
-
+                        
                     } else {
                         setErrorFlag(true);
                     }
 
-                    //window.location = '/dashboard'
-                    //response.data.pipe(fs.createWriteStream('ada_lovelace.jpg'))
+                   
 
                 }).catch(function (error) {
                     // handle error
@@ -144,17 +135,17 @@ const Login = () => {
 
     });
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        getWorkEnvironment();
+    //     getWorkEnvironment();
 
-    }, []);
+    // }, []);
 
-    useEffect(() => {
-        getWorkEnvironment();
+    // useEffect(() => {
+    //     getWorkEnvironment();
 
 
-    }, [formik.values.userName], [formik.values.password])
+    // }, [formik.values.userName], [formik.values.password])
 
 
 
@@ -188,6 +179,9 @@ const Login = () => {
 
                 console.log("response : ");
                 console.log(response.data);
+                
+               
+
                 const resultItems = response.data;
 
                 resultItems.map((data) => {
@@ -262,7 +256,7 @@ const Login = () => {
                                 ''
                         }
 
-                        <div className={formik.errors.mohit && formik.touched.mohit ? 'wrap-input100 validate-input alert-validate' : ' wrap-input100 validate-input'}
+                        {/* <div className={formik.errors.mohit && formik.touched.mohit ? 'wrap-input100 validate-input alert-validate' : ' wrap-input100 validate-input'}
                             style={{ direction: "rtl", fontFamily: "IRANSans" }} data-validate="محیط کاربری ضروری است" >
                             <FormSelect style={{ direction: "rtl", height: "40px", fontFamily: "IRANSans", borderRadius: "25px" }}
                                 onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.mohit}
@@ -282,12 +276,7 @@ const Login = () => {
                                 <i className="fa fa-home" aria-hidden="true" style={{ direction: "rtl", marginRight: "10px" }}></i>
                             </span>
                         </div>
-                        {/* {
-                            ErrorFlag == true ?
-                                <div style={{ direction: "rtl", color: "red", textAlign: "right" }}><i className='fa fa-warning pl-2'></i><span>وارد کردن محیط کاربری الزامی است</span></div>
-                                :
-                                ''
-                        } */}
+                        */}
 
 
                         <div className="container-login100-form-btn" style={{ fontFamily: "IRANSans" }}>

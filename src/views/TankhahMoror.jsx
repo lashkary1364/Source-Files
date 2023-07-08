@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import {
-    Container, Row, Col, Card, ListGroup,    
+    Container, Row, Col, Card, ListGroup,
     ListGroupItem,
     Button, FormSelect
 } from "shards-react";
@@ -10,6 +10,7 @@ import persian from "react-date-object/calendars/persian"
 import persian_en from "react-date-object/locales/persian_en"
 import { TankhahReport } from './TankhahReport';
 import swal from 'sweetalert';
+import { FilterReport } from './FilterReport';
 
 
 export const TankhahMoror = () => {
@@ -47,7 +48,6 @@ export const TankhahMoror = () => {
         setTankhahId(tankhahId);
     }
 
-
     const GetCurrentFinanceYear = () => {
         axios(
             {
@@ -73,7 +73,7 @@ export const TankhahMoror = () => {
                 // console.log("axois error: ");
                 // console.log(error);
                 // alert(error);
-                swal("error",error.meddsgr,"error");                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+                swal("error", error.meddsgr, "error");
             })
     }
 
@@ -92,31 +92,21 @@ export const TankhahMoror = () => {
                 }
             }).then(function (response) {
 
-                const resultItems = response.data;
-                setTankhahId(resultItems[0].tankhah_ID)
+                const resultItems = response.data;               
                 resultItems.map(data => {
                     setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID }]);
                 });
 
             }).catch(function (error) {
-                // handle error
-                // console.log("axois error: ");
-                // console.log(error);
-                // alert(error);
-                swal("error",error.message,"error");
+                swal("error", error.message, "error");
             })
     }
 
-    const getAllTankhahMoror = (e) => {
-        e.preventDefault();
+    const getAllReports = (dateFrom, dateTo, salId, tankhahId, mandeKhat) => {
+       console.log("moror ...")
 
-        // console.log( {
-        //     "fromDate": dateFrom,
-        //     "toDate": dateTo,
-        //     "salId": salId,
-        //     "tankhahId": tankhahId,
-        //     "showMande": mandeKhat
-        // });
+       setDateFrom(dateFrom);
+       setDateTo(dateTo);
         axios(
             {
                 url: serverAdress + "GetTankhahMoror",
@@ -140,11 +130,11 @@ export const TankhahMoror = () => {
                 }
             }).then(function (response) {
 
-                //nsole.log("gfhjghghghghghgghghghghghghghghhhg")
+                setItems([]);
                 const resultItems = response.data;
-                //console.log(resultItems);
+                console.log(resultItems);
                 resultItems.map((item) => {
-                    setItems(items=>[...items ,{bed: item.bed.toLocaleString(), bes: item.bes.toLocaleString(), radif: item.radif, sharh: item.tpSHarh, tarikh: item.dptarikh }])
+                    setItems(items => [...items, { bed: item.bed.toLocaleString(), bes: item.bes.toLocaleString(), radif: item.radif, sharh: item.tpSHarh, tarikh: item.dptarikh }])
                 });
 
             }).catch(function (error) {
@@ -152,7 +142,7 @@ export const TankhahMoror = () => {
                 // console.log("axois error: ");
                 // console.log(error);
                 // alert(error);
-                swal("error",error.message,"error")
+                swal("error", error.message, "error")
             });
 
 
@@ -170,7 +160,8 @@ export const TankhahMoror = () => {
                 </Col>
 
                 <Col lg="12" >
-                    <Card small className="mb-2">
+                    <FilterReport getAllReports={getAllReports}></FilterReport>
+                    {/* <Card small className="mb-2">
                         <ListGroup flush>
                             <ListGroupItem >
                                 <form className="form-inline">
@@ -178,7 +169,7 @@ export const TankhahMoror = () => {
                                         <label htmlFor="tankhah">اتتخاب تنخواه*:</label>
                                         <FormSelect id="tankhah" name="tankhah" className='form-control' onChange={(e) => GetAllTankhahInfo(e.target.value)}>
                                             {/* <option value={""}>یک موردانتخاب کنید</option> */}
-                                            {
+                    {/* {
                                                 tankhahItems.map((item, index) => (
                                                     <option key={index}
                                                         value={item.tankhah_ID}>
@@ -231,14 +222,14 @@ export const TankhahMoror = () => {
                                 </form>
                             </ListGroupItem>
                         </ListGroup>
-                    </Card>
+                    </Card> */}
                     {/* {
                         console.log(items)
 
                     }
                     {items.length > 0 ?  */}
                     <TankhahReport resultItems={items} dateFrom={dateFrom} dateTo={dateTo}></TankhahReport>
-                     {/* : ''} */}
+                    {/* : ''} */}
                 </Col>
             </Row>
 

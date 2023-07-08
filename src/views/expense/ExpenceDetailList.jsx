@@ -27,7 +27,6 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
   const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
   const gridRef = useRef();
   const [rowData, setRowData] = useState([]);
-  const [rowInsert, setRowInsert] = useState([]);
   const [columnDefs] = useState([
     {
       field: 'ID', filter: 'agTextColumnFilter', headerName: 'ردیف', headerCheckboxSelection: true,
@@ -202,7 +201,7 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
     <Row>
       <Col lg="12" >
         <div style={{ borderStyle: "solid", padding: "10px", borderColor: "#d9d9d9" }}>
-          <div class="btn-group mb-2" role="group" aria-label="Basic example">
+          <div className="btn-group mb-2" role="group" aria-label="Basic example">
             <button type="button" className="btn btn-secondary" onClick={handleNew}>جدید</button>
             <button type="button" className="btn btn-secondary" onClick={handleSaveDetail} disabled={isAction == true ? true : false}>  <span className='form-inline'>
               ذخیره

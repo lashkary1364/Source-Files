@@ -10,6 +10,7 @@ import persian from "react-date-object/calendars/persian";
 import persian_en from "react-date-object/locales/persian_en";
 import { TankhahMororListDaryaftiha } from './TankhahMororListDaryaftiha';
 import swal from 'sweetalert';
+import { FilterReport } from './FilterReport';
 
 
 export const MororListDaryaftiha = () => {
@@ -26,85 +27,88 @@ export const MororListDaryaftiha = () => {
     const [tankhahId, setTankhahId] = useState();
     const [mandeKhat, setMandeKhat] = useState(false);
 
-    useEffect(() => {
-        GetAllTankhah();
-        GetCurrentFinanceYear();
-    }, []);
+    // useEffect(() => {
+    //     GetAllTankhah();
+    //     GetCurrentFinanceYear();
+    // }, []);
 
-    const convertFrom = (date, format = state.format) => {
-        let object = { date, format }
-        setState(new DateObject(object).convert(persian, persian_en).format());
-        setDateFrom(new DateObject(object).convert(persian, persian_en).format());
-    }
+    // const convertFrom = (date, format = state.format) => {
+    //     let object = { date, format }
+    //     setState(new DateObject(object).convert(persian, persian_en).format());
+    //     setDateFrom(new DateObject(object).convert(persian, persian_en).format());
+    // }
 
-    const convertTo = (date, format = state.format) => {
-        let object = { date, format }
-        setState(new DateObject(object).convert(persian, persian_en).format());
-        setDateTo(new DateObject(object).convert(persian, persian_en).format());
-    }
+    // const convertTo = (date, format = state.format) => {
+    //     let object = { date, format }
+    //     setState(new DateObject(object).convert(persian, persian_en).format());
+    //     setDateTo(new DateObject(object).convert(persian, persian_en).format());
+    // }
 
-    const GetAllTankhahInfo = (tankhahId) => {
-        setTankhahId(tankhahId);
-    }
+    // const GetAllTankhahInfo = (tankhahId) => {
+    //     setTankhahId(tankhahId);
+    // }
 
-    const GetCurrentFinanceYear = () => {
-        axios(
-            {
-                url: serverAdress + "GetFinanceYearById?salMali=" + parseInt(sessionStorage.getItem("SalMali")),
-                method: "get",
-                headers:
-                {
-                    Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache',
-                    'Expires': '0',
-                }
-            }).then(function (response) {
+    // const GetCurrentFinanceYear = () => {
+    //     axios(
+    //         {
+    //             url: serverAdress + "GetFinanceYearById?salMali=" + parseInt(sessionStorage.getItem("SalMali")),
+    //             method: "get",
+    //             headers:
+    //             {
+    //                 Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
+    //                 'Cache-Control': 'no-cache',
+    //                 'Pragma': 'no-cache',
+    //                 'Expires': '0',
+    //             }
+    //         }).then(function (response) {
 
-                if (response.data != null) {
-                    setDateFrom(response.data.salStart);
-                    setDateTo(response.data.salEnd);
-                    setSalId(response.data.salId);
-                }
+    //             if (response.data != null) {
+    //                 setDateFrom(response.data.salStart);
+    //                 setDateTo(response.data.salEnd);
+    //                 setSalId(response.data.salId);
+    //             }
 
-            }).catch(function (error) {
-                // handle error
-                // console.log("axois error: ");
-                // console.log(error);
-                swal("error",error.message,"error");
-            })
-    }
+    //         }).catch(function (error) {
+    //             // handle error
+    //             // console.log("axois error: ");
+    //             // console.log(error);
+    //             swal("error",error.message,"error");
+    //         })
+    // }
 
-    const GetAllTankhah = () => {
-        axios(
-            {
-                url: serverAdress + `GetAllTankhah?userId=${user.UserId}`,
-                method: "get",
-                headers:
-                {
-                    Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache',
-                    'Expires': '0',
-                }
-            }).then(function (response) {
+    // const GetAllTankhah = () => {
+    //     axios(
+    //         {
+    //             url: serverAdress + `GetAllTankhah?userId=${user.UserId}`,
+    //             method: "get",
+    //             headers:
+    //             {
+    //                 Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
+    //                 'Cache-Control': 'no-cache',
+    //                 'Pragma': 'no-cache',
+    //                 'Expires': '0',
+    //             }
+    //         }).then(function (response) {
 
-                const resultItems = response.data;
-                setTankhahId(resultItems[0].tankhah_ID)
-                resultItems.map(data => {
-                    setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID }]);
-                });
+    //             const resultItems = response.data;
+    //             setTankhahId(resultItems[0].tankhah_ID)
+    //             resultItems.map(data => {
+    //                 setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID }]);
+    //             });
 
-            }).catch(function (error) {
-                // handle error
-                // console.log("axois error: ");
-                // console.log(error);
-                swal("error",error.message,"error");
-            })
-    }
+    //         }).catch(function (error) {
+    //             // handle error
+    //             // console.log("axois error: ");
+    //             // console.log(error);
+    //             swal("error",error.message,"error");
+    //         })
+    // }
 
-    const getAllTankhahMoror = (e) => {
-        e.preventDefault();
+    const getAllReports = (dateFrom, dateTo, salId, tankhahId, mandeKhat) => {
+      
+      setDateFrom(dateFrom);
+      setDateTo(dateTo);
+        // e.preventDefault();
         // console.log({
         //     "fromDate": dateFrom,
         //     "toDate": dateTo,
@@ -137,6 +141,7 @@ export const MororListDaryaftiha = () => {
             }).then(function (response) {
 
                 const resultItems = response.data;
+                setItems([]);
                 resultItems.map((item) => {
                     //console.log(item);
                     setItems(items=>[
@@ -169,7 +174,8 @@ export const MororListDaryaftiha = () => {
                 </Col>
 
                 <Col lg="12" >
-                    <Card small className="mb-2">
+                    <FilterReport getAllReports={getAllReports} ></FilterReport>
+                    {/* <Card small className="mb-2">
                         <ListGroup flush>
                             <ListGroupItem >
                                 <form className="form-inline">
@@ -177,7 +183,7 @@ export const MororListDaryaftiha = () => {
                                         <label htmlFor="tankhah">اتتخاب تنخواه*:</label>
                                         <FormSelect id="tankhah" name="tankhah" className='form-control' onChange={(e) => GetAllTankhahInfo(e.target.value)}>
                                             {/* <option value={""}>یک موردانتخاب کنید</option> */}
-                                            {
+                                            {/* {
                                                 tankhahItems.map((item, index) => (
                                                     <option key={index}
                                                         value={item.tankhah_ID}>
@@ -230,7 +236,7 @@ export const MororListDaryaftiha = () => {
                                 </form>
                             </ListGroupItem>
                         </ListGroup>
-                    </Card>
+                    </Card> */} 
                     {/* {items.length > 0 ?  */}
                      <TankhahMororListDaryaftiha resultItems={items} dateFrom={dateFrom} dateTo={dateTo}></TankhahMororListDaryaftiha>
                        {/* :<p>داده ای برای نمایش وجود ندارد</p>}  */}

@@ -52,7 +52,10 @@ export const TankhahSodoreName = () => {
                 //console.log("get all GetAllSodorName ...")
                 const resultItems = response.data;
                 //console.log(response);
-                var tempPrice = 0;            
+                var tempPrice = 0;
+                setSodoreName([]); 
+                setShomareName([]);    
+                
                 resultItems.map(item => {
                    // console.log(item.SodoreNameDetails);
                     var detailSouratHazine = [];
@@ -68,10 +71,13 @@ export const TankhahSodoreName = () => {
                     // console.log("details...")
                     // console.log(sss);
                     setShomareName(item.shomareName);
+                    setSodoreName([]); 
                     setSodoreName(sodoreName => [...sodoreName, {
                         soratId: item.soratId, shomare: item.shomare, ShomareName: item.ShomareName, tarikh: item.tarikh,
                         totalPrice: item.totalPrice, sharh: item.sharh, mablag: item.mablagh, tozihat: item.tozihat, details: detailSouratHazine
                     }]);
+
+
 
                 });
 
