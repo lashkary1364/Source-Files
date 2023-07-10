@@ -100,7 +100,7 @@ export const TankhahMororListExpenseType = ({ resultItems, dateFrom, dateTo }) =
                     <thead>
                         <tr style={{ backgroundColor: "#d1d3d5" }} >
 
-                            <th scope="col" >#</th>
+                            <th scope="col" >ردیف</th>
                             <th scope="col">شماره صورت هزینه</th>
                             <th scope="col">شماره برگه </th>
                             <th scope="col">شرح </th>
@@ -114,11 +114,11 @@ export const TankhahMororListExpenseType = ({ resultItems, dateFrom, dateTo }) =
                             resultItems.length == 0 ? <tr><td colSpan={6} className="text-center">داده ای برای نمایش وجود ندارد</td></tr> :
                                 resultItems.map((item, index) =>
                                     <tr key={index}>
-                                        <td scope="row" data-label="#:">{item.radif}</td>
+                                        <td scope="row" data-label="ردیف:">{item.radif}</td>
                                         <td data-label="شماره صورت هزینه:">{item.Shomare}</td>
                                         <td data-label="شماره برگه:">{item.ShomareBarge}</td>
                                         <td data-label="شرح:">{item.Sharh}</td>
-                                        <td data-label="تاریخ پرداخت:">{item.TarikhPardakht}</td>
+                                        <td data-label="تاریخ تایید:">{item.TarikhPardakht}</td>
                                         <td data-label="مبلغ:">{item.Mablagh}</td>
                                     </tr>
                                 )

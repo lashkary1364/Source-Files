@@ -7,6 +7,7 @@ import {
 import axios from 'axios';
 import DatePicker, { DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
 import persian_en from "react-date-object/locales/persian_en";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
@@ -14,17 +15,22 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { TankhahMororListExpenseType } from "./TankhahMororListExpenseType";
 import swal from 'sweetalert';
+import { Spinner } from 'react-bootstrap';
+
+
 
 export const MororListExpenseType = () => {
 
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
     const [tankhahItems, setTankhahItems] = useState([]);
     const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }));
-    const [dateFrom, setDateFrom] = useState(null);
-    const [dateTo, setDateTo] = useState(null);
+    const [dateFrom, setDateFrom] = useState(new DateObject({ calendar: persian, locale: persian_en }).format());
+    const [dateTo, setDateTo] = useState(new DateObject({ calendar: persian, locale: persian_en }).format());
     const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
     const calendarRef = useRef();
     const [items, setItems] = useState([]);
+    const [dateFromError, setDateFromError] = useState(false);
+    const [dateToError, setDateToError] = useState(false);
     const [tankhahId, setTankhahId] = useState();
     const [options, setOptions] = useState([]);
     const [values, setValues] = React.useState(null);
@@ -32,29 +38,59 @@ export const MororListExpenseType = () => {
     const [mohitItems, setMohitItems] = useState([]);
     const [salMaliItems, setSalMaliItems] = useState([]);
     const [salMali, setSalMali] = useState();
+    const [isLoading, setIsLoading] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
+    const [yearFrom, setYearFrom] = useState(state.year);
+    const [yearTo, setYearTo] = useState(state.year);
+    const [salText, setSalText] = useState();
 
     useEffect(() => {
+
         GetAllMohit();
+
         //GetAllTankhah();
-       // GetCurrentFinanceYear();
-      // GetAllSoratHazineSharh();
+        // GetCurrentFinanceYear();
+        // GetAllSoratHazineSharh();
     }, []);
 
     const validationSchema = Yup.object().shape({
         sharhDetail: Yup.string().required('فیلد شرح اجباری است'),
+        tankhah: Yup.string().required('فیلد  تنخواه اجباری است'),
     });
 
     const formik = useFormik({
         initialValues:
         {
             sharhDetail: options,
+            tankhah: ''
         },
         validationSchema,
         validateOnChange: true,
         validateOnBlur: true,
         isInitialValid: true,
         onSubmit: (data) => {
-
+            console.log("data")
+            console.log(data);
+            console.log("sharh ...");
+            console.log(options);
+            console.log(dateFrom);
+            console.log(yearFrom);
+            console.log(dateTo);
+            console.log(yearTo);
+            if (tankhahId == undefined || dateFrom == undefined || dateTo == undefined) {
+                swal("error", "وارد کردن تنخواه و بازه تاریخی و شرح الزامی است", "warning");
+                return;
+            }
+    
+            if (dateFrom > dateTo) {
+                swal("توجه", "بازه تاریخی درست وارد نشده است", "warning");
+                return;
+            }
+    
+            if (yearFrom != salText || yearTo != salText) {
+                swal("توجه", "بازه تاریخی و سال ملی یکسان نیست", "warning");
+                return;
+            }
             getAllTankhahMoror();
 
         }
@@ -69,13 +105,26 @@ export const MororListExpenseType = () => {
 
     const convertFrom = (date, format = state.format) => {
         let object = { date, format }
-        setState(new DateObject(object).convert(persian, persian_en).format());
+        if (date == null)
+            setDateFromError(true);
+        else {
+            setDateFromError(false);
+        }
+        setYearFrom(new DateObject(object).convert(persian, persian_en).format("YYYY"));
+       // setState(new DateObject(object).convert(persian, persian_en).format());
         setDateFrom(new DateObject(object).convert(persian, persian_en).format())
     }
 
     const convertTo = (date, format = state.format) => {
         let object = { date, format }
-        setState(new DateObject(object).convert(persian, persian_en).format());
+        if (date == null)
+            setDateToError(true);
+        else {
+            setDateToError(false);
+        }
+
+        setYearTo(new DateObject(object).convert(persian, persian_en).format("YYYY"));
+        //setState(new DateObject(object).convert(persian, persian_en).format());
         setDateTo(new DateObject(object).convert(persian, persian_en).format())
     }
 
@@ -136,12 +185,12 @@ export const MororListExpenseType = () => {
             })
     }
 
-
     const GetAllTankhah = (salId) => {
 
-        console.log(mohitId)
-        console.log(user.UserId)
-        console.log(salId)
+        console.log(mohitId);
+        console.log(user.UserId);
+        console.log(salId);
+
         axios(
             {
                 url: serverAdress + `GetAllTankhah?mohitId=${mohitId}&userId=${user.UserId}&salId=${salId}`,
@@ -165,7 +214,6 @@ export const MororListExpenseType = () => {
                 swal("error", error.message, "error");
             })
     }
-
 
     const GetAllSoratHazineSharh = (mohitId) => {
 
@@ -207,14 +255,8 @@ export const MororListExpenseType = () => {
     }
 
     const getAllTankhahMoror = () => {
-        //     console.log("values.name")
-        //    console.log( {
-        //     "dateFrom": dateFrom,
-        //     "dateTo": dateTo,
-        //     "tankhahId": tankhahId,
-        //     "hazine": values.name
-
-        // });
+       
+        setIsLoading(true);
         axios(
             {
                 url: serverAdress + "GetMororListHazineType",
@@ -234,7 +276,6 @@ export const MororListExpenseType = () => {
                     "dateTo": dateTo,
                     "tankhahId": tankhahId,
                     "hazine": values.name
-
                 }
             }).then(function (response) {
                 const resultItems = response.data;
@@ -243,18 +284,27 @@ export const MororListExpenseType = () => {
                 resultItems.map((item) => {
                     setItems(items => [...items, { radif: item.radif, Mablagh: item.mab.toLocaleString(), Sharh: item.sharh, Shomare: item.shomare, ShomareBarge: item.shomare_barge, TarikhPardakht: item.tarikh_pardakht }])
                 });
+
+                setIsVisible(true);
+                window.setTimeout(() => {
+                    setIsLoading(false);
+                }, 2000);
+
+
             }).catch(function (error) {
                 // handle error
                 // console.log("axois error: ");
                 // console.log(error);
                 // alert(error);
                 swal("error", error.message, "error");
+                setIsLoading(false);
             });
 
     }
 
     const changeTankhah = (tankhahId) => {
         setTankhahId(tankhahId);
+        formik.setFieldValue("tankhah", tankhahId);
     }
 
     const GetAllMohit = () => {
@@ -325,10 +375,16 @@ export const MororListExpenseType = () => {
         GetAllSoratHazineSharh(mohitId);
     }
 
-    const changeSalMali = (salId) => {
+    const changeSalMali = (event) => {
         console.log("change sal mali");
-        setSalMali(salId);
-        GetAllTankhah(salId)
+        var index = event.nativeEvent.target.selectedIndex;
+        console.log(event.nativeEvent.target[index].text);
+        console.log(event.target.value)
+
+        setSalText(event.nativeEvent.target[index].text);
+        // console.log(salId);
+        setSalMali(event.target.value);
+        GetAllTankhah(event.target.value)
     }
 
 
@@ -346,7 +402,7 @@ export const MororListExpenseType = () => {
                 <Col lg="12" >
                     <Card small className="mb-2">
                         <ListGroup flush>
-                            <ListGroupItem >
+                            <ListGroupItem>
                                 <form onSubmit={formik.handleSubmit}>
                                     <Row>
                                         <Col md="4" className="form-group">
@@ -368,7 +424,7 @@ export const MororListExpenseType = () => {
                                         <Col md="4" className="form-group">
                                             <div className="form-inline mt-3 mr-3">
                                                 <label htmlFor="salMali">  سال مالی*:</label>
-                                                <FormSelect id="salMali" name="salMali" onChange={(e) => changeSalMali(e.target.value)} className='form-control'>
+                                                <FormSelect id="salMali" name="salMali" onChange={(e) => changeSalMali(e)} className='form-control'>
                                                     <option value={""}>یک موردانتخاب کنید</option>
                                                     {
                                                         salMaliItems.map((item, index) => (
@@ -384,7 +440,7 @@ export const MororListExpenseType = () => {
                                         <Col md="4" className="form-group">
                                             <div className="form-inline mt-3 mr-3">
                                                 <label htmlFor="tankhah"> تنخواه*:</label>
-                                                <FormSelect id="tankhah" name="tankhah" onChange={(e) => changeTankhah(e.target.value)} className='form-control'>
+                                                <FormSelect id="tankhah" name="tankhah" value={formik.values.tankhah} onChange={(e) => changeTankhah(e.target.value)} className={'form-control' + (formik.errors.tankhah && formik.touched.tankhah ? ' is-invalid' : '')}>
                                                     <option value={""}>یک موردانتخاب کنید</option>
                                                     {
                                                         tankhahItems.map((item, index) => (
@@ -395,6 +451,13 @@ export const MororListExpenseType = () => {
                                                         ))
                                                     }
                                                 </FormSelect>
+                                                <div className="invalid-feedback">
+                                                    {
+                                                        formik.errors.tankhah && formik.touched.tankhah
+                                                            ? formik.errors.tankhah
+                                                            : null
+                                                    }
+                                                </div>
                                             </div>
                                         </Col>
                                     </Row>
@@ -407,6 +470,21 @@ export const MororListExpenseType = () => {
                                                 <DatePicker inputClass='form-control'
                                                     ref={calendarRef}
                                                     calendar={persian}
+                                                    locale={persian_fa}
+                                                    style={dateFromError == true ? { borderColor: "#c4183c", fontFamily: 'tahoma' } : { borderColor: "#e1e5eb", fontFamily: 'tahoma' }}
+                                                    format={"YYYY/MM/DD"}
+                                                    value={dateFrom}
+                                                    onChange={convertFrom}
+                                                    id="tarikh" name="tarikh"
+                                                    calendarPosition="bottom-right"
+
+                                                />
+
+                                                {/* <DatePicker inputClass='form-control'
+                                            </div>
+                                           
+                                                    ref={calendarRef}
+                                                    calendar={persian}
                                                     locale={persian_en}
                                                     format={"YYYY/MM/DD"}
                                                     value={dateFrom}
@@ -414,6 +492,16 @@ export const MororListExpenseType = () => {
                                                     id="tarikh" name="tarikh"
                                                     calendarPosition="bottom-right"
                                                 />
+                                                <div className="invalid-feedback">
+                                                    {
+                                                        formik.errors.dateFrom && formik.touched.dateFrom
+                                                            ? formik.errors.dateFrom
+                                                            : null
+                                                    }
+                                                </div> */}
+                                            </div>
+                                            <div>
+                                                {dateFromError == true ? <div style={{ marginTop: "0.25rem", fontSize: "80%", color: "#c4183c", fontFamily: 'IRANSans', }}>فیلد تاریخ اجباری است</div> : ''}
                                             </div>
                                         </Col>
 
@@ -423,13 +511,17 @@ export const MororListExpenseType = () => {
                                                 <DatePicker inputClass='form-control'
                                                     ref={calendarRef}
                                                     calendar={persian}
-                                                    locale={persian_en}
+                                                    locale={persian_fa}
+                                                    style={dateToError == true ? { borderColor: "#c4183c", fontFamily: 'tahoma' } : { borderColor: "#e1e5eb", fontFamily: 'tahoma' }}
                                                     format={"YYYY/MM/DD"}
                                                     value={dateTo}
                                                     onChange={convertTo}
                                                     id="tarikh" name="tarikh"
                                                     calendarPosition="bottom-right"
                                                 />
+                                            </div>
+                                            <div>
+                                                {dateToError == true ? <div style={{ marginTop: "0.25rem", fontSize: "80%", color: "#c4183c", fontFamily: 'IRANSans', }}>فیلد تاریخ اجباری است</div> : ''}
                                             </div>
                                         </Col>
 
@@ -487,11 +579,17 @@ export const MororListExpenseType = () => {
                             </ListGroupItem>
                         </ListGroup>
                     </Card>
-                    {/* {items.length > 0 ?  */}
-                    <TankhahMororListExpenseType resultItems={items} dateFrom={dateFrom} dateTo={dateTo}></TankhahMororListExpenseType>
-                    {/* : ''} */}
+                    {isVisible ?
+                        isLoading == true ? <div className="text-center" style={{ paddingTop: "50px", margin: "auto", width: "50%" }} >
+                            <Spinner animation="grow" size="sm" variant="primary" />
+                            <Spinner animation="grow" variant="primary" />
+                            <div className='text-primary text-center' dir="rtl">در حال بارگزاری...</div>
+                        </div> :
+                            <TankhahMororListExpenseType resultItems={items} dateFrom={dateFrom} dateTo={dateTo}></TankhahMororListExpenseType>
+                        : ''
+                    }
                 </Col>
             </Row>
-        </Container>
+        </Container >
     )
 }

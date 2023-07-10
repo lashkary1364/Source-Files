@@ -70,6 +70,7 @@ export const ExpenseList = () => {
   }
   const [dateHeader, setDateHeader] = useState(date.format());
   const gridStyle = useMemo(() => ({ height: '600px', width: '100%', }), []);
+  const [mohitV, setMohitV] = useState();
   const getAllData = (tankhahId) => {
 
     console.log("tankhahId: " + tankhahId);
@@ -100,7 +101,13 @@ export const ExpenseList = () => {
       alert(error);
     })
   }
-
+  const options = [
+    { value: 'C++', label: 'C++' },
+    { value: 'JAVA', label: 'JAVA' },
+    { value: 'Javascript', label: 'Javascript' },
+    { value: 'Python', label: 'Python' },
+    { value: 'Swift', label: 'Swift' }
+  ];
   const getAllTankhah = () => {
 
     axios(
@@ -133,7 +140,7 @@ export const ExpenseList = () => {
   useEffect(() => {
     GetAllMohit();
   }, []);
-  
+
   const defaultColDef = useMemo(() => ({
     sortable: true,
     // resizable: true,
@@ -183,6 +190,7 @@ export const ExpenseList = () => {
         console.log(resultItems);
         resultItems.map(data => {
           setMohitItems(mohitItems => [...mohitItems, { MohitId: data.mohitID, MohitOnvan: data.mohitOnvan }]);
+          setMohitV(data.mohitID);
         });
 
       }).catch(function (error) {
@@ -246,7 +254,6 @@ export const ExpenseList = () => {
       })
   }
 
-
   const changeMohit = (mohitId) => {
 
     console.log("change mohit ...")
@@ -260,7 +267,6 @@ export const ExpenseList = () => {
     setSalMali(salId);
     GetAllTankhah(salId)
   }
-
 
   const handleAdd = () => {
     history.push("/expense?operation=add");
@@ -308,7 +314,6 @@ export const ExpenseList = () => {
     history.push("/expense?id=" + selectedRow[0].soratID + "&operation=delete")
   }
 
-
   const handleSodoreName = () => {
     console.log("sodore name ....")
     console.log(selectedRow);
@@ -348,7 +353,8 @@ export const ExpenseList = () => {
       }).then(function (response) {
         console.log("Allow Ebtal Name ...");
         const resultItems = response.data;
-        if (resultItems.length > 0) {
+        console.log(resultItems);
+        if (resultItems > 0) {
           swal("بعضی از صورت هزینه های انتخابی در وضعیت تایید شده هستند و قابل برگشت نمیباشند");
           return;
         } else {
@@ -427,6 +433,7 @@ export const ExpenseList = () => {
 
 
   return (
+
     <Container fluid className="main-content-container">
       <Row className="page-header mt-2 ">
         <Col lg="12" >
@@ -438,63 +445,60 @@ export const ExpenseList = () => {
       </Row>
       <Card small className="h-100">
         <CardBody className="pt-0">
-          
-            <Row>
-              <Col md="4" className="form-group">
-                <div className="form-inline mt-3 mr-3">
-                  <label htmlFor="mohit"> محیط کاربری*:</label>
-                  <FormSelect id="mohit" name="mohit" onChange={(e) => changeMohit(e.target.value)} className='form-control'
-                  // value={mohit}
-                  >
-                    <option value={""}>یک موردانتخاب کنید</option>
-                    {
-                      mohitItems.map((item, index) => (
-                        <option key={index}
-                          value={item.MohitId}>
-                          {item.MohitOnvan}
-                        </option>
-                      ))
-                    }
-                  </FormSelect>
-                </div>
-              </Col>
-              <Col md="4" className="form-group">
-                <div className="form-inline mt-3 mr-3">
-                  <label htmlFor="salMali">  سال مالی*:</label>
-                  <FormSelect id="salMali" name="salMali" onChange={(e) => changeSalMali(e.target.value)} className='form-control'>
-                    {/* // value={formik.values.salMali}> */}
-                    <option value={""}>یک موردانتخاب کنید</option>
-                    {
-                      salMaliItems.map((item, index) => (
-                        <option key={index}
-                          value={item.SalId}>
-                          {item.SalMali}
-                        </option>
-                      ))
-                    }
-                  </FormSelect>
-                </div>
-              </Col>
-              <Col md="4" className="form-group">
-                <div className="form-inline mt-3 mr-3">
-                  <label htmlFor="tankhah"> تنخواه*:</label>
-                  <FormSelect id="tankhah" name="tankhah" onChange={(e) => getAllData(e.target.value)} className='form-control'
-                  // value={formik.values.tankhah}
-                  >
-                    <option value={""}>یک موردانتخاب کنید</option>
-                    {
-                      tankhahItems.map((item, index) => (
-                        <option key={index}
-                          value={item.tankhah_ID}>
-                          {item.tankhah_name}
-                        </option>
-                      ))
-                    }
-                  </FormSelect>
-                </div>
-              </Col>
-            </Row>
-            {/* <Col md="6" className="form-group">
+          <Row>
+            <Col md="4" className="form-group">
+              <div className="form-inline mt-3 mr-3">
+                <label htmlFor="mohit"> محیط کاربری*:</label>
+                <FormSelect id="mohit" name="mohit"  onChange={(e) => changeMohit(e.target.value)} className='form-control' >
+                  <option value={""}>یک موردانتخاب کنید</option>
+                  {
+                    mohitItems.map((item, index) => (
+                      <option key={index}
+                        value={item.MohitId}>
+                        {item.MohitOnvan}
+                      </option>
+                    ))
+                  }
+                </FormSelect>
+              </div>
+            </Col>
+            <Col md="4" className="form-group">
+              <div className="form-inline mt-3 mr-3">
+                <label htmlFor="salMali">  سال مالی*:</label>
+                <FormSelect id="salMali" name="salMali" onChange={(e) => changeSalMali(e.target.value)} className='form-control'>
+                  {/* // value={formik.values.salMali}> */}
+                  <option value={""}>یک موردانتخاب کنید</option>
+                  {
+                    salMaliItems.map((item, index) => (
+                      <option key={index}
+                        value={item.SalId}>
+                        {item.SalMali}
+                      </option>
+                    ))
+                  }
+                </FormSelect>
+              </div>
+            </Col>
+            <Col md="4" className="form-group">
+              <div className="form-inline mt-3 mr-3">
+                <label htmlFor="tankhah"> تنخواه*:</label>
+                <FormSelect id="tankhah" name="tankhah" onChange={(e) => getAllData(e.target.value)} className='form-control'
+                // value={formik.values.tankhah}
+                >
+                  <option value={""}>یک موردانتخاب کنید</option>
+                  {
+                    tankhahItems.map((item, index) => (
+                      <option key={index}
+                        value={item.tankhah_ID}>
+                        {item.tankhah_name}
+                      </option>
+                    ))
+                  }
+                </FormSelect>
+              </div>
+            </Col>
+          </Row>
+          {/* <Col md="6" className="form-group">
               <div className="form-inline mt-3 mr-3">
                 <label htmlFor="tankhah" className="mr-2"> انتخاب تنخواه*:</label>
                 <FormSelect className="form-control" id="tankhah" name="tankhah" onChange={(e) => getAllData(e.target.value)}>
@@ -510,7 +514,19 @@ export const ExpenseList = () => {
                 </FormSelect>
               </div>
             </Col> */}
-        
+          {/* <Row>
+            <Col md="4" className="form-group">
+              <div className="form-inline mt-3 mr-3">
+                <label htmlFor="tankhah"> تنخواه*:</label>
+                <select value="Radish">
+                  <option value="Orange">Orange</option>
+                  <option value="Radish">Radish</option>
+                  <option value="Cherry">Cherry</option>
+                </select>
+              </div>
+            </Col>
+
+          </Row> */}
 
           <div style={{ borderStyle: "solid", padding: "5px", borderColor: "#d9d9d9" }}>
             <div className="btn-group mb-2" role="group" aria-label="Basic example">
@@ -519,7 +535,7 @@ export const ExpenseList = () => {
               <button type="button" className="btn btn-secondary" onClick={handleDetail}>جزئیات</button>
               <button type="button" className="btn btn-secondary" onClick={handleDelete}>حذف</button>
               <button type="button" className="btn btn-secondary" onClick={toggle}>صدور نامه تحویل</button>
-              <button type="button" className="btn btn-secondary" onClick={handleEbtaleName}>ابطال نامه تحویل</button>
+              {/* <button type="button" className="btn btn-secondary" onClick={handleEbtaleName}>ابطال نامه تحویل</button> */}
             </div>
             <div className="ag-theme-alpine mb-5" style={gridStyle}>
               <div className="example-wrapper">

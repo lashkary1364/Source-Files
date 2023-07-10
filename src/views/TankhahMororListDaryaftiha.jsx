@@ -78,7 +78,7 @@ export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) =>
                     </ListGroupItem>
                 </ListGroup>
             </Card>
-            <div id="table-to-xls" ref={ref} className="table-to-xls" style={{margin:"50px"}}>
+            <div id="table-to-xls" ref={ref} className="table-to-xls" style={{ margin: "50px" }}>
                 <div className="border-tankhah-header">
                     <div >{JSON.parse(sessionStorage.getItem("LoginTocken")).LastMohitName}</div>
                     <div >
@@ -93,10 +93,10 @@ export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) =>
                     </div>
                 </div>
 
-                <table  dir="rtl" >
+                <table dir="rtl" >
                     <thead>
-                        <tr  style={{backgroundColor: "#d1d3d5"}}>
-                            <th scope="col">#</th>
+                        <tr style={{ backgroundColor: "#d1d3d5" }}>
+                            <th scope="col">ردیف</th>
                             <th scope="col">تاریخ</th>
                             <th scope="col">نوع دریافت / پرداخت</th>
                             <th scope="col">شرح</th>
@@ -111,24 +111,28 @@ export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) =>
                         </tr>
                     </thead>
                     <tbody>
+                        {console.log("fffffjjjjjbbbb")}
+                        {console.log(resultItems)}
                         {
                             resultItems.length == 0 ? <tr><td className='text-center' colSpan={12}> داده ای برای نمایش وجود ندارد </td></tr> :
-                                resultItems.map((item, index) =>
+                                resultItems.map((item, index) => 
+                                 
                                     <tr key={index}>
-                                        <td scope="row" data-label="#:">{item.radif}</td>                                  
-                                        {/* <td>{item.radif}</td> */}
+                                        <td scope="row" data-label="ردیف:">{item.radif}</td>                                      
                                         <td data-label="تاریخ:">{item.dpTarikh}</td>
                                         <td data-label="نوع دریافت/پرداخت:">{item.vajh_type_title}</td>
-                                        <td data-label="شرح:">{item.SHarh}</td>
+                                        <td data-label="شرح:">{item.sHarh}</td>
                                         <td data-label="شماره صندوق:">{item.SandogNO}</td>
                                         <td data-label="نام صندوق:">{item.SandogName}</td>
                                         <td data-label="نام بانک:">{item.BankName}</td>
                                         <td data-label="نام شعبه:">{item.SHobe}</td>
                                         <td data-label="سریال چک:">{item.CkSerial}</td>
                                         <td data-label="تاریخ چک:">{item.CkSerial}</td>
-                                        <td data-label="مبلغ دریافتی تنخواه:">{item.daryafti_be_tankhah}</td>
-                                        <td data-label="مبلغ پرداختی تنخواه:">{item.pardakhti_az_tankhahdata}</td>
+                                        <td data-label="مبلغ دریافتی تنخواه:">{item.pardakhti_az_tankhah}</td>
+                                        <td data-label="مبلغ پرداختی تنخواه:">{item.daryafti_be_tankhah}</td>
                                     </tr>
+                                
+
                                 )
                         }
                     </tbody>

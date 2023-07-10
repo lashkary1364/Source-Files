@@ -16,7 +16,7 @@ import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import '../assets/view-css.css';
 import swal from 'sweetalert';
-
+import { Spinner } from 'react-bootstrap';
 
 export const TankhahSodoreName = () => {
 
@@ -26,7 +26,7 @@ export const TankhahSodoreName = () => {
     const [sodoreName, setSodoreName] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [listId, setListId] = useState([]);
-
+    const [isLoading,setIsloading]=useState(true);
 
     useEffect(() => {
         setListId(queryParameters.get("listId"));
@@ -76,14 +76,16 @@ export const TankhahSodoreName = () => {
                         soratId: item.soratId, shomare: item.shomare, ShomareName: item.ShomareName, tarikh: item.tarikh,
                         totalPrice: item.totalPrice, sharh: item.sharh, mablag: item.mablagh, tozihat: item.tozihat, details: detailSouratHazine
                     }]);
-
-
-
                 });
 
 
                 //console.log(tempPrice);
                 setTotalPrice(tempPrice);
+
+                window.setTimeout(()=>{
+                    setIsloading(false);
+                },2000);
+
             }).catch(function (error) {
                 // handle error
                 // console.log("axois error: ");
@@ -149,90 +151,98 @@ export const TankhahSodoreName = () => {
                     </ListGroupItem>
                 </ListGroup>
             </Card>
-            <div id="table-to-xls" className="table-to-xls" style={{ padding: "40px", margin: "50px" }} ref={ref}>
-                <div className="border-tankhah-header" >
-                    <table style={{ border: "1px solid rgb(40, 39, 39)" }}>
-                        <tbody>
-                            <tr>
-                                <td rowSpan={2} style={{ verticalAlign: "middle", border: "1px solid rgb(40, 39, 39)" }}>
-                                    <img   src={require("./../images/deka.png")}></img> 
-                                </td>
-                                <td scope="row" rowSpan={2} style={{ verticalAlign: "middle", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}  ><h3>فرم تنخواه گردان</h3></td>
-                                <td style={{ border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}>شماره :{shomareName}</td>
-                            </tr>
-                            <tr>
-                                <td style={{ border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}>تاریخ :{queryParameters.get("tarikh")}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <h3 style={{ marginLeft: "5px", marginRight: "5px", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "15pt" }} dir="rtl">امور مالی محترم:</h3>
-                    <p style={{ marginLeft: "5px", marginRight: "5px", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "13pt" }} dir="rtl">احتراما صورت هزینه های پرداخت شده جهت تایید تقدیم میگردد.</p>
-                    {
-                        sodoreName.map((item, index) => (
-
-                            <div key={index}>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th scope="col" style={{ textAlign: "center", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14.5pt" }}>ردیف</th>
-                                            <th scope="col" style={{ textAlign: "center", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14.5pt" }}>شرح سند</th>
-                                            <th scope="col" style={{ textAlign: "center", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14.5pt" }}>شماره صورت</th>
-                                            <th scope="col" style={{ textAlign: "center", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14.5pt" }}>تاریخ صورت هزینه</th>
-                                            <th scope="col" style={{ textAlign: "center", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14.5pt" }}>مبلغ صورت هزینه</th>
-                                            <th scope="col" style={{ textAlign: "center", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14.5pt" }}>توضیحات</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr style={{ background: "#ebe7e7" }}>
-                                            <td scope="row" data-label="ردیف" style={{ border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}>{index + 1}</td>
-                                            <td data-label="شرح سند:" style={{ border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}>{item.sharh}</td>
-                                            <td data-label="شماره صورت:" style={{ border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}>{item.shomare}</td>
-                                            <td data-label="تاریخ صورت هزینه:" style={{ border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}>{item.tarikh}</td>
-                                            <td data-label="مبلغ صورت هزینه:" style={{ border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}>{item.totalPrice.toLocaleString()}</td>
-                                            <td data-label="توضیحات:" style={{ border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }} >{item.tozihat}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <table >
-                                    <thead>
-                                        <tr >
-                                            <th scope="col" style={{ textAlign: "center", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14.5pt" }}>شرح</th>
-                                            <th scope="col" style={{ textAlign: "center", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14.5pt" }}>مبلغ ریز هزینه (ریال)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            item.details.map((itemdetail, index) => (
-                                                <tr key={index} >
-                                                    <td scope="row" data-label="شرح:" style={{ border: "1px solid rgb(40, 39, 39) ", background: "#dbd7d7", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "11.5pt" }}>{itemdetail.sharh}</td>
-                                                    <td scope="row" data-label="مبلغ ریز هزینه (ریال):" style={{ border: "1px solid rgb(40, 39, 39)", background: "#dbd7d7", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "11.5pt" }}>{itemdetail.price.toLocaleString()}</td>
-                                                </tr>
-                                            ))
-
-                                        }
-                                        <tr>
-                                            <td scope="row" data-label="جمع:" style={{ background: "#a8a8a8", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "13pt", border: "1px solid rgb(40, 39, 39)" }}>جمع:</td>
-                                            <td scope="row" data-label="مبلغ ریز هزینه (ریال):" style={{ background: "#a8a8a8", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "13pt", border: "1px solid rgb(40, 39, 39)" }}>{item.totalPrice.toLocaleString()}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-
-                            </div>
-                        ))
-
-
+            {
+                        isLoading == true ? <div className="text-center" style={{ paddingTop: "50px", margin: "auto", width: "50%" }} >
+                            <Spinner animation="grow" size="sm" variant="primary" />
+                            <Spinner animation="grow" variant="primary" />
+                            <div className='text-primary text-center' dir="rtl">در حال بارگزاری...</div>
+                        </div> :
+                      <div id="table-to-xls" className="table-to-xls" style={{ padding: "40px", margin: "50px" }} ref={ref}>
+                      <div className="border-tankhah-header" >
+                          <table style={{ border: "1px solid rgb(40, 39, 39)" }}>
+                              <tbody>
+                                  <tr>
+                                      <td rowSpan={2} style={{ verticalAlign: "middle", border: "1px solid rgb(40, 39, 39)" }}>
+                                          <img   src={require("./../images/deka.png")}></img> 
+                                      </td>
+                                      <td scope="row" rowSpan={2} style={{ verticalAlign: "middle", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}  ><h3>فرم تنخواه گردان</h3></td>
+                                      <td style={{ border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}>شماره :{shomareName}</td>
+                                  </tr>
+                                  <tr>
+                                      <td style={{ border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}>تاریخ :{queryParameters.get("tarikh")}</td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                          <h3 style={{ marginLeft: "5px", marginRight: "5px", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "15pt" }} dir="rtl">امور مالی محترم:</h3>
+                          <p style={{ marginLeft: "5px", marginRight: "5px", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "13pt" }} dir="rtl">احتراما صورت هزینه های پرداخت شده جهت تایید تقدیم میگردد.</p>
+                          {
+                              sodoreName.map((item, index) => (
+      
+                                  <div key={index}>
+                                      <table>
+                                          <thead>
+                                              <tr>
+                                                  <th scope="col" style={{ textAlign: "center", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14.5pt" }}>ردیف</th>
+                                                  <th scope="col" style={{ textAlign: "center", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14.5pt" }}>شرح سند</th>
+                                                  <th scope="col" style={{ textAlign: "center", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14.5pt" }}>شماره صورت</th>
+                                                  <th scope="col" style={{ textAlign: "center", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14.5pt" }}>تاریخ صورت هزینه</th>
+                                                  <th scope="col" style={{ textAlign: "center", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14.5pt" }}>مبلغ صورت هزینه</th>
+                                                  <th scope="col" style={{ textAlign: "center", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14.5pt" }}>توضیحات</th>
+                                              </tr>
+                                          </thead>
+                                          <tbody>
+                                              <tr style={{ background: "#ebe7e7" }}>
+                                                  <td scope="row" data-label="ردیف" style={{ border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}>{index + 1}</td>
+                                                  <td data-label="شرح سند:" style={{ border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}>{item.sharh}</td>
+                                                  <td data-label="شماره صورت:" style={{ border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}>{item.shomare}</td>
+                                                  <td data-label="تاریخ صورت هزینه:" style={{ border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}>{item.tarikh}</td>
+                                                  <td data-label="مبلغ صورت هزینه:" style={{ border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}>{item.totalPrice.toLocaleString()}</td>
+                                                  <td data-label="توضیحات:" style={{ border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }} >{item.tozihat}</td>
+                                              </tr>
+                                          </tbody>
+                                      </table>
+                                      <table >
+                                          <thead>
+                                              <tr >
+                                                  <th scope="col" style={{ textAlign: "center", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14.5pt" }}>شرح</th>
+                                                  <th scope="col" style={{ textAlign: "center", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14.5pt" }}>مبلغ ریز هزینه (ریال)</th>
+                                              </tr>
+                                          </thead>
+                                          <tbody>
+                                              {
+                                                  item.details.map((itemdetail, index) => (
+                                                      <tr key={index} >
+                                                          <td scope="row" data-label="شرح:" style={{ border: "1px solid rgb(40, 39, 39) ", background: "#dbd7d7", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "11.5pt" }}>{itemdetail.sharh}</td>
+                                                          <td scope="row" data-label="مبلغ ریز هزینه (ریال):" style={{ border: "1px solid rgb(40, 39, 39)", background: "#dbd7d7", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "11.5pt" }}>{itemdetail.price.toLocaleString()}</td>
+                                                      </tr>
+                                                  ))
+      
+                                              }
+                                              <tr>
+                                                  <td scope="row" data-label="جمع:" style={{ background: "#a8a8a8", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "13pt", border: "1px solid rgb(40, 39, 39)" }}>جمع:</td>
+                                                  <td scope="row" data-label="مبلغ ریز هزینه (ریال):" style={{ background: "#a8a8a8", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "13pt", border: "1px solid rgb(40, 39, 39)" }}>{item.totalPrice.toLocaleString()}</td>
+                                              </tr>
+                                          </tbody>
+                                      </table>
+      
+                                  </div>
+                              ))
+      
+      
+                          }
+                          <table >
+                              <tbody>
+                                  <tr >
+                                      <td scope="row" rowSpan={2} style={{ verticalAlign: "middle", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14pt", border: "1px solid rgb(40, 39, 39)" }}  ><h3>جمع به حروف:</h3><h5><span>{Num2persian(totalPrice)}</span><span className='ml-1'>ریال</span>  </h5></td>
+                                      <td style={{ border: "1px solid rgb(40, 39, 39)" }}><h3 style={{ fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14pt" }}>{totalPrice.toLocaleString()}</h3></td>
+                                  </tr>
+      
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>   
                     }
-                    <table >
-                        <tbody>
-                            <tr >
-                                <td scope="row" rowSpan={2} style={{ verticalAlign: "middle", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14pt", border: "1px solid rgb(40, 39, 39)" }}  ><h3>جمع به حروف:</h3><h5><span>{Num2persian(totalPrice)}</span><span className='ml-1'>ریال</span>  </h5></td>
-                                <td style={{ border: "1px solid rgb(40, 39, 39)" }}><h3 style={{ fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "14pt" }}>{totalPrice.toLocaleString()}</h3></td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            
         </div >
     )
 }

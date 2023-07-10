@@ -81,6 +81,8 @@ export const TankhahReportListExpense = ({ resultItems, dateFrom, dateTo }) => {
                     </ListGroupItem>
                 </ListGroup>
             </Card>
+
+            
             <div id="table-to-xls" ref={ref} className="table-to-xls" style={{margin:"50px"}} >
                 <div className="border-tankhah-header">
                     <div style={{textAlign:"center"}}>{JSON.parse(sessionStorage.getItem("LoginTocken")).LastMohitName}</div>
@@ -99,7 +101,7 @@ export const TankhahReportListExpense = ({ resultItems, dateFrom, dateTo }) => {
                 <table >
                     <thead>
                         <tr style={{backgroundColor: "#d1d3d5"}}   >
-                            <th scope="col" >#</th>
+                            <th scope="col" >ردیف</th>
                             <th scope="col" >تاریخ</th>
                             <th scope="col">شماره</th>
                             <th scope="col">نام پروژه</th>
@@ -112,8 +114,8 @@ export const TankhahReportListExpense = ({ resultItems, dateFrom, dateTo }) => {
                         {
                             resultItems.map((item, index) =>
                                 <tr key={index}>
-                                    <td scope="row" data-label="#:">{index+1}</td>
-                                     <td data-label="تاریخ:">{item.tarikh}</td>
+                                    <td scope="row" data-label="ردیف:">{index+1}</td>
+                                    <td data-label="تاریخ:">{item.tarikh}</td>
                                     <td data-label="شماره:">{item.shomare}</td>
                                     <td style={{paddingTop:"5px"}}   data-label="نام پروژه:">{item.proname}</td>
                                     <td data-label="شرح:">{item.sharh}</td>

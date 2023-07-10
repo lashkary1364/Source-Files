@@ -11,7 +11,7 @@ import persian_en from "react-date-object/locales/persian_en"
 import { TankhahReport } from './TankhahReport';
 import swal from 'sweetalert';
 import { FilterReport } from './FilterReport';
-
+import { Spinner } from 'react-bootstrap';
 
 export const TankhahMoror = () => {
 
@@ -26,6 +26,8 @@ export const TankhahMoror = () => {
     const [salId, setSalId] = useState()
     const [tankhahId, setTankhahId] = useState();
     const [mandeKhat, setMandeKhat] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
         GetAllTankhah();
@@ -92,7 +94,7 @@ export const TankhahMoror = () => {
                 }
             }).then(function (response) {
 
-                const resultItems = response.data;               
+                const resultItems = response.data;
                 resultItems.map(data => {
                     setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID }]);
                 });
@@ -103,10 +105,14 @@ export const TankhahMoror = () => {
     }
 
     const getAllReports = (dateFrom, dateTo, salId, tankhahId, mandeKhat) => {
-       console.log("moror ...")
+        console.log("moror ...")
 
-       setDateFrom(dateFrom);
-       setDateTo(dateTo);
+        setDateFrom(dateFrom);
+        setDateTo(dateTo);
+        setIsLoading(true);
+        setIsLoading(true);
+        setIsVisible(true)
+
         axios(
             {
                 url: serverAdress + "GetTankhahMoror",
@@ -129,24 +135,31 @@ export const TankhahMoror = () => {
                     "showMande": mandeKhat
                 }
             }).then(function (response) {
-
+                var mande = 0;
                 setItems([]);
                 const resultItems = response.data;
                 console.log(resultItems);
-                resultItems.map((item) => {
-                    setItems(items => [...items, { bed: item.bed.toLocaleString(), bes: item.bes.toLocaleString(), radif: item.radif, sharh: item.tpSHarh, tarikh: item.dptarikh }])
+                resultItems.map((item, index) => {
+                    if (index == 0) {
+                        mande = (item.bed) - (item.bes);
+                    } else {
+                        mande = mande + (item.bed) - (item.bes);
+                    }
+                    setItems(items => [...items, { bed: item.bed.toLocaleString(), bes: item.bes.toLocaleString(), radif: item.radif, sharh: item.tpSHarh, tarikh: item.dptarikh, mande: mande }])
                 });
+
+                window.setTimeout(() => {
+                    setIsLoading(false);
+                }, 2000);
 
             }).catch(function (error) {
                 // handle error
                 // console.log("axois error: ");
                 // console.log(error);
                 // alert(error);
-                swal("error", error.message, "error")
+                swal("error", error.message, "error");
+                setIsLoading(false);
             });
-
-
-
     }
 
     return (
@@ -158,78 +171,17 @@ export const TankhahMoror = () => {
                         <span className="breadcrumb-item active">گزارش مرور تنخواه</span>
                     </nav>
                 </Col>
-
                 <Col lg="12" >
                     <FilterReport getAllReports={getAllReports}></FilterReport>
-                    {/* <Card small className="mb-2">
-                        <ListGroup flush>
-                            <ListGroupItem >
-                                <form className="form-inline">
-                                    <div className="form-group mb-2">
-                                        <label htmlFor="tankhah">اتتخاب تنخواه*:</label>
-                                        <FormSelect id="tankhah" name="tankhah" className='form-control' onChange={(e) => GetAllTankhahInfo(e.target.value)}>
-                                            {/* <option value={""}>یک موردانتخاب کنید</option> */}
-                    {/* {
-                                                tankhahItems.map((item, index) => (
-                                                    <option key={index}
-                                                        value={item.tankhah_ID}>
-                                                        {item.tankhah_name}
-                                                    </option>
-                                                ))
-                                            }
-                                        </FormSelect>
-                                    </div>
-
-                                    <div className="form-group mx-sm-3 mb-2">
-                                        <label htmlFor="mande" > از تاریخ :</label>
-                                        <DatePicker inputClass='form-control'
-                                            ref={calendarRef}
-                                            calendar={persian}
-                                            locale={persian_en}
-                                            format={"YYYY/MM/DD"}
-                                            value={dateFrom}
-                                            onChange={convertFrom}
-                                            id="tarikh" name="tarikh"
-                                            calendarPosition="bottom-right"
-                                        />
-                                    </div>
-
-                                    <div className="form-group mx-sm-3 mb-2">
-                                        <label htmlFor="etebarMax">تا تاریخ:</label>
-                                        <DatePicker inputClass='form-control'
-                                            ref={calendarRef}
-                                            calendar={persian}
-                                            locale={persian_en}
-                                            format={"YYYY/MM/DD"}
-                                            value={dateTo}
-                                            onChange={convertTo}
-                                            id="tarikh" name="tarikh"
-                                            calendarPosition="bottom-right"
-                                        />
-                                    </div>
-
-                                    <div className="form-group mx-sm-3 mb-2">
-                                        <input type="checkbox" name="vehicle1" onChange={(e) => setMandeKhat(e.target.checked)} />
-                                        <label > محاسبه مانده در خط</label>
-                                    </div>
-
-                                    <Button theme="primary" className="mb-2 mr-1" type="submit" onClick={(e) => getAllTankhahMoror(e)} >
-                                        <span className='form-inline'>
-                                            گزارش
-                                        </span>
-                                    </Button>
-
-                                </form>
-                            </ListGroupItem>
-                        </ListGroup>
-                    </Card> */}
-                    {/* {
-                        console.log(items)
-
-                    }
-                    {items.length > 0 ?  */}
-                    <TankhahReport resultItems={items} dateFrom={dateFrom} dateTo={dateTo}></TankhahReport>
-                    {/* : ''} */}
+                    {isVisible ?
+                        isLoading == true ? <div className="text-center" style={{ paddingTop: "50px", margin: "auto", width: "50%" }} >
+                            <Spinner animation="grow" size="sm" variant="primary" />
+                            <Spinner animation="grow" variant="primary" />
+                            <div className='text-primary text-center' dir="rtl">در حال بارگزاری...</div>
+                        </div> :
+                            <TankhahReport resultItems={items} dateFrom={dateFrom} dateTo={dateTo}></TankhahReport>
+                        : ''
+                    }                   
                 </Col>
             </Row>
 

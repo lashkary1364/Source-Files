@@ -101,11 +101,12 @@ export const TankhahReport = ({ resultItems, dateFrom, dateTo }) => {
                 <table>
                     <thead>
                         <tr style={{backgroundColor: "#d1d3d5"}} >
-                            <th scope="col">#</th>
+                            <th scope="col">ردیف</th>
                             <th scope="col">شرح</th>
                             <th scope="col">تاریخ</th>
                             <th scope="col">بدهکار</th>
                             <th scope="col">بستانکار</th>
+                            <th scope="col">مانده</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -113,12 +114,13 @@ export const TankhahReport = ({ resultItems, dateFrom, dateTo }) => {
                             resultItems.length == 0 ? <tr><td className='text-center' colSpan={5}> داده ای برای نمایش وجود ندارد </td></tr> :
                                 resultItems.map((item, index) =>
                                     <tr key={index}>
-                                        <td scope="row" data-label="#">{item.radif}</td>
+                                        <td scope="row" data-label="ردیف">{item.radif}</td>
                                         {/* <td>{item.radif}</td> */}
                                         <td data-label="شرح:">{item.sharh}</td>
                                         <td data-label="تاریخ:">{item.tarikh}</td>
                                         <td data-label="بدهکار:">{item.bed.toLocaleString()}</td>
                                         <td data-label="بستانکار:">{item.bes.toLocaleString()}</td>
+                                        <td data-label="مانده:">   {item.mande<0 ? `(${Math.abs(item.mande.toLocaleString())})` :item.mande.toLocaleString()} </td>
                                     </tr>
                                 )
                         }

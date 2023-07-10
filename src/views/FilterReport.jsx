@@ -7,6 +7,7 @@ import {
 import axios from 'axios';
 import DatePicker, { DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
 import persian_en from "react-date-object/locales/persian_en";
 import { TankhahReportListExpense } from './TankhahReportListExpense';
 import swal from 'sweetalert';
@@ -15,13 +16,14 @@ export const FilterReport = ({ getAllReports }) => {
 
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
     const [tankhahItems, setTankhahItems] = useState([]);
-    const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }));
-    const [dateFrom, setDateFrom] = useState(null);
-    const [dateTo, setDateTo] = useState(null);
+    const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_fa }));
+    const [dateFrom, setDateFrom] = useState();
+    const [dateTo, setDateTo] = useState();
     const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
     const calendarRef = useRef();
-    // const [items, setItems] = useState([]);
-    // const [salId, setSalId] = useState()
+    const [salText,setSalText]=useState();
+    const [yearFrom,setYearFrom]=useState();
+    const [yearTo,setYearTo]=useState();
     const [tankhahId, setTankhahId] = useState();
     const [mandeKhat, setMandeKhat] = useState(false);
     const [mohitItems, setMohitItems] = useState([]);
@@ -37,12 +39,15 @@ export const FilterReport = ({ getAllReports }) => {
     const convertFrom = (date, format = state.format) => {
         let object = { date, format }
         setState(new DateObject(object).convert(persian, persian_en).format());
+        console.log(new DateObject(object).convert(persian, persian_en).format("YYYY"));
+        setYearFrom(new DateObject(object).convert(persian, persian_en).format("YYYY"));
         setDateFrom(new DateObject(object).convert(persian, persian_en).format());
     }
 
     const convertTo = (date, format = state.format) => {
         let object = { date, format }
         setState(new DateObject(object).convert(persian, persian_en).format());
+        setYearTo(new DateObject(object).convert(persian, persian_en).format("YYYY"));
         setDateTo(new DateObject(object).convert(persian, persian_en).format());
     }
 
@@ -80,12 +85,29 @@ export const FilterReport = ({ getAllReports }) => {
     }
 
     const getAllReport = (e) => {
-        e.preventDefault();
-        console.log(dateFrom);
-        console.log(dateTo);
+          e.preventDefault();
+        if (dateFrom==undefined || dateTo==undefined||tankhahId==undefined ||salMali.length==0){
+            swal("توجه", "وارد کردن تنخواه و تاریخ الزامی است", "warning"); 
+            return;
+        }
+
+        if (dateFrom>dateTo){
+            swal("توجه", "بازه تاریخی درست وارد نشده است", "warning"); 
+            return; 
+        }
+
+        if(yearFrom!=salText || yearTo!=salText){
+            swal("توجه", "بازه تاریخی و سال ملی یکسان نیست", "warning"); 
+            return;
+        }
+        
+        console.log(dateFrom?.format?.("YYYY"));
+        console.log(dateFrom.year);
+        console.log(dateTo);    
         console.log(salMali);
         console.log(tankhahId);
-        getAllReports(dateFrom, dateTo, salMali, tankhahId, false);
+
+        getAllReports(dateFrom, dateTo, salMali, tankhahId, mandeKhat);
     }
 
     const GetAllMohit = () => {
@@ -184,10 +206,17 @@ export const FilterReport = ({ getAllReports }) => {
         GetAllSalMali(mohitId);
     }
 
-    const changeSalMali = (salId) => {
+    const changeSalMali = (event) => {
+
         console.log("change sal mali");
-        setSalMali(salId);
-        GetAllTankhah(salId)
+        var index = event.nativeEvent.target.selectedIndex;
+        console.log(event.nativeEvent.target[index].text);
+        console.log(event.target.value)
+
+        setSalText(event.nativeEvent.target[index].text);
+        // console.log(salId);
+        setSalMali(event.target.value);
+        GetAllTankhah(event.target.value)
     }
 
 
@@ -216,7 +245,7 @@ export const FilterReport = ({ getAllReports }) => {
                             <Col md="4" className="form-group">
                                 <div className="form-inline mt-3 mr-3">
                                     <label htmlFor="salMali">  سال مالی*:</label>
-                                    <FormSelect id="salMali" name="salMali" onChange={(e) => changeSalMali(e.target.value)} className='form-control'>
+                                    <FormSelect id="salMali" name="salMali" onChange={(e) => changeSalMali(e)} className='form-control'>
                                         <option value={""}>یک موردانتخاب کنید</option>
                                         {
                                             salMaliItems.map((item, index) => (
@@ -253,7 +282,7 @@ export const FilterReport = ({ getAllReports }) => {
                                     <DatePicker inputClass='form-control'
                                         ref={calendarRef}
                                         calendar={persian}
-                                        locale={persian_en}
+                                        locale={persian_fa}
                                         format={"YYYY/MM/DD"}
                                         value={dateFrom}
                                         onChange={convertFrom}
@@ -268,7 +297,7 @@ export const FilterReport = ({ getAllReports }) => {
                                     <DatePicker inputClass='form-control'
                                         ref={calendarRef}
                                         calendar={persian}
-                                        locale={persian_en}
+                                        locale={persian_fa}
                                         format={"YYYY/MM/DD"}
                                         value={dateTo}
                                         onChange={convertTo}

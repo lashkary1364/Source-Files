@@ -11,7 +11,8 @@ import axios from 'axios';
 import CurrencyInput from 'react-currency-input-field';
 import DatePicker, { DateObject } from "react-multi-date-picker"
 import persian from "react-date-object/calendars/persian"
-import persian_en from "react-date-object/locales/persian_fa"
+import persian_en from "react-date-object/locales/persian_en"
+import persian_fa from "react-date-object/locales/persian_fa"
 import ReactLoading from 'react-loading';
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import 'react-toastify/dist/ReactToastify.css';
@@ -46,7 +47,8 @@ export const ExpenceDetail = () => {
     const [ok, setOk] = useState();
     const [tankhahSoratHazineH, setTankhahSoratHazineH] = useState();
     const [mohitId,setMohitId]=useState();
-
+    const[year,setYear]=useState(state.year);
+    const[salText,setSalText]=useState();
     const convert = (date, format = state.format) => {
 
         console.log(dateDetail);
@@ -58,7 +60,8 @@ export const ExpenceDetail = () => {
         }
 
         let object = { date, format }
-        setState(new DateObject(object).convert(persian, persian_en).format())
+        setState(new DateObject(object).convert(persian, persian_en).format());
+        setYear(new DateObject(object).convert(persian, persian_en).format("YYYY")); 
         setDateDetail(new DateObject(object).convert(persian, persian_en).format());
     }
 
@@ -98,6 +101,7 @@ export const ExpenceDetail = () => {
                 console.log(resultItems);
                 setTankhahSoratHazineH({ "status": resultItems.status })
                 setMohitId(response.data.mohidID);
+                setSalText(response.data.salMali);
                 GetAllSoratHazineSharh(response.data.mohidID);
             }).catch(function (error) {
 
@@ -220,6 +224,15 @@ export const ExpenceDetail = () => {
                     return;
                 }
 
+console.log(year);
+console.log(salText);
+                if(year!=salText){
+                    swal("توجه", " تاریخ و سال مالی یکسان نیست", "warning"); 
+                    return;
+                }
+
+
+
                 setRowIndex(rowIndex + 1);
                 const ids = rowGrid.map(object => {
                     return object.ID;
@@ -256,6 +269,10 @@ export const ExpenceDetail = () => {
                     swal("توجه", "این سند قابل ویرایش نیست", "warning")
                     return;
                 }
+                if(year!=salText){
+                    swal("توجه", " تاریخ و سال مالی یکسان نیست", "warning"); 
+                    return;
+                }
 
                 axios(
                     {
@@ -272,7 +289,7 @@ export const ExpenceDetail = () => {
                         const resultItems = response.data;
 
                         if (resultItems > 0) {
-                            swal("توجه", "برای این سند نامه صادر شده است و قابل حذف نمیباشد", "warning");
+                            swal("توجه", "برای این سند نامه صادر شده است و قابل ویرایش نمیباشد", "warning");
                             return;
                         } else {
                             axios(
@@ -302,6 +319,7 @@ export const ExpenceDetail = () => {
                                         "tozihat": data.tozihatDetail,
                                     }
                                 }).then(function (response) {
+                                 
                                     toast.success('عملیات با موفقیت انجام پذیرفت', {
                                         position: toast.POSITION.TOP_LEFT,
                                         className: 'toast-message'
@@ -309,7 +327,8 @@ export const ExpenceDetail = () => {
 
                                     setTimeout(() => {
                                         setIsAction(false);
-                                        history.push("/expencelist");
+                                        getAllSoratHazineDetail();
+                                       // history.push("/expencelist");
                                     }, 1000);
 
                                 }).catch(function (error) {
@@ -489,7 +508,7 @@ export const ExpenceDetail = () => {
                                                         <DatePicker inputClass='form-control'
                                                             ref={calendarRef}
                                                             calendar={persian}
-                                                            locale={persian_en}
+                                                            locale={persian_fa}
                                                             style={tarikhError == true ? { borderColor: "#c4183c", fontFamily: 'tahoma' } : { borderColor: "#e1e5eb", fontFamily: 'tahoma' }}
                                                             format={"YYYY/MM/DD"}
                                                             value={state}

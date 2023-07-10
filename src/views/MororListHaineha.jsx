@@ -12,10 +12,12 @@ import axios from 'axios';
 import { TankhahReportListExpense } from './TankhahReportListExpense';
 import swal from 'sweetalert';
 import { FilterReport } from './FilterReport';
-
+import { Spinner } from 'react-bootstrap';
 
 export const MororListHaineha = () => {
 
+    const [isLoading, setIsLoading] = useState(false);
+    const [isVisible,setIsVisible]=useState(false);
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
     // const [tankhahItems, setTankhahItems] = useState([]);
     // const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }));
@@ -226,15 +228,18 @@ export const MororListHaineha = () => {
 
     const getAllReports = (dateFrom, dateTo, salId, tankhahId, mandeKhat) => {
 
+        setIsLoading(true);
+        
         console.log("clicked ...........");
         console.log(dateFrom);
         console.log(dateTo);
         console.log(salId);
         console.log(tankhahId);
         console.log(mandeKhat);
-
         setDateFrom(dateFrom);
         setDateTo(dateTo);
+
+
         axios(
             {
                 url: serverAdress + "GetListHazineha",
@@ -255,16 +260,23 @@ export const MororListHaineha = () => {
                     "salId": salId,
                     "tankhahId": tankhahId,
                     "showMande": false
-
                 }
             }).then(function (response) {
                 // console.log("'chva ....")
                 // console.log(response)
                 const resultItems = response.data;
                 setItems([]);
+
                 resultItems.map((item) => {
                     setItems(items => [...items, { total: item.total, shomare: item.shomare, proname: item.proname, sharh: item.sharh, TankhahId: item.TankhahId, proname: item.proname, tankhah: item.tankhah, tarikh: item.tarikh }])
                 });
+
+
+                setIsVisible(true);
+                window.setTimeout(() => {
+                    setIsLoading(false);
+                }, 2000)
+
 
             }).catch(function (error) {
                 // handle error
@@ -272,6 +284,7 @@ export const MororListHaineha = () => {
                 // console.log(error);
                 // alert(error);
                 swal("error", error.message, "error");
+                setIsLoading(false);
             })
 
 
@@ -289,112 +302,17 @@ export const MororListHaineha = () => {
                 </Col>
 
                 <Col lg="12" >
-                    {/* <Card small className="mb-2">
-                        <ListGroup flush>
-                            <ListGroupItem >
-                                <form >
-                                    <Row>
-                                        <Col md="4" className="form-group">
-                                            <div className="form-inline mt-3 mr-3">
-                                                <label htmlFor="mohit"> محیط کاربری*:</label>
-                                                <FormSelect id="mohit" name="mohit" onChange={(e) => changeMohit(e.target.value)} className='form-control'>
-                                                    <option value={""}>یک موردانتخاب کنید</option>
-                                                    {
-                                                        mohitItems.map((item, index) => (
-                                                            <option key={index}
-                                                                value={item.MohitId}>
-                                                                {item.MohitOnvan}
-                                                            </option>
-                                                        ))
-                                                    }
-                                                </FormSelect>
-                                            </div>
-                                        </Col>
-                                        <Col md="4" className="form-group">
-                                            <div className="form-inline mt-3 mr-3">
-                                                <label htmlFor="salMali">  سال مالی*:</label>
-                                                <FormSelect id="salMali" name="salMali" onChange={(e) => changeSalMali(e.target.value)} className='form-control'>
-                                                    <option value={""}>یک موردانتخاب کنید</option>
-                                                    {
-                                                        salMaliItems.map((item, index) => (
-                                                            <option key={index}
-                                                                value={item.SalId}>
-                                                                {item.SalMali}
-                                                            </option>
-                                                        ))
-                                                    }
-                                                </FormSelect>
-                                            </div>
-                                        </Col>
-                                        <Col md="4" className="form-group">
-                                            <div className="form-inline mt-3 mr-3">
-                                                <label htmlFor="tankhah"> تنخواه*:</label>
-                                                <FormSelect id="tankhah" name="tankhah" onChange={(e) => changeTankhah(e.target.value)} className='form-control'>
-                                                    {
-                                                        tankhahItems.map((item, index) => (
-                                                            <option key={index}
-                                                                value={item.tankhah_ID}>
-                                                                {item.tankhah_name}
-                                                            </option>
-                                                        ))
-                                                    }
-                                                </FormSelect>
-                                            </div>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col md="3" className="form-group">
-                                            <div className="form-group mx-sm-3 mb-2">
-                                                <label htmlFor="mande" > از تاریخ :</label>
-                                                <DatePicker inputClass='form-control'
-                                                    ref={calendarRef}
-                                                    calendar={persian}
-                                                    locale={persian_en}
-                                                    format={"YYYY/MM/DD"}
-                                                    value={dateFrom}
-                                                    onChange={convertFrom}
-                                                    id="tarikh" name="tarikh"
-                                                    calendarPosition="bottom-right"
-                                                />
-                                            </div>
-                                        </Col>
-                                        <Col md="3" className="form-group">
-                                            <div className="form-group mx-sm-3 mb-2">
-                                                <label htmlFor="etebarMax">تا تاریخ:</label>
-                                                <DatePicker inputClass='form-control'
-                                                    ref={calendarRef}
-                                                    calendar={persian}
-                                                    locale={persian_en}
-                                                    format={"YYYY/MM/DD"}
-                                                    value={dateTo}
-                                                    onChange={convertTo}
-                                                    id="tarikh" name="tarikh"
-                                                    calendarPosition="bottom-right"
-                                                />
-                                            </div>
-                                        </Col>
-                                        <Col md="3" className="form-group">
-                                            <div className="form-group mx-sm-3 mb-2">
-                                                <input type="checkbox" name="vehicle1" onChange={(e) => setMandeKhat(e.target.checked)} />
-                                                <label > محاسبه مانده در خط</label>
-                                            </div>
-                                        </Col>
-                                        <Col md="3" className="form-group">
-                                            <Button theme="primary" className="mb-2 mr-1" type="submit" onClick={(e) => getAllTankhahMoror(e)} >
-                                                <span className='form-inline'>
-                                                    گزارش
-                                                </span>
-                                            </Button>
-                                        </Col>
-                                    </Row>
-                                </form>
-                            </ListGroupItem>
-                        </ListGroup>
-                    </Card> */}
-                    <FilterReport getAllReports={getAllReports}  ></FilterReport>
-
-                    <TankhahReportListExpense resultItems={items} dateFrom={dateFrom} dateTo={dateTo}></TankhahReportListExpense>
-
+                   <FilterReport getAllReports={getAllReports}  ></FilterReport>
+                    {
+                        isVisible?
+                        isLoading == true ? <div className="text-center" style={{ paddingTop: "50px", margin: "auto", width: "50%" }} >
+                            <Spinner animation="grow" size="sm" variant="primary" />
+                            <Spinner animation="grow" variant="primary" />
+                            <div className='text-primary text-center' dir="rtl">در حال بارگزاری...</div>
+                        </div> :
+                            <TankhahReportListExpense resultItems={items} dateFrom={dateFrom} dateTo={dateTo}></TankhahReportListExpense>
+                    :''
+                        }
                 </Col>
             </Row>
 

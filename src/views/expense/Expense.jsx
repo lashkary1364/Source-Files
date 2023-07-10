@@ -14,7 +14,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios';
 import DatePicker, { DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian"
-import persian_en from "react-date-object/locales/persian_fa"
+import persian_fa from "react-date-object/locales/persian_fa"
+import persian_en from "react-date-object/locales/persian_en"
 import 'react-toastify/dist/ReactToastify.css';
 import '../../assets/view-css.css';
 import { ToastContainer, toast } from 'react-toastify';
@@ -50,7 +51,9 @@ export const Expense = () => {
   const date = new DateObject({ calendar: persian, locale: persian_en })
   const [dateHeader, setDateHeader] = useState(date.format());
   const [status, setStatus] = useState(0);
-
+  const [salText,setSalText]=useState();
+  const[year,setYear]=useState(state.year);
+  
   const convert = (date, format = state.format) => {
     let object = { date, format }
     if (date == null)
@@ -58,7 +61,8 @@ export const Expense = () => {
         else {
             setTarikhError(false);
         }
-    setState(new DateObject(object).convert(persian, persian_en).format());   
+    setState(new DateObject(object).convert(persian, persian_en).format());  
+    setYear(new DateObject(object).convert(persian, persian_en).format("YYYY")); 
     setDateHeader(new DateObject(object).convert(persian, persian_en).format());
 
   }
@@ -216,11 +220,17 @@ export const Expense = () => {
     GetAllSalMali(mohitId);
   }
 
-  const changeSalMali = (salId) => {
+  const changeSalMali = (event) => {
     console.log("change sal mali");
-    formik.setFieldValue("salMali", salId);
-    setSalMali(salId);
-    GetAllTankhah(mohitId,salId)
+    
+    //setSalMali(salId);
+    var index = event.nativeEvent.target.selectedIndex;
+    console.log(event.nativeEvent.target[index].text);
+    console.log(event.target.value);
+    formik.setFieldValue("salMali", event.target.value);
+    setSalText(event.nativeEvent.target[index].text);
+    setSalMali(event.target.value);
+    GetAllTankhah(mohitId,event.target.value);
   }
 
   const validationSchema = Yup.object().shape({
@@ -250,6 +260,7 @@ export const Expense = () => {
     onSubmit: (data) => {
 
       switch (operation) {
+
         case 'add':
 
           return addSouratHazineHeader(data);
@@ -309,6 +320,10 @@ export const Expense = () => {
 
   const addSouratHazineHeader = (data) => {
 
+  if(year!=salText){
+      swal("توجه", " تاریخ و سال مالی یکسان نیست", "warning"); 
+      return;
+  }
     setIsAction(true);
     axios(
       {
@@ -422,7 +437,10 @@ export const Expense = () => {
   }
 
   const updateSouratHazineHeader = (data) => {
-
+    if(year!=salText){
+      swal("توجه", "بازه تاریخی و سال ملی یکسان نیست", "warning"); 
+      return;
+  }
     if (status != 0) {
       swal("توجه", "این سند قابل ویرایش نمی باشد", "warning");
       return;
@@ -529,7 +547,7 @@ export const Expense = () => {
                     </Col>
                     <Col md="4" className="form-group">
                       <label htmlFor="salMali">اتتخاب  سال مالی*:</label>
-                      <FormSelect id="salMali" name="salMali" onChange={(e) => changeSalMali(e.target.value)} className={'form-control' + (formik.errors.salMali && formik.touched.salMali ? ' is-invalid' : '')}
+                      <FormSelect id="salMali" name="salMali" onChange={(e) => changeSalMali(e)} className={'form-control' + (formik.errors.salMali && formik.touched.salMali ? ' is-invalid' : '')}
                         value={formik.values.salMali}>
                         <option value={""}>یک موردانتخاب کنید</option>
                         {
@@ -597,7 +615,7 @@ export const Expense = () => {
                         <DatePicker inputClass='form-control'
                           ref={calendarRef}
                           calendar={persian}
-                          locale={persian_en}
+                          locale={persian_fa}
                           style={tarikhError == true ? { borderColor: "#c4183c", fontFamily: 'tahoma' } : { borderColor: "#e1e5eb", fontFamily: 'tahoma' }}
                           format={"YYYY/MM/DD"}
                           value={state}

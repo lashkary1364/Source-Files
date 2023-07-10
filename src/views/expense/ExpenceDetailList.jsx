@@ -136,7 +136,6 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
 
   }
 
-
   const onSelectionChanged = useCallback(() => {
     var selectedRows = gridRef.current.api.getSelectedRows();
     setSelectedRow(selectedRows[0]);
