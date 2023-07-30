@@ -21,6 +21,8 @@ import { Rowing } from "@material-ui/icons";
 
 export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSouratHazineDetail }) => {
 
+  const [selected, setSelected] = useState(null);
+  const [visible, setVisible] = useState();
   const [isAction, setIsAction] = useState(false);
   const history = useHistory();
   const [selectedRow, setSelectedRow] = useState();
@@ -68,6 +70,10 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
 
   }, [gridData]);
 
+  useEffect(() => {
+    getWindowDimensions();
+  });
+
   const gridStyle = useMemo(() => ({ height: '600px', width: '100%', }), []);
 
   const defaultColDef = useMemo(() => ({
@@ -104,8 +110,8 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
       return;
     }
 
-   const newRow= rowData.filter(m=>m.State==0);
-    
+    const newRow = rowData.filter(m => m.State == 0);
+
     axios(
       {
         url: serverAdress + "InsertSoratHazineDetail",
@@ -117,7 +123,7 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
         },
         data: newRow,
       }).then(function (response) {
-       
+
         toast.success('عملیات با موفقیت انجام پذیرفت', {
           position: toast.POSITION.TOP_LEFT,
           className: 'toast-message'
@@ -143,6 +149,7 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
 
   const handleDelete = () => {
     console.log(selectedRow.SoratID);
+
     if (selectedRow.ok != 0) {
       swal("توجه", "این سند قابل حذف نیست", "warning");
       return;
@@ -172,17 +179,16 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
             icon: "warning",
             buttons: true,
             dangerMode: true,
-          })
-            .then((willDelete) => {
-              if (willDelete) {
+          }).then((willDelete) => {
+            if (willDelete) {
 
-                gridRef.current.api.redrawRows();
-                gridRef.current.api.redrawRows({ rowNodes: rowData });
-                deleteSouratHazineDetail(selectedRow.ID);
-              }
-              else {
-              }
-            });
+              gridRef.current.api.redrawRows();
+              gridRef.current.api.redrawRows({ rowNodes: rowData });
+              deleteSouratHazineDetail(selectedRow.ID);
+            }
+            else {
+            }
+          });
 
         }
       }).catch(function (error) {
@@ -194,9 +200,56 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
       });
   }
 
+  function getWindowDimensions() {
+    const { innerWidth: width, innerHeight: height } = window;
+    console.log({
+      width,
+      height
+    });
+
+    if (width <= 500) {
+      setVisible(false);
+    } else {
+      setVisible(true);
+    }
+
+    return {
+      width,
+      height
+    };
+
+  }
+
+  window.addEventListener('resize', function () {
+    setTimeout(function () {
+      if (window.innerWidth <= 500) {
+        //alert("window resize .....");
+        // gridOptions.setColumnDefs(mobileColumn);
+        // params.api.sizeColumnsToFit();
+
+        setVisible(false);
+      } else {
+        setVisible(true);
+      }
+
+
+    })
+  });
+
+  const handelChangeSoratId = (item) => {
+    console.log(item);
+    setSelectedRow([]);
+    setSelectedRow(item);
+    console.log("checked ....");
+    console.log("selectedRow");
+    console.log(selectedRow);
+    setSelected((prev) => (item === prev ? null : item));
+
+  }
+
+
 
   return (
-
     <Row>
       <Col lg="12" >
         <div style={{ borderStyle: "solid", padding: "10px", borderColor: "#d9d9d9" }}>
@@ -213,55 +266,87 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
               // console.log(selectedRow.State);
               if (selectedRow.State == 1)
                 editDetail(selectedRow, "edit");
-
               else
                 swal("توجه", "این ردیف در دیتابیس ذخیر نشده است دمیتوانید آن را حذف و دوباره وارد نمایید", "warning");
             }}>ویرایش</button>
             <button type="button" className="btn btn-secondary" onClick={handleDelete}>حذف</button>
           </div>
-          <div className="ag-theme-alpine mb-5" style={gridStyle}>
-            <div className="example-wrapper">
-              <div className="form-inline m-2">
-                <span className="mr-3">سایز صفحه</span>
-                <select className="form-contro mr-5" onChange={onPageSizeChanged} id="page-size" defaultValue={10}>
-                  <option value="10" >10</option>
-                  <option value="100">100</option>
-                  <option value="500">500</option>
-                  <option value="1000">1000</option>
-                </select>
-                <input
-                  type="text"
-                  className="form-control mr-5"
-                  onInput={onQuickFilterChanged}
-                  id="quickFilter"
-                  placeholder="جستجو..."
-                />
-              </div>
-            </div>
 
-            <AgGridReact direction="rtl" style={{ fontFamily: "IRANSans", height: '100%' }}
-              ref={gridRef}
-              rowSelection="single"
-              rowData={rowData}
-              defaultColDef={defaultColDef}
-              enableRtl="true"
-              columnDefs={columnDefs}
-              localeText={AG_GRID_LOCALE_FA}
-              pivotPanelShow={'always'}
-              pagination={true}
-              paginationPageSize={10}
-              paginationNumberFormatter={paginationNumberFormatter}
-              alwaysShowBothConditions={true}
-              caseSensitive={false}
-              checkboxSelection={true}
-              animateRows={true}
-              //onSelectionChanged={onSelectionChanged}
-              //  onCellClicked={onCellClicked}
-              //  onSelectionChanged={onSelectionChanged}
-              onSelectionChanged={onSelectionChanged}
-            >
-            </AgGridReact>
-          </div>
+          {visible ?
+            <div className="ag-theme-alpine mb-5" style={gridStyle}>
+              <div className="example-wrapper">
+                <div className="form-inline m-2">
+                  <span className="mr-3">سایز صفحه</span>
+                  <select className="form-contro mr-5" onChange={onPageSizeChanged} id="page-size" defaultValue={10}>
+                    <option value="10" >10</option>
+                    <option value="100">100</option>
+                    <option value="500">500</option>
+                    <option value="1000">1000</option>
+                  </select>
+                  <input
+                    type="text"
+                    className="form-control mr-5"
+                    onInput={onQuickFilterChanged}
+                    id="quickFilter"
+                    placeholder="جستجو..."
+                  />
+                </div>
+              </div>
+              <AgGridReact direction="rtl" style={{ fontFamily: "IRANSans", height: '100%' }}
+                ref={gridRef}
+                rowSelection="single"
+                rowData={rowData}
+                defaultColDef={defaultColDef}
+                enableRtl="true"
+                columnDefs={columnDefs}
+                localeText={AG_GRID_LOCALE_FA}
+                pivotPanelShow={'always'}
+                pagination={true}
+                paginationPageSize={10}
+                paginationNumberFormatter={paginationNumberFormatter}
+                alwaysShowBothConditions={true}
+                caseSensitive={false}
+                checkboxSelection={true}
+                animateRows={true}
+                //onSelectionChanged={onSelectionChanged}
+                //  onCellClicked={onCellClicked}
+                //  onSelectionChanged={onSelectionChanged}
+                onSelectionChanged={onSelectionChanged}
+              >
+              </AgGridReact>
+            </div>
+            :
+            <table dir="rtl" >
+              <thead>
+                <tr style={{ backgroundColor: "#d1d3d5" }} >
+                  <th scope="col" >ردیف</th>
+                  <th scope="col">شماره فاکتور</th>
+                  <th scope="col">تاریخ پرداخت </th>
+                  <th scope="col">مبلغ </th>
+                  <th scope="col">شرح</th>
+                  <th scope="col">توضیحات</th>
+                  <th scope="col">وضعیت</th>
+                </tr>
+              </thead>
+              <tbody  >
+                {
+                  rowData.map((item, index) => (
+                    <tr key={index}>
+                      <td scope="row" data-label="ردیف:"><input type="checkbox" checked={item === selected}  onChange={() => handelChangeSoratId(item)}></input></td>
+                      <td data-label="شماره فاکتور :">{item.ShomareBarge}</td>
+                      <td data-label="تاریخ پرداخت:">{item.TarikhPardakht}</td>
+                      <td data-label="مبلغ :">{item.Mablagh1}</td>
+                      <td data-label="شرح :">{item.Sharh}</td>
+                      <td data-label=" توضیحات :">{item.Tozihat}</td>
+                      <td data-label=" وضعیت :">{item.okDesc}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          }
+
+
         </div>
       </Col>
       <ToastContainer />

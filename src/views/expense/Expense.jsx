@@ -51,18 +51,18 @@ export const Expense = () => {
   const date = new DateObject({ calendar: persian, locale: persian_en })
   const [dateHeader, setDateHeader] = useState(date.format());
   const [status, setStatus] = useState(0);
-  const [salText,setSalText]=useState();
-  const[year,setYear]=useState(state.year);
-  
+  const [salText, setSalText] = useState();
+  const [year, setYear] = useState(state.year);
+
   const convert = (date, format = state.format) => {
     let object = { date, format }
     if (date == null)
-            setTarikhError(true);
-        else {
-            setTarikhError(false);
-        }
-    setState(new DateObject(object).convert(persian, persian_en).format());  
-    setYear(new DateObject(object).convert(persian, persian_en).format("YYYY")); 
+      setTarikhError(true);
+    else {
+      setTarikhError(false);
+    }
+    setState(new DateObject(object).convert(persian, persian_en).format());
+    setYear(new DateObject(object).convert(persian, persian_en).format("YYYY"));
     setDateHeader(new DateObject(object).convert(persian, persian_en).format());
 
   }
@@ -70,9 +70,9 @@ export const Expense = () => {
   useEffect(() => {
 
     GetAllMohit();
-   
+
     if (operation == "delete" || operation == "edit")
-    setInfo();
+      setInfo();
 
   }, []);
 
@@ -125,13 +125,13 @@ export const Expense = () => {
         resultItems.map(data => {
           setSalMaliItems(salMaliItems => [...salMaliItems, { SalId: data.salId, SalMali: data.salMali }]);
         });
-        
+
       }).catch(function (error) {
         swal("error", error.message, "error");
       })
   }
 
-  const GetAllTankhah = (mohitId , salId) => {
+  const GetAllTankhah = (mohitId, salId) => {
 
     console.log(mohitId);
     console.log(user.UserId);
@@ -164,8 +164,8 @@ export const Expense = () => {
   const GetAllTankhahInfo = (tankhahId) => {
 
     formik.setFieldValue("tankhah", tankhahId);
-   
-   
+
+
     axios(
       {
         url: serverAdress + `GetMohitId?tankhahId=${tankhahId}`,
@@ -222,7 +222,7 @@ export const Expense = () => {
 
   const changeSalMali = (event) => {
     console.log("change sal mali");
-    
+
     //setSalMali(salId);
     var index = event.nativeEvent.target.selectedIndex;
     console.log(event.nativeEvent.target[index].text);
@@ -230,7 +230,7 @@ export const Expense = () => {
     formik.setFieldValue("salMali", event.target.value);
     setSalText(event.nativeEvent.target[index].text);
     setSalMali(event.target.value);
-    GetAllTankhah(mohitId,event.target.value);
+    GetAllTankhah(mohitId, event.target.value);
   }
 
   const validationSchema = Yup.object().shape({
@@ -250,8 +250,8 @@ export const Expense = () => {
       tarikh: new Date() || null,
       sharh: '',
       tozihat: '',
-      salMali:'',
-      mohit:''
+      salMali: '',
+      mohit: ''
     },
     validationSchema,
     validateOnChange: true,
@@ -300,11 +300,11 @@ export const Expense = () => {
         formik.setFieldValue("sharh", response.data.sharh);
         formik.setFieldValue("tarikh", response.data.tarikh);
         formik.setFieldValue("shomare", response.data.shomare);
-        
+
         formik.setFieldValue("mohit", response.data.mohidID);
-        
-        GetAllSalMali(response.data.mohidID);  
-        GetAllTankhah(response.data.mohidID ,response.data.salID );       
+
+        GetAllSalMali(response.data.mohidID);
+        GetAllTankhah(response.data.mohidID, response.data.salID);
         setState(response.data.tarikh);
         setDateHeader(response.data.tarikh);
         setStatus(response.data.status);
@@ -312,7 +312,8 @@ export const Expense = () => {
         formik.setFieldValue("salMali", response.data.salID);
         formik.setFieldValue("tankhah", response.data.tankhah_ID);
         GetAllTankhahInfo(response.data.tankhah_ID);
-
+        setSalText(response.data.salMali);
+       // setSalMali(event.target.value);
       }).catch(function (error) {
         swal("error", error.message, "error");
       })
@@ -320,10 +321,10 @@ export const Expense = () => {
 
   const addSouratHazineHeader = (data) => {
 
-  if(year!=salText){
-      swal("توجه", " تاریخ و سال مالی یکسان نیست", "warning"); 
+    if (year != salText) {
+      swal("توجه", " تاریخ و سال مالی یکسان نیست", "warning");
       return;
-  }
+    }
     setIsAction(true);
     axios(
       {
@@ -437,10 +438,15 @@ export const Expense = () => {
   }
 
   const updateSouratHazineHeader = (data) => {
-    if(year!=salText){
-      swal("توجه", "بازه تاریخی و سال ملی یکسان نیست", "warning"); 
+    console.log("year");
+    console.log(year);
+    console.log(salText);
+    console.log("salText");
+
+    if (year != salText) {
+      swal("توجه", "بازه تاریخی و سال مالی یکسان نیست", "warning");
       return;
-  }
+    }
     if (status != 0) {
       swal("توجه", "این سند قابل ویرایش نمی باشد", "warning");
       return;

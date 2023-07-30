@@ -21,6 +21,7 @@
     "ag-grid-react": "^29.0.0",
     "babel-plugin-macros": "^3.1.0",
     "bootstrap-rtl": "^3.3.4",
+    "bootstrap-table-mobile": "^1.0.0",
     "bootstrap-v4-rtl": "^4.6.2-1",
     "bulma": "^0.9.4",
     "camelize": "^1.0.0",
@@ -70,7 +71,6 @@
     "shards-react": "^1.0.0",
     "sheetjs-style": "^0.15.8",
     "shortid": "^2.2.14",
-    "stimulsoft-reports-js": "^2023.2.1",
     "sweetalert": "^2.1.2",
     "yup": "^0.32.11"
   },

@@ -46,9 +46,9 @@ export const ExpenceDetail = () => {
     const [values, setValues] = React.useState(null);
     const [ok, setOk] = useState();
     const [tankhahSoratHazineH, setTankhahSoratHazineH] = useState();
-    const [mohitId,setMohitId]=useState();
-    const[year,setYear]=useState(state.year);
-    const[salText,setSalText]=useState();
+    const [mohitId, setMohitId] = useState();
+    const [year, setYear] = useState(state.year);
+    const [salText, setSalText] = useState();
     const convert = (date, format = state.format) => {
 
         console.log(dateDetail);
@@ -61,7 +61,7 @@ export const ExpenceDetail = () => {
 
         let object = { date, format }
         setState(new DateObject(object).convert(persian, persian_en).format());
-        setYear(new DateObject(object).convert(persian, persian_en).format("YYYY")); 
+        setYear(new DateObject(object).convert(persian, persian_en).format("YYYY"));
         setDateDetail(new DateObject(object).convert(persian, persian_en).format());
     }
 
@@ -78,12 +78,12 @@ export const ExpenceDetail = () => {
     useEffect(() => {
 
         getSouratHazineHeader();
-       
         getAllSoratHazineDetail();
 
     }, []);
 
     const getSouratHazineHeader = () => {
+
         axios(
             {
                 url: serverAdress + `GetAllSouratHazineHeader?souratId=${soratId}`,
@@ -150,7 +150,9 @@ export const ExpenceDetail = () => {
     }
 
     const GetAllSoratHazineSharh = (mohitId) => {
-       console.log(serverAdress + `GetAllSouratHazineSharh?mohitId=${mohitId}`);
+       
+        console.log(serverAdress + `GetAllSouratHazineSharh?mohitId=${mohitId}`);
+       
         axios(
             {
                 url: serverAdress + `GetAllSouratHazineSharh?mohitId=${mohitId}`,
@@ -224,10 +226,10 @@ export const ExpenceDetail = () => {
                     return;
                 }
 
-console.log(year);
-console.log(salText);
-                if(year!=salText){
-                    swal("توجه", " تاریخ و سال مالی یکسان نیست", "warning"); 
+                console.log(year);
+                console.log(salText);
+                if (year != salText) {
+                    swal("توجه", " تاریخ و سال مالی یکسان نیست", "warning");
                     return;
                 }
 
@@ -269,8 +271,8 @@ console.log(salText);
                     swal("توجه", "این سند قابل ویرایش نیست", "warning")
                     return;
                 }
-                if(year!=salText){
-                    swal("توجه", " تاریخ و سال مالی یکسان نیست", "warning"); 
+                if (year != salText) {
+                    swal("توجه", " تاریخ و سال مالی یکسان نیست", "warning");
                     return;
                 }
 
@@ -319,7 +321,7 @@ console.log(salText);
                                         "tozihat": data.tozihatDetail,
                                     }
                                 }).then(function (response) {
-                                 
+
                                     toast.success('عملیات با موفقیت انجام پذیرفت', {
                                         position: toast.POSITION.TOP_LEFT,
                                         className: 'toast-message'
@@ -328,7 +330,7 @@ console.log(salText);
                                     setTimeout(() => {
                                         setIsAction(false);
                                         getAllSoratHazineDetail();
-                                       // history.push("/expencelist");
+                                        // history.push("/expencelist");
                                     }, 1000);
 
                                 }).catch(function (error) {
@@ -469,7 +471,6 @@ console.log(salText);
 
     return (
         <Container fluid className="main-content-container px-4">
-
             <Row className="page-header mt-2 ">
                 <Col lg="12" >
                     <nav className="breadcrumb">
