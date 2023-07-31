@@ -24,7 +24,7 @@ import GetAllShomareName from "./ShomareName";
 
 
 export const ExpenseList = () => {
-
+  const [selected, setSelected] = useState(null);
   const [visible, setVisible] = useState(true);
   const history = useHistory();
   const [selectedRow, setSelectedRow] = useState();
@@ -468,6 +468,7 @@ export const ExpenseList = () => {
     console.log("selectedRow");
     console.log(selectedRow);
     setListId(item.soratID);
+    setSelected((prev) => (item === prev ? null : item));
   }
 
   function getWindowDimensions() {
@@ -610,8 +611,8 @@ export const ExpenseList = () => {
                 </AgGridReact>
               </div>
               :
-              <table dir="rtl" >
-                <thead>
+              <table dir="rtl" className="table table-bordered table-hover table-expense "  >
+                <thead className="thead-light">
                   <tr style={{ backgroundColor: "#d1d3d5" }} >
                     <th scope="col" >ردیف</th>
                     <th scope="col">شماره</th>
@@ -627,14 +628,14 @@ export const ExpenseList = () => {
                   {
                     rowData.map((item, index) => (
                       <tr key={index}>
-                        <td scope="row" data-label="ردیف:"><input type="checkbox" onChange={() => handelChangeSoratId(item)}></input></td>
-                        <td data-label="شماره :">{item.shomare}</td>
-                        <td data-label="شرح:">{item.sharh}</td>
-                        <td data-label="تاریخ :">{item.tarikh}</td>
-                        <td data-label="وضعیت :">{item.str_status}</td>
-                        <td data-label="شماره نامه :">{item.shomare_name}</td>
-                        <td data-label="تاریخ نامه :">{item.tarikh_name}</td>
-                        <td data-label="شماره سند :">{item.sanadID}</td>
+                        <td scope="row" data-label="ردیف:"><input type="checkbox" checked={item === selected} onChange={() => handelChangeSoratId(item)}></input></td>
+                        <td data-label="شماره :"  >{item.shomare}</td>
+                        <td data-label="شرح:" >{item.sharh}</td>
+                        <td data-label="تاریخ :" >{item.tarikh}</td>
+                        <td data-label="وضعیت :" >{item.str_status}</td>
+                        <td data-label="شماره نامه :"  >{item.shomare_name}</td>
+                        <td data-label="تاریخ نامه :"  >{item.tarikh_name}</td>
+                        <td data-label="شماره سند :" >{item.sanadID}</td>
                       </tr>
                     ))
                   }

@@ -182,9 +182,14 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
           }).then((willDelete) => {
             if (willDelete) {
 
-              gridRef.current.api.redrawRows();
-              gridRef.current.api.redrawRows({ rowNodes: rowData });
-              deleteSouratHazineDetail(selectedRow.ID);
+              if (visible) {
+                gridRef.current.api.redrawRows();
+                gridRef.current.api.redrawRows({ rowNodes: rowData });
+              } 
+                deleteSouratHazineDetail(selectedRow.ID);
+              
+
+
             }
             else {
             }
@@ -237,6 +242,7 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
   });
 
   const handelChangeSoratId = (item) => {
+
     console.log(item);
     setSelectedRow([]);
     setSelectedRow(item);
@@ -316,7 +322,7 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
               </AgGridReact>
             </div>
             :
-            <table dir="rtl" >
+            <table dir="rtl" className="table table-bordered table-hover table-expense "  >
               <thead>
                 <tr style={{ backgroundColor: "#d1d3d5" }} >
                   <th scope="col" >ردیف</th>
@@ -332,7 +338,7 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
                 {
                   rowData.map((item, index) => (
                     <tr key={index}>
-                      <td scope="row" data-label="ردیف:"><input type="checkbox" checked={item === selected}  onChange={() => handelChangeSoratId(item)}></input></td>
+                      <td scope="row" data-label="ردیف:"><input type="checkbox" checked={item === selected} onChange={() => handelChangeSoratId(item)}></input></td>
                       <td data-label="شماره فاکتور :">{item.ShomareBarge}</td>
                       <td data-label="تاریخ پرداخت:">{item.TarikhPardakht}</td>
                       <td data-label="مبلغ :">{item.Mablagh1}</td>
