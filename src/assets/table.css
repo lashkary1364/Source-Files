@@ -115,9 +115,12 @@ table {
   table > tbody > tr > td{
     border:1px solid rgb(40, 39, 39);
     text-align: center;
+    font-family: "B Nazanin" ;
+    font-size: 11.5pt;
   }
 
-  .table-expense>tbody > tr > td{
+  .table-expense >table>tbody>tr>td
+  {
     text-align: right;
     font-family: "B Nazanin" ;
     font-size: 11.5pt;

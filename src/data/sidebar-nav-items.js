@@ -79,7 +79,12 @@ export default function () {
       // '<i class="material-icons">error</i>',
       to: "/expenseTypes",
     },
-   
+    {
+      title: "گزارش مرور - لیست صورت هزینه ها",
+      htmlBefore: '<i class="material-icons">table_chart</i>',
+      // '<i class="material-icons">error</i>',
+      to: "/ListSoratHazineha",
+    },
     // {
     //   title: "دیتیل مدیریت هزینه",
     //   htmlBefore: '<i class="material-icons">error</i>',

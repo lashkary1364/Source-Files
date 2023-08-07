@@ -82,18 +82,12 @@ const Login = () => {
                     },
                 }).then(function (response) {
 
-
-                    // response.setHeader("Access-Control-Allow-Origin", "*");
-                    // response.setHeader("Access-Control-Allow-Credentials", "true");
-                    // response.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS, HEAD");
-                    // response.setHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, "
-                    //     + "Access-Control-Request-Method, Access-Control-Request-Headers, Authorization");
-                    if (response.data.isAdmin==true){
+                    if (response.data.isAdmin==true)
+                    {
                         swal("توجه" ,"این کاربر مجاز به ورود به سیستم تنخواه تحت وب نمی باشد", "warning");
                         return;
-                    }else{
-
                     }
+
                     console.log("response: ")
                     console.log(response.data);
                     console.log(response.data.access_token)
@@ -108,21 +102,20 @@ const Login = () => {
 
                     console.log("login token")
                     console.log(JSON.parse(sessionStorage.getItem("LoginTocken")).LastMohitName);
-                    const date = new DateObject({ calendar: persian })
-                    console.log(date.year)
+                    const date = new DateObject({calendar: persian});
+                    console.log(date.year);
                     sessionStorage.setItem("SalMali", date.year);
 
                     if (response.data.access_token != null) {
                         console.log("acess tocken");
                         console.log(response.data.access_token);
                         localStorage.setItem("access-tocken", response.data.access_token);
-                        window.location.replace('/home')
+                        window.location.replace('/home');
                         
                     } else {
                         setErrorFlag(true);
                     }
 
-                   
 
                 }).catch(function (error) {
                     // handle error
@@ -178,9 +171,7 @@ const Login = () => {
             }).then(function (response) {
 
                 console.log("response : ");
-                console.log(response.data);
-                
-               
+                console.log(response.data);                              
 
                 const resultItems = response.data;
 

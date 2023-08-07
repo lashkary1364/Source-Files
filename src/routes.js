@@ -31,6 +31,8 @@ import { MororListHaineha } from "./views/MororListHaineha";
 import { MororListDaryaftiha } from "./views/MororListDaryaftiha";
 import { MororListExpenseType } from "./views/MororListExpenseType";
 import { TankhahSodoreName } from "./views/TankhahSodoreName";
+import { MororRizHazine } from "./views/MororRizHazine";
+import { TankhahReportListHazineha } from "./views/TankhahReportListHazineha";
 export default [
   // {
   //   path: "/",
@@ -160,6 +162,14 @@ export default [
     layout: DefaultLayout,
     component: TankhahSodoreName
   },
- 
- 
+  {
+    path:"/ListSoratHazineha",
+    layout: DefaultLayout,
+    component: MororRizHazine
+  },
+  {
+    path:"/list",
+    layout: DefaultLayout,
+    component: TankhahReportListHazineha
+  },
 ];

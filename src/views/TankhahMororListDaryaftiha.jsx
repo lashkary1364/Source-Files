@@ -111,8 +111,6 @@ export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) =>
                         </tr>
                     </thead>
                     <tbody>
-                        {console.log("fffffjjjjjbbbb")}
-                        {console.log(resultItems)}
                         {
                             resultItems.length == 0 ? <tr><td className='text-center' colSpan={12}> داده ای برای نمایش وجود ندارد </td></tr> :
                                 resultItems.map((item, index) => 
