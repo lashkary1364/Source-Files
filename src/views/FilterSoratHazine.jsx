@@ -33,7 +33,7 @@ export const FilterSoratHazine = ({ getAllReports }) => {
     const [order, setOrder] = useState(1);
     const [salId, setSalId] = useState();
     const [sanadState, setSanadState] = useState(0);
-    const [values, setValues] = React.useState(null);
+    const [values, setValues] = React.useState([]);
     const [options, setOptions] = useState([]);
 
     useEffect(() => {

@@ -3,34 +3,138 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
+import { PrintListHeader } from './PrintListHeader';
+import { PrintListDetail } from './PrintListDetail';
 
 
 export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMablagh, sumTotal, sumTaeedShode, sumTaeedNashode }) => {
 
-  const [activeTab, setActiveTab] = useState('1');
+  const [activeTab, setActiveTab] = useState('listHeader');
+  const [selectedRow, setSelectedRow] = useState([]);
+  const [headerItems, setHeaderItems] = useState([]);
+
+  useEffect(() => {
+
+    console.log("report items ...")
+    console.log(reportItems);
+
+  }, [reportItems])
+
+
 
   useEffect(() => {
     toggle(activeTab);
   }, []);
 
-
   const toggle = (tab) => {
     if (activeTab == tab) {
+      console.log("tab");
+      console.log(tab);
       setActiveTab(tab);
     }
   }
 
+  useEffect(() => {
+    console.log("selected row 4444440")
+    console.log(headerItems);
+  }, [headerItems]);
+
+
+  const handelChangeSoratId = (item, checked) => {
+
+
+    console.log("item");
+    console.log(item);
+
+    if (checked) {
+
+      console.log("hhhhhhhhhhhhhhh");
+      console.log(item)
+      var details = [];
+      item.Details.map(i =>
+        details.push({
+          Mablagh: i.Mablagh,
+          Ok: i.Ok,
+          OkStr: i.OkStr,
+          Sharh: i.Sharh,
+          ShomareBarge: i.ShomareBarge,
+          ShomareSoratHazine: i.ShomareSoratHazine,
+          SoratID: i.SoratID,
+          TankhahName: i.TankhahName,
+          TarikhPardakht: i.TarikhPardakht,
+          Tozihat: i.Tozihat
+        })
+      )
+
+      setSelectedRow(i => [...i, {
+        TankhahName: item.TankhahName, Sharh: item.Sharh, Shomare: item.Shomare, ShomareName: item.ShomareName,
+        ShomareSanad: item.ShomareSanad, SoratID: item.SoratID, StrStatus: item.StrStatus, TaeedNashode: item.TaeedNashode
+        , ProjectName: item.ProjectName, TaeedShode: item.TaeedShode, Tarikh: item.Tarikh, TarikhName: item.TarikhName,
+        Total: item.Total,
+        Detials: details
+      }]);
+
+      setHeaderItems(i =>
+        [...i, {
+          TankhahName: item.TankhahName, Sharh: item.Sharh, Shomare: item.Shomare, ShomareName: item.ShomareName,
+          ShomareSanad: item.ShomareSanad, SoratID: item.SoratID, StrStatus: item.StrStatus, TaeedNashode: item.TaeedNashode
+          , ProjectName: item.ProjectName, TaeedShode: item.TaeedShode, Tarikh: item.Tarikh, TarikhName: item.TarikhName,
+          Total: item.Total,
+          Details: details
+        }]);
+
+      console.log("selectedRow");
+      console.log(selectedRow);
+    }
+    else {
+      const filters = selectedRow.filter(m => m.SoratID !== item.SoratID);
+      console.log("remove items");
+      console.log(filters);
+      setSelectedRow([]);
+      setHeaderItems([]);
+      setHeaderItems(filters);
+      setSelectedRow(filters);
+
+    }
+  }
+
+  const chapList = (e) => {
+    e.preventDefault();
+    console.log("ggggggggg");
+    alert("ok");
+    setActiveTab('printList');
+  }
+
+  const chapListDetail = (e) => {
+    e.preventDefault();
+    alert("detail");
+    setActiveTab('printListDetail');
+  }
 
 
   return (
-    <Tabs style={{ paddingRight: "20px", paddingTop: "20px" }}
-      defaultActiveKey="profile"
+
+    <Tabs defaultActiveKey="listHeader" activeKey={activeTab} onSelect={(k) => setActiveTab(k)}
       id="uncontrolled-tab-example"
       className="mb-3">
-      <Tab eventKey="home" title="لیست صورت هزینه ها" style={{ paddingRight: "20px" }} >
-        <table dir="rtl" >
+      <Tab eventKey="listHeader" title="لیست صورت هزینه ها"  >
+        <div className='form-inline'>
+          <button className="btn btn-primary mb-2 mr-1" onClick={(event) => chapList(event)} >
+            <FontAwesomeIcon icon={faFilePdf} className="text-warning mr-2" />
+            چاپ لیست
+          </button>
+          <button className="btn btn-primary mb-2 mr-1" onClick={(event) => chapListDetail(event)} >
+            <FontAwesomeIcon icon={faFilePdf} className="text-warning mr-2" />
+            چاپ لیست با جزییات
+          </button>
+        </div>
+
+        <table>
           <thead>
             <tr style={{ backgroundColor: "#d1d3d5" }}>
+              <th scope="col">انتخاب</th>
               <th scope="col">ردیف</th>
               <th scope="col">نام تنخواه</th>
               <th scope="col"> نام پروژه </th>
@@ -45,13 +149,13 @@ export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMabl
             </tr>
           </thead>
           <tbody>
-            {console.log("report items")}
-            {console.log(reportItems)}
-           {
+            {
               reportItems.length == 0 ? <tr><td className='text-center' colSpan={11}> داده ای برای نمایش وجود ندارد </td></tr> :
                 reportItems.map((item, index) =>
-
                   <tr key={index}>
+                    <td scope="row" data-label="ردیف:">
+                      <input type="checkbox" onChange={(e) => handelChangeSoratId(item, e.target.checked)}></input>
+                    </td>
                     <td scope="row" data-label="ردیف:">{index + 1}</td>
                     <td data-label="نام تنخواه:">{item.TankhahName}</td>
                     <td data-label="نام پروژه">{item.ProjectName}</td>
@@ -64,11 +168,10 @@ export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMabl
                     <td data-label="جمع مبلغ تایید نشده:">{item.TaeedNashode.toLocaleString()}</td>
                     <td data-label="جمع کل مبلغ صورت هزینه:">{item.Total.toLocaleString()}</td>
                   </tr>
-
                 )
             }
             <tr>
-              <td colSpan="8"></td>
+              <td colSpan="9"></td>
               <td data-label="جمع مبلغ تایید شده :">{sumTaeedShode.toLocaleString()}</td>
               <td data-label="جمع مبلغ تایید نشده :">{sumTaeedNashode.toLocaleString()}</td>
               <td data-label="جمع کل مبلغ :">{sumTotal.toLocaleString()}</td>
@@ -76,8 +179,8 @@ export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMabl
           </tbody>
         </table>
       </Tab>
-      <Tab eventKey="profile" title="لیست ریزهزینه ها" style={{ padding: "20px" }}  >
-        <table dir="rtl" >
+      <Tab eventKey="ListDetail" title="لیست ریزهزینه ها"   >
+        <table  >
           <thead>
             <tr style={{ backgroundColor: "#d1d3d5" }}>
               <th scope="col">ردیف</th>
@@ -92,8 +195,6 @@ export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMabl
             </tr>
           </thead>
           <tbody>
-            {console.log("report riz items")}
-            {console.log(reportRizItems)}
             {
               reportRizItems.length == 0 ? <tr><td className='text-center' colSpan={9}> داده ای برای نمایش وجود ندارد </td></tr> :
                 reportRizItems.map((item, index) =>
@@ -108,7 +209,6 @@ export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMabl
                     <td data-label="وضعیت:">{item.OkStr}</td>
                     <td data-label="مبلغ :">{item.Mablagh}</td>
                   </tr>
-
                 )
             }
             <tr>
@@ -117,6 +217,14 @@ export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMabl
             </tr>
           </tbody>
         </table>
+      </Tab>
+      <Tab eventKey="printList" title="چاپ لیست">
+        <PrintListHeader headerItems={headerItems} sumTaeedNashode={sumTaeedNashode} sumTaeedShode={sumTaeedShode} sumTotal={sumTotal}></PrintListHeader>
+      </Tab>
+      <Tab eventKey="printListDetail" title="چاپ لیست با جزییات"   >
+
+        <PrintListDetail headerItems={headerItems}></PrintListDetail>
+
       </Tab>
     </Tabs>
 

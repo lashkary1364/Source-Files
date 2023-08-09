@@ -8,6 +8,7 @@ import swal from 'sweetalert';
 import { Spinner } from 'react-bootstrap';
 import { FilterSoratHazine } from "./FilterSoratHazine";
 
+
 export const MororRizHazine = () => {
 
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
@@ -19,14 +20,16 @@ export const MororRizHazine = () => {
     const [sumTaeedNaShose, setSumTaeedNaShode] = useState(0);
     const [sumTotal, setSumTotal] = useState(0);
     const [sumMablagh, setSumMablagh] = useState(0);
+    const [details, setDetails] = useState([]);
 
 
 
-    // useEffect(() => {
-    //   console.log("use effect report items ....")
-    //   console.log(reportItems);
+    useEffect(() => {
+     
+        console.log("8777777777")
+        console.log(reportItems);
 
-    // }, [reportItems])
+    }, [reportItems])
     
     const getAllReports = (data) => {
 
@@ -56,10 +59,28 @@ export const MororRizHazine = () => {
                 var sumTaeedNashode = 0;
                 var sumTotal = 0;
                 setReportItems([]);
+                 var detailItems=[];
                 resultItems.map(data => (
+                   detailItems=[],
+                    data.details.map(i =>                      
+                        detailItems.push({Mablagh: i.mablagh,
+                            Ok: i.ok,
+                            OkStr: i.okStr,
+                            Sharh: i.sharh,
+                            ShomareBarge: i.shomareBarge,
+                            ShomareSoratHazine: i.shomareSoratHazine,
+                            SoratID: i.soratID,
+                            TankhahName: i.tankhahName,
+                            TarikhPardakht: i.tarikhPardakht,
+                            Tozihat: i.tozihat})
+                    ),
+                       console.log("detailItems"),
+                       console.log(detailItems),                     
+
                     sumTaeedShode += data.taeed_shode,
                     sumTaeedNashode += data.taeed_Nashode,
                     sumTotal += data.total,
+
                     setReportItems(reportItems => [...reportItems, {
                         TankhahName: data.tankhah_name,
                         Sharh: data.sharh, Shomare: data.shomare,
@@ -67,19 +88,12 @@ export const MororRizHazine = () => {
                         StrStatus: data.str_status, TaeedNashode: data.taeed_Nashode, ProjectName: data.projectName,
                         TaeedShode: data.taeed_shode,
                         Tarikh: data.tarikh, TarikhName: data.tarikh_name,
-                        Total: data.total
+                        Total: data.total,
+                        Details: detailItems
+
                     }])
-
                 ));
-                console.log(sumTaeedShode);
-                console.log(sumTaeedNashode);
-                console.log(sumTotal);
-
-                setSumTaeedShode(sumTaeedShode);
-                setSumTaeedNaShode(sumTaeedNashode);
-                setSumTotal(sumTotal);
-                setIsVisible(true);
-              
+             
 
             }).catch(function (error) {
                 swal("error", error.message, "error");
@@ -126,10 +140,10 @@ export const MororRizHazine = () => {
                 setIsLoading(false);
             })
 
-            window.setTimeout(()=>{
-                 setIsLoading(false);
-            },1000)
-           
+        window.setTimeout(() => {
+            setIsLoading(false);
+        }, 1000)
+
 
     }
 
@@ -150,7 +164,7 @@ export const MororRizHazine = () => {
                             <Spinner animation="grow" variant="primary" />
                             <div className='text-primary text-center' dir="rtl">در حال بارگزاری...</div>
                         </div> :
-                            <TankhahReportListHazineha reportItems={reportItems} reportRizItems={reportRizItems}   sumMablagh={sumMablagh}  sumTotal={sumTotal} sumTaeedNashode={sumTaeedNaShose} sumTaeedShode={sumTaeedShose} ></TankhahReportListHazineha>
+                            <TankhahReportListHazineha reportItems={reportItems} reportRizItems={reportRizItems} sumMablagh={sumMablagh} sumTotal={sumTotal} sumTaeedNashode={sumTaeedNaShose} sumTaeedShode={sumTaeedShose} ></TankhahReportListHazineha>
                         : ''
                     }
                 </Col>
