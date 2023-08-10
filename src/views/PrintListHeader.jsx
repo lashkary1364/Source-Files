@@ -11,7 +11,7 @@ import { useDownloadExcel, DownloadTableExcel } from "react-export-table-to-exce
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileExcel, faFilePdf, faFileExport } from '@fortawesome/free-solid-svg-icons';
 
-export const PrintListHeader = ({headerItems , sumTaeedNashode , sumTaeedShode , sumTotal}) => {
+export const PrintListHeader = ({headerItems , sumTaeedNashode , sumTaeedShode , sumTotal , data}) => {
 
     const fileType = "application/vnd.openxmlformats-officedocumnet.spreadsheetml.sheet;charset=UTF-8";
     const fileExtension = ".xlsx";
@@ -26,9 +26,6 @@ export const PrintListHeader = ({headerItems , sumTaeedNashode , sumTaeedShode ,
         FileSaver.saveAs(data, "exportexcel" + fileExtension);
       };
     
-    
-
-      
 
   return (
     <div>  <div className="form-inline">
@@ -41,20 +38,20 @@ export const PrintListHeader = ({headerItems , sumTaeedNashode , sumTaeedShode ,
       />
     </div>
 
-    <div>
+    {/* <div>
       <button onClick={(e) => exportToExcel(e)} type="button" className="btn btn-primary mb-2 mr-1">
         <FontAwesomeIcon icon={faFileExport} className="text-warning mr-2" />
         خروجی اکسل
       </button>
-    </div>
+    </div> */}
 
   </div>
   <div ref={ref} className="table-to-xls" style={{ margin: "10px" }}>
-    <div className="border-tankhah-header p-2">
-      <h4>محیط کاربری اولیه</h4>
-      <h5>چاپ لیست صورت هزینه</h5>
-      <h6>لیست صورت هزینه از تاریخ 1402/01/01 الی تاریخ 1402/05/09</h6>
-    </div>
+    <div className="border-tankhah-header p-2" >
+      <h4 style={{fontFamily: "b nazanin"}}>{data?.MohitName}</h4>
+      <h5 style={{fontFamily: "b nazanin"}}>چاپ لیست صورت هزینه</h5>
+      {data?.FromDate!=null && data?.ToDate!=null ?  <h6 style={{fontFamily: "b nazanin"}}><span>لیست صورت هزینه از تاریخ</span><span>{"   "+data?.FromDate+"  "}</span><span>تا تاریخ</span><span>{"   "+data?.ToDate}</span></h6>:'' }
+      </div>
     <table  >
       <thead>
         <tr style={{ backgroundColor: "#d1d3d5" }}>

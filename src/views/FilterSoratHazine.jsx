@@ -14,7 +14,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 
 
-export const FilterSoratHazine = ({ getAllReports }) => {
+export const FilterSoratHazine = ({ getAllReports  }) => {
 
 
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
@@ -23,7 +23,7 @@ export const FilterSoratHazine = ({ getAllReports }) => {
     const [dateTo, setDateTo] = useState(null);
     const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
     const calendarRef = useRef();
-    const tozihatRef = useRef();   
+    const tozihatRef = useRef();
     const [mohitItems, setMohitItems] = useState([]);
     const [mohitId, setMohitId] = useState();
     const [salMaliItems, setSalMaliItems] = useState([]);
@@ -35,6 +35,11 @@ export const FilterSoratHazine = ({ getAllReports }) => {
     const [sanadState, setSanadState] = useState(0);
     const [values, setValues] = React.useState([]);
     const [options, setOptions] = useState([]);
+    const [mohitName, setMohitName] = useState("");
+    const [parameter,setParameter]=useState({MohitName:"" , FromDate:"" , ToDate:""});
+
+
+
 
     useEffect(() => {
         GetAllMohit();
@@ -84,7 +89,7 @@ export const FilterSoratHazine = ({ getAllReports }) => {
     //         })
     // }
 
-  
+
     const getAllProjects = (mohitId) => {
         axios(
             {
@@ -106,7 +111,7 @@ export const FilterSoratHazine = ({ getAllReports }) => {
                     setProjectItems(projectItems => [...projectItems, { ProjectId: data.projectID, ProjectName: data.projectName }]);
                 });
 
-              
+
                 console.log("project items ...");
                 console.log(projectItems);
 
@@ -135,6 +140,9 @@ export const FilterSoratHazine = ({ getAllReports }) => {
             return;
         }
 
+        parameter.FromDate=dateFrom;
+        parameter.ToDate=dateTo;
+
         var data = {
             "MohitId": parseInt(mohitId),
             "SalId": parseInt(salId),
@@ -146,7 +154,8 @@ export const FilterSoratHazine = ({ getAllReports }) => {
             "Sharh": values.name,
             "SanadState": parseInt(sanadState),  //sanadState,
             "Tozihat": tozihatRef.current.value,
-            "Orederd": parseInt(order) //order
+            "Orederd": parseInt(order), //order ,
+            "MohitName":mohitName
         }
 
         console.log("data ...")
@@ -222,13 +231,16 @@ export const FilterSoratHazine = ({ getAllReports }) => {
 
     }
 
-    const changeMohit = (mohitId) => {
+    const changeMohit = (e) => {
+        var index = e.nativeEvent.target.selectedIndex;
         console.log("change mohit ...")
         console.log(mohitId);
-        setMohitId(mohitId);
-        GetAllSalMali(mohitId);
-        getAllProjects(mohitId);
-        GetAllSoratHazineSharh(mohitId);
+        setMohitId(e.target.value);
+        GetAllSalMali(e.target.value);
+        getAllProjects(e.target.value);
+        GetAllSoratHazineSharh(e.target.value);
+        setMohitName(e.nativeEvent.target[index].text);
+        parameter.MohitName=e.nativeEvent.target[index].text;
     }
 
     const changeSalMali = (event) => {
@@ -312,7 +324,7 @@ export const FilterSoratHazine = ({ getAllReports }) => {
                             <Col md="3" className="form-group">
                                 <div className="form-inline mt-3 mr-3">
                                     <label style={{ width: "30%" }} htmlFor="mohit"> محیط کاربری*:</label>
-                                    <FormSelect id="mohit" style={{ width: "70%" }} name="mohit" onChange={(e) => changeMohit(e.target.value)} className='form-control' selectedIndex={0}>
+                                    <FormSelect id="mohit" style={{ width: "70%" }} name="mohit" onChange={(e) => changeMohit(e)} className='form-control' selectedIndex={0}>
                                         <option value={""}>یک موردانتخاب کنید</option>
                                         {
                                             mohitItems.map((item, index) => (
@@ -363,7 +375,7 @@ export const FilterSoratHazine = ({ getAllReports }) => {
                             <Col md="3" className="form-group">
                                 <div className="form-inline mt-3 mr-3">
                                     <label htmlFor="project" style={{ width: "30%" }}> وضعیت صورت هزینه :</label>
-                                    <FormSelect style={{ width: "70%" }} id="project" name="project" onChange={(e) => changesoratHazineState()} className='form-control'>
+                                    <FormSelect style={{ width: "70%" }} id="project" name="project" onChange={(e) => changesoratHazineState(e)} className='form-control'>
                                         <option value="2" >
                                             همه
                                         </option>
@@ -417,7 +429,7 @@ export const FilterSoratHazine = ({ getAllReports }) => {
                             <Col md="3" className="form-group">
                                 <div className="form-inline mt-3 mr-3">
                                     <label htmlFor="sanad" style={{ width: "30%" }}> وضعیت سند :</label>
-                                    <FormSelect id="sanadId" style={{ width: "70%" }} name="sanadId" onChange={(e) => changeSanad()} className='form-control'>
+                                    <FormSelect id="sanadId" style={{ width: "70%" }} name="sanadId" onChange={(e) => changeSanad(e)} className='form-control'>
                                         <option value="0">
                                             همه
                                         </option>
@@ -435,17 +447,17 @@ export const FilterSoratHazine = ({ getAllReports }) => {
                             <Col md="3" className="form-group">
                                 <div className="form-inline mt-3 mr-3">
                                     <label htmlFor="mande" style={{ width: "30%" }} > مرتب سازی بر اساس  :</label>
-                                    <FormSelect id="project" name="project" onChange={(e) => changeOrder(e.target.value)} className='form-control' style={{ width: "70%" }}>
+                                    <FormSelect id="project" name="project" onChange={(e) => changeOrder(e)} className='form-control' style={{ width: "70%" }}>
                                         <option value="1">
                                             شماره - صعودی
                                         </option>
-                                        <option value="1">
+                                        <option value="2">
                                             شماره - نزولی
                                         </option>
-                                        <option value="2">
+                                        <option value="3">
                                             تاریخ - صعودی
                                         </option>
-                                        <option value="3">
+                                        <option value="4">
                                             تاریخ - نزولی
                                         </option>
                                     </FormSelect>

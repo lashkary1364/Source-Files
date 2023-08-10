@@ -9,20 +9,23 @@ import { PrintListHeader } from './PrintListHeader';
 import { PrintListDetail } from './PrintListDetail';
 
 
-export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMablagh, sumTotal, sumTaeedShode, sumTaeedNashode }) => {
+export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMablagh, sumTotal, sumTaeedShode, sumTaeedNashode ,data}) => {
 
   const [activeTab, setActiveTab] = useState('listHeader');
   const [selectedRow, setSelectedRow] = useState([]);
   const [headerItems, setHeaderItems] = useState([]);
+  const [chapListState,setChapListState]=useState(true);
+  const [chapListDetailState,setChapListDetailState]=useState(true);
 
   useEffect(() => {
 
     console.log("report items ...")
     console.log(reportItems);
 
+    console.log("data");
+    console.log(data);
+
   }, [reportItems])
-
-
 
   useEffect(() => {
     toggle(activeTab);
@@ -73,7 +76,7 @@ export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMabl
         ShomareSanad: item.ShomareSanad, SoratID: item.SoratID, StrStatus: item.StrStatus, TaeedNashode: item.TaeedNashode
         , ProjectName: item.ProjectName, TaeedShode: item.TaeedShode, Tarikh: item.Tarikh, TarikhName: item.TarikhName,
         Total: item.Total,
-        Detials: details
+        Details: details
       }]);
 
       setHeaderItems(i =>
@@ -88,15 +91,15 @@ export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMabl
       console.log("selectedRow");
       console.log(selectedRow);
     }
-    else {
+    else
+    {
       const filters = selectedRow.filter(m => m.SoratID !== item.SoratID);
       console.log("remove items");
       console.log(filters);
-      setSelectedRow([]);
-      setHeaderItems([]);
+      // setSelectedRow([]);
+      // setHeaderItems([]);
       setHeaderItems(filters);
       setSelectedRow(filters);
-
     }
   }
 
@@ -105,17 +108,18 @@ export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMabl
     console.log("ggggggggg");
     alert("ok");
     setActiveTab('printList');
+    setChapListState(false);
   }
 
   const chapListDetail = (e) => {
     e.preventDefault();
     alert("detail");
     setActiveTab('printListDetail');
+    setChapListDetailState(false);
   }
 
 
   return (
-
     <Tabs defaultActiveKey="listHeader" activeKey={activeTab} onSelect={(k) => setActiveTab(k)}
       id="uncontrolled-tab-example"
       className="mb-3">
@@ -130,7 +134,6 @@ export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMabl
             چاپ لیست با جزییات
           </button>
         </div>
-
         <table>
           <thead>
             <tr style={{ backgroundColor: "#d1d3d5" }}>
@@ -218,13 +221,11 @@ export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMabl
           </tbody>
         </table>
       </Tab>
-      <Tab eventKey="printList" title="چاپ لیست">
-        <PrintListHeader headerItems={headerItems} sumTaeedNashode={sumTaeedNashode} sumTaeedShode={sumTaeedShode} sumTotal={sumTotal}></PrintListHeader>
+      <Tab eventKey="printList" title="چاپ لیست" disabled={chapListState}>
+        <PrintListHeader headerItems={headerItems} sumTaeedNashode={sumTaeedNashode} sumTaeedShode={sumTaeedShode} sumTotal={sumTotal} data={data}></PrintListHeader>
       </Tab>
-      <Tab eventKey="printListDetail" title="چاپ لیست با جزییات"   >
-
-        <PrintListDetail headerItems={headerItems}></PrintListDetail>
-
+      <Tab eventKey="printListDetail" title="چاپ لیست با جزییات" disabled={chapListDetailState}>
+        <PrintListDetail headerItems={headerItems} data={data}></PrintListDetail>
       </Tab>
     </Tabs>
 

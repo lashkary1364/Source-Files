@@ -16,25 +16,28 @@ export const MororRizHazine = () => {
     const [isVisible, setIsVisible] = useState(true);
     const [reportItems, setReportItems] = useState([]);
     const [reportRizItems, setReportRizItems] = useState([]);
-    const [sumTaeedShose, setSumTaeedShode] = useState(0);
-    const [sumTaeedNaShose, setSumTaeedNaShode] = useState(0);
+    const [sumTaeedShode, setSumTaeedShode] = useState(0);
+    const [sumTaeedNaShode, setSumTaeedNaShode] = useState(0);
     const [sumTotal, setSumTotal] = useState(0);
     const [sumMablagh, setSumMablagh] = useState(0);
     const [details, setDetails] = useState([]);
-
+    const [data, setData] = useState();
 
 
     useEffect(() => {
-     
+
         console.log("8777777777")
         console.log(reportItems);
 
     }, [reportItems])
-    
+
+
     const getAllReports = (data) => {
+
 
         console.log("data ...");
         console.log(data);
+        setData(data);
         setReportItems([]);
         setReportRizItems([]);
         setIsLoading(true);
@@ -59,11 +62,12 @@ export const MororRizHazine = () => {
                 var sumTaeedNashode = 0;
                 var sumTotal = 0;
                 setReportItems([]);
-                 var detailItems=[];
+                var detailItems = [];
                 resultItems.map(data => (
-                   detailItems=[],
-                    data.details.map(i =>                      
-                        detailItems.push({Mablagh: i.mablagh,
+                    detailItems = [],
+                    data.details.map(i =>
+                        detailItems.push({
+                            Mablagh: i.mablagh,
                             Ok: i.ok,
                             OkStr: i.okStr,
                             Sharh: i.sharh,
@@ -72,10 +76,11 @@ export const MororRizHazine = () => {
                             SoratID: i.soratID,
                             TankhahName: i.tankhahName,
                             TarikhPardakht: i.tarikhPardakht,
-                            Tozihat: i.tozihat})
+                            Tozihat: i.tozihat
+                        })
                     ),
-                       console.log("detailItems"),
-                       console.log(detailItems),                     
+                    console.log("detailItems"),
+                    console.log(detailItems),
 
                     sumTaeedShode += data.taeed_shode,
                     sumTaeedNashode += data.taeed_Nashode,
@@ -93,8 +98,11 @@ export const MororRizHazine = () => {
 
                     }])
                 ));
-             
 
+                setSumTaeedNaShode(sumTaeedNashode);
+                setSumTaeedShode(sumTaeedShode);
+                setSumTotal(sumTotal);
+                
             }).catch(function (error) {
                 swal("error", error.message, "error");
                 setIsLoading(false);
@@ -164,7 +172,7 @@ export const MororRizHazine = () => {
                             <Spinner animation="grow" variant="primary" />
                             <div className='text-primary text-center' dir="rtl">در حال بارگزاری...</div>
                         </div> :
-                            <TankhahReportListHazineha reportItems={reportItems} reportRizItems={reportRizItems} sumMablagh={sumMablagh} sumTotal={sumTotal} sumTaeedNashode={sumTaeedNaShose} sumTaeedShode={sumTaeedShose} ></TankhahReportListHazineha>
+                            <TankhahReportListHazineha reportItems={reportItems} reportRizItems={reportRizItems} sumMablagh={sumMablagh} sumTotal={sumTotal} sumTaeedNashode={sumTaeedNaShode} sumTaeedShode={sumTaeedShode} data={data}></TankhahReportListHazineha>
                         : ''
                     }
                 </Col>
