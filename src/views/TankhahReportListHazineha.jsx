@@ -105,15 +105,12 @@ export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMabl
 
   const chapList = (e) => {
     e.preventDefault();
-    console.log("ggggggggg");
-    alert("ok");
     setActiveTab('printList');
     setChapListState(false);
   }
 
   const chapListDetail = (e) => {
     e.preventDefault();
-    alert("detail");
     setActiveTab('printListDetail');
     setChapListDetailState(false);
   }

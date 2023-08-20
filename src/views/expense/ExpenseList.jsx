@@ -100,7 +100,7 @@ export const ExpenseList = () => {
       console.table(rowData);
     }).catch(function (error) {
       console.log("axois error: " + error);
-      alert(error);
+      swal("error", error.message, "error");
     })
   }
 
