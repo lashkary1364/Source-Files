@@ -19,7 +19,8 @@ const PrivateRoute = () => {
                 isAuth == true ?
                     routes.map((route, index) => {
                         return (
-                            <Route
+                            // <React.Suspense key={index} fallback={<span>loading ...</span>}>
+       <Route
                                 key={index}
                                 path={route.path}
                                 exact={route.exact}
@@ -30,6 +31,9 @@ const PrivateRoute = () => {
                                         </route.layout>
                                     );
                                 })}></Route>
+
+                            // </React.Suspense>
+                     
 
                         )
                     })

@@ -5,26 +5,18 @@ import React, { useState } from "react";
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import axios from 'axios'
-import {
-    FormSelect
-} from "shards-react";
 import { useEffect } from 'react';
-import { useCallback } from 'react';
 import persian from "react-date-object/calendars/persian"
-//import persian_fa from "react-date-object/locales/persian_fa"
-import DatePicker, { DateObject } from "react-multi-date-picker";
-import {
-    useHistory
-} from 'react-router-dom';
+import { DateObject } from "react-multi-date-picker";
 import swal from 'sweetalert';
 
 const Login = () => {
 
-    const history = useHistory();
+
     const [ErrorFlag, setErrorFlag] = useState(false);
     const [mohitItems, setMohitItems] = useState([]);
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
-    const [resultItems] = [];
+    const [errorMessage, setErrorMessage] = useState("");
 
     const validationSchema = Yup.object().shape({
         userName: Yup.string().required('فیلد نام کاربری اجباری است'),
@@ -50,22 +42,17 @@ const Login = () => {
         {
             userName: '',
             password: '',
-            // mohit: ''
-            //email: '',
-            //password: '',
-            // confirmPassword: '',
-            // acceptTerms: false,
         },
         validationSchema,
         // validateOnChange: false,
         // validateOnBlur: false,
-        onSubmit: (data) => {           
-           console.log({
-            "UserName": data.userName,
-            "UserPasss": data.password,
-            "Imei": "1",
-           // "LastMohitId":parseInt(data.mohit)
-        })
+        onSubmit: (data) => {
+            console.log({
+                "UserName": data.userName,
+                "UserPasss": data.password,
+                "Imei": "1",
+
+            })
             axios(
                 {
                     url: serverAdress + 'login',
@@ -75,16 +62,20 @@ const Login = () => {
                         "UserName": data.userName,
                         "UserPasss": data.password,
                         "Imei": "1",
-                        // "LastMohitId":parseInt(data.mohit)
                     },
                     headers: {
                         'Content-Type': 'application/json',
                     },
                 }).then(function (response) {
-
-                    if (response.data.isAdmin==true)
-                    {
-                        swal("توجه" ,"این کاربر مجاز به ورود به سیستم تنخواه تحت وب نمی باشد", "warning");
+                    console.log("response");
+                    console.log(response);
+                    if(response.data==401){
+                        setErrorFlag(true);
+                        setErrorMessage("نام کاربری یا رمز عبور نادرست است");
+                        return false;
+                    }else
+                    if (response.data.isAdmin == true) {
+                        swal("توجه", "این کاربر مجاز به ورود به سیستم تنخواه تحت وب نمی باشد", "warning");
                         return;
                     }
 
@@ -92,17 +83,17 @@ const Login = () => {
                     console.log(response.data);
                     console.log(response.data.access_token)
 
-                    sessionStorage.setItem("LoginTocken" , JSON.stringify({
+                    sessionStorage.setItem("LoginTocken", JSON.stringify({
                         userFirstName: response.data.userFName,
                         userLastName: response.data.userLName,
                         UserId: response.data.userId,
                         userTocken: response.data.access_token,
-                        LastMohitName:response.data.lastMohitName
+                        LastMohitName: response.data.lastMohitName
                     }));
 
                     console.log("login token")
                     console.log(JSON.parse(sessionStorage.getItem("LoginTocken")).LastMohitName);
-                    const date = new DateObject({calendar: persian});
+                    const date = new DateObject({ calendar: persian });
                     console.log(date.year);
                     sessionStorage.setItem("SalMali", date.year);
 
@@ -111,9 +102,10 @@ const Login = () => {
                         console.log(response.data.access_token);
                         localStorage.setItem("access-tocken", response.data.access_token);
                         window.location.replace('/home');
-                        
+
                     } else {
                         setErrorFlag(true);
+                        setErrorMessage("نام کاربری یا رمز عبور نادرست است")
                     }
 
 
@@ -121,71 +113,48 @@ const Login = () => {
                     // handle error
                     setErrorFlag(true);
                     console.log("axois error: " + error);
-                    console.log(ErrorFlag);
+                    swal("error", error.message, "error");
+                    setErrorMessage(error.message)
                     localStorage.clear();
+
                 })
         }
 
     });
 
-    // useEffect(() => {
 
-    //     getWorkEnvironment();
+    // const getWorkEnvironment = () => {
 
-    // }, []);
+    //     setMohitItems([])
+    //     axios(
+    //         {
+    //             url: serverAdress + `GetAllWorkEnvironment`,
+    //             method: "get",
+    //             headers:
+    //             {
+    //                 //Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
+    //                 'Cache-Control': 'no-cache',
+    //                 'Pragma': 'no-cache',
+    //                 'Expires': '0',
+    //             }
+    //         }).then(function (response) {
 
-    // useEffect(() => {
-    //     getWorkEnvironment();
+    //             console.log("response : ");
+    //             console.log(response.data);                              
 
+    //             const resultItems = response.data;
 
-    // }, [formik.values.userName], [formik.values.password])
+    //             resultItems.map((data) => {
+    //                 setMohitItems(mohitItems => [...mohitItems, { Id: data.mohitID, Name: data.fullMohitOnvan }]);
+    //             });
 
-
-
-    useEffect(
-        () => {
-            console.log("gggggggggggggggg11111111111")
-            mohitItems.map(data => {
-                console.log(data.Id);
-                console.log(data.Name)
-            })
-        },
-        [mohitItems],
-    )
-
-
-    const getWorkEnvironment = () => {
-
-        setMohitItems([])
-        axios(
-            {
-                url: serverAdress + `GetAllWorkEnvironment`,
-                method: "get",
-                headers:
-                {
-                    //Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache',
-                    'Expires': '0',
-                }
-            }).then(function (response) {
-
-                console.log("response : ");
-                console.log(response.data);                              
-
-                const resultItems = response.data;
-
-                resultItems.map((data) => {
-                    setMohitItems(mohitItems => [...mohitItems, { Id: data.mohitID, Name: data.fullMohitOnvan }]);
-                });
-
-            }).catch(function (error) {
-                setErrorFlag(true);
-                // handle error
-                console.log("axois error: ");
-                console.log(error)
-            })
-    }
+    //         }).catch(function (error) {
+    //             setErrorFlag(true);
+    //             // handle error
+    //             console.log("axois error: ");
+    //             console.log(error)
+    //         })
+    // }
 
 
     // const handleChangeUserName = (value) => {
@@ -205,26 +174,9 @@ const Login = () => {
             <div className="container-login100">
                 <div className="wrap-login100" style={{ padding: "0px", paddingBottom: "60px" }}>
                     <label height="100%" width="100%" runat="server"></label>
-                    <div style={{ width: "500px", height: "215px", margin: "auto", marginTop: "40px", textAlign: "center" }}>
-                        <label className="login100-form-title" style={{ margin: "auto", marginBottom: "0px", paddingBottom: "25px", direction: "rtl", color: "white", fontFamily: "IRANSans", fontSize: "20px" }}>اطلاعیه ها</label>
-                        <div style={{ textAlign: "right", marginTop: "0px" }}>
-                            <span style={{ color: "white", fontWeight: "500", fontSize: "13px", fontFamily: "IRANSans" }}>. ١.كليه عمليات مربوط به ثبت ورود و خروج و تسهيم كاركرد در همان روز انجام مي گردد</span>
-                            <br />
-                            <span style={{ color: "white", fontWeight: "500", fontSize: "12px", fontFamily: "IRANSans" }}>.٢.درصورت مشكل درعدم ثبت پشتيباني سيستم توسط خانم رستمي تايك ساعت بعدانجام مي گردد</span>
-                            <br />
-                            <span style={{ color: "white", fontWeight: "500", fontSize: "12px", fontFamily: "IRANSans" }}>. ٣.در قسمت ورود اطلاعات جديد محل خدمت همان محل حضور فيزيكي شماست</span>
-                            <br />
-                            <span style={{ color: "white", fontWeight: "500", fontSize: "12px", fontFamily: "IRANSans" }}>. ٤.در تسهيم كاركرد قسمت نام شركت همان فعاليتي هست كه در طي روز كاركرد داشته ايد</span>
-                            <br />
-                            <span style={{ color: "white", fontWeight: "500", fontSize: "12px", fontFamily: "IRANSans" }}>. ٥.عنوان قرارداد و عنوان فعاليت با توجه به محاسبه بهاي تمام شده به دقت و صحيح وارد شود</span>
-                            <br />
-                            <span style={{ color: "white", fontWeight: "500", fontSize: "12px", fontFamily: "IRANSans" }}>. ٦.مرخصي ها در موعد مقرر و با تاييد سرپرست انجام شود</span>
-                        </div>
-                    </div>
-
                     <form className="login100-form validate-form" style={{ margin: "auto", marginTop: "40px" }} onSubmit={formik.handleSubmit} >
                         <span className="login100-form-title" style={{ color: "white", fontFamily: "IRANSans", fontSize: "20px" }}>
-                           ورود به سامانه تنخواه گردان
+                            ورود به سامانه تنخواه گردان
                         </span>
                         <div className={formik.errors.userName && formik.touched.userName ? 'wrap-input100 validate-input alert-validate' : ' wrap-input100 validate-input'} style={{ direction: "rtl", fontSize: "20px", fontFamily: "IRANSans" }} data-validate="نام کاربری ضروری می باشد">
                             <input name="userName" className="input100" onChange={formik.handleChange} value={formik.values.userName} id="userName" type="text" placeholder="نام کاربری" style={{ direction: "rtl", height: "40px", fontFamily: "IRANSans" }} />
@@ -242,7 +194,7 @@ const Login = () => {
                         </div>
                         {
                             ErrorFlag == true ?
-                                <div style={{ direction: "rtl", color: "red", textAlign: "right" }}><i className='fa fa-warning pl-2'></i><span>نام کاربری یا رمز عبور اشتباه میباشد</span></div>
+                                <div style={{ direction: "rtl", color: "red", textAlign: "right" }}><i className='fa fa-warning pl-2'></i><span>{errorMessage}</span></div>
                                 :
                                 ''
                         }

@@ -10,19 +10,19 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import '../src/login/css/fontiran.css'
 import './assets/ag-grid.css'
 import PrivateRoute from "./PrivateRoute";
-import {Home2} from './home2'
-import { NotFound } from "./views/NotFound";
-import { Picker } from "./views/Picker";
+
 
 // import { ToastProvider } from 'react-toast-notifications'
 
 export default () => (
 
-  <Router basename={process.env.REACT_APP_BASENAME || ""}>
-    <div>
-    {/* <ToastProvider> */}
-      <PrivateRoute></PrivateRoute>
-      {/* {routes.map((route, index) => {
+  // <React.Suspense fallback={<span>loading ...</span> }>
+
+    <Router basename={process.env.REACT_APP_BASENAME || ""}>
+      <div>
+        {/* <ToastProvider> */}
+        <PrivateRoute></PrivateRoute>
+        {/* {routes.map((route, index) => {
   return (
     <PrivateRoute
       key={index}
@@ -39,12 +39,16 @@ export default () => (
   );
 })} */}
 
-      <Route path="/" key={100000} exact component={Login} />
-      {/* <Route path="/picker" key={100000} exact component={Picker} /> */}
-      {/* <Route path="*" component={NotFound}></Route> */}
-      {/* <Route path="/home2" key={100001} exact component={Home2} /> */}
-      {/* </ToastProvider> */}
-    </div>
+        <Route path="/" key={100000} exact component={Login} />
+        {/* <Route path="/picker" key={100000} exact component={Picker} /> */}
+        {/* <Route path="*" component={NotFound}></Route> */}
+        {/* <Route path="/home2" key={100001} exact component={Home2} /> */}
+        {/* </ToastProvider> */}
+      </div>
 
-  </Router>
+    </Router>
+
+
+  // </React.Suspense>
+
 );
