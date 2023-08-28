@@ -32,6 +32,11 @@ export const MororRizHazine = () => {
         setReportItems([]);
         setReportRizItems([]);
         setIsLoading(true);
+
+
+
+
+        
         axios(
             {
                 url: serverAdress + `GetAllReportSoratHazine`,

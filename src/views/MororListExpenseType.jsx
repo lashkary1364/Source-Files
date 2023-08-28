@@ -19,11 +19,10 @@ import { Spinner } from 'react-bootstrap';
 
 
 
-export const MororListExpenseType = () => {
+export const MororListExpenseType = () => { 
 
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
     const [tankhahItems, setTankhahItems] = useState([]);
-    const state = useState(new DateObject({ calendar: persian, locale: persian_en }));
     const [dateFrom, setDateFrom] = useState(new DateObject({ calendar: persian, locale: persian_en }).format());
     const [dateTo, setDateTo] = useState(new DateObject({ calendar: persian, locale: persian_en }).format());
     const user = JSON.parse(sessionStorage.getItem("LoginTocken"));
@@ -35,17 +34,19 @@ export const MororListExpenseType = () => {
     const [options, setOptions] = useState([]);
     const [values, setValues] = React.useState(null);
     const mohitId = sessionStorage.getItem("mohitId");
-    const salId = sessionStorage.getItem("salId");
+    const salId = sessionStorage.getItem("salId");    
+    const salText = sessionStorage.getItem("salMali");
+    const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_fa }));
     const [isLoading, setIsLoading] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const [yearFrom, setYearFrom] = useState(state.year);
     const [yearTo, setYearTo] = useState(state.year);
-    const salText = sessionStorage.getItem("salMali");
+
 
     useEffect(() => {
 
-        GetAllTankhah();
-        GetAllSoratHazineSharh();
+       GetAllTankhah();
+       GetAllSoratHazineSharh();
 
     }, []);
 
@@ -65,7 +66,11 @@ export const MororListExpenseType = () => {
         validateOnBlur: true,
         isInitialValid: true,
         onSubmit: (data) => {
-
+            console.log("kkkkkkk")
+            console.log(yearTo)
+            console.log(yearFrom);
+            console.log(salText);
+            console.log(dateFrom.year);
             if (tankhahId == undefined || dateFrom == undefined || dateTo == undefined) {
                 swal("error", "وارد کردن تنخواه و بازه تاریخی و شرح الزامی است", "warning");
                 return;
@@ -99,7 +104,7 @@ export const MororListExpenseType = () => {
             setDateFromError(false);
         }
         setYearFrom(new DateObject(object).convert(persian, persian_en).format("YYYY"));
-        // setState(new DateObject(object).convert(persian, persian_en).format());
+        setState(new DateObject(object).convert(persian, persian_en).format());
         setDateFrom(new DateObject(object).convert(persian, persian_en).format())
     }
 
@@ -112,7 +117,7 @@ export const MororListExpenseType = () => {
         }
 
         setYearTo(new DateObject(object).convert(persian, persian_en).format("YYYY"));
-        //setState(new DateObject(object).convert(persian, persian_en).format());
+        setState(new DateObject(object).convert(persian, persian_en).format());
         setDateTo(new DateObject(object).convert(persian, persian_en).format())
     }
 
@@ -172,7 +177,6 @@ export const MororListExpenseType = () => {
                         markaz2: data.markaz2,
                         markaz3: data.markaz3
                     }]);
-
                 });
 
             }).catch(function (error) {

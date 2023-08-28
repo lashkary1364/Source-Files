@@ -14,7 +14,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 
 
-export const FilterSoratHazine = ({ getAllReports  }) => {
+export const FilterSoratHazine = ({ getAllReports }) => {
 
 
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
@@ -34,33 +34,34 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
     const [values, setValues] = React.useState([]);
     const [options, setOptions] = useState([]);
     const [mohitName, setMohitName] = useState("");
-    const [parameter,setParameter]=useState({MohitName:"" , FromDate:"" , ToDate:""});
-
-
+    const [parameter, setParameter] = useState({ MohitName: "", FromDate: "", ToDate: "" });
+    const [yearFrom, setYearFrom] = useState(null);
+    const [yearTo, setYearTo] = useState(null);
+    const salMali = sessionStorage.getItem("salMali");
 
 
     useEffect(() => {
         getAllProjects();
         GetAllSoratHazineSharh();
-       
+
     }, []);
 
     const convertFrom = (date, format = state.format) => {
         let object = { date, format }
         setState(new DateObject(object).convert(persian, persian_en).format());
         console.log(new DateObject(object).convert(persian, persian_en).format("YYYY"));
-        // setYearFrom(new DateObject(object).convert(persian, persian_en).format("YYYY"));
+        setYearFrom(new DateObject(object).convert(persian, persian_en).format("YYYY"));
         setDateFrom(new DateObject(object).convert(persian, persian_en).format());
     }
 
     const convertTo = (date, format = state.format) => {
         let object = { date, format }
         setState(new DateObject(object).convert(persian, persian_en).format());
-        // setYearTo(new DateObject(object).convert(persian, persian_en).format("YYYY"));
+        setYearTo(new DateObject(object).convert(persian, persian_en).format("YYYY"));
         setDateTo(new DateObject(object).convert(persian, persian_en).format());
     }
 
-   
+
 
     const getAllProjects = () => {
         axios(
@@ -94,26 +95,34 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
 
     }
 
-    useEffect(() => {
-        console.log("project items ...");
-        console.log(projectItems);
-    }, [projectItems])
+
 
 
     const getAllReport = (e) => {
 
         e.preventDefault();
 
-        console.log(parseInt(user.userId));
-        console.log(values.name);
+       
+        console.log(yearTo);
+        console.log(yearFrom);
 
-        if (salId == undefined || mohitId == undefined) {
-            swal("توجه", "وارد کردن محیط کاربری و سال مالی الزامی است", "warning");
+        if (dateFrom > dateTo) {
+            swal("توجه", "بازه تاریخی درست وارد نشده است", "warning");
             return;
         }
 
-        parameter.FromDate=dateFrom;
-        parameter.ToDate=dateTo;
+        if (yearFrom != null && yearFrom != salMali) {
+            swal("توجه", "از تاریخ و سال ملی یکسان نیست", "warning");
+            return;
+        }
+        if (yearTo != null && yearTo != salMali) {
+            swal("توجه", "تا تاریخ و سال ملی یکسان نیست", "warning");
+            return;
+        }
+
+
+        parameter.FromDate = dateFrom;
+        parameter.ToDate = dateTo;
 
         var data = {
             "MohitId": parseInt(mohitId),
@@ -127,9 +136,9 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
             "SanadState": parseInt(sanadState),  //sanadState,
             "Tozihat": tozihatRef.current.value,
             "Orederd": parseInt(order), //order ,
-            "MohitName":mohitName
+            "MohitName": mohitName
         }
-     
+
         getAllReports(data);
     }
 
@@ -189,7 +198,7 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
                 });
 
             }).catch(function (error) {
-               swal("error", error.message, "error");
+                swal("error", error.message, "error");
             })
 
     }

@@ -22,7 +22,8 @@ export const MororListHaineha = () => {
 
         setIsLoading(true);   
         setDateTo(dateTo);
-
+        setDateFrom(dateFrom);
+        
 
         axios(
             {
@@ -99,7 +100,6 @@ export const MororListHaineha = () => {
                         }
                 </Col>
             </Row>
-
         </Container>
     )
 }

@@ -143,8 +143,7 @@ export const FilterReport = ({ getAllReports }) => {
                                         locale={persian_fa}
                                         format={"YYYY/MM/DD"}
                                         value={dateFrom}
-                                        onChange={convertFrom}
-                                        id="tarikh" name="tarikh"
+                                        onChange={convertFrom}                                     
                                         calendarPosition="bottom-right"
                                     />
                                 </div>
@@ -158,8 +157,7 @@ export const FilterReport = ({ getAllReports }) => {
                                         locale={persian_fa}
                                         format={"YYYY/MM/DD"}
                                         value={dateTo}
-                                        onChange={convertTo}
-                                        id="tarikh" name="tarikh"
+                                        onChange={convertTo}                                       
                                         calendarPosition="bottom-right"
                                     />
                                 </div>
