@@ -386,8 +386,7 @@ export const ExpenseList = () => {
             <Col md="4" className="form-group">
               <div className="form-inline mt-3 mr-3">
                 <label htmlFor="tankhah"> تنخواه*:</label>
-                <FormSelect id="tankhah" name="tankhah" onChange={(e) => getAllData(e.target.value)} className='form-control'
-                             >
+                <FormSelect id="tankhah" name="tankhah" onChange={(e) => getAllData(e.target.value)} className='form-control' >                        
                   <option value={""}>یک موردانتخاب کنید</option>
                   {
                     tankhahItems.map((item, index) => (

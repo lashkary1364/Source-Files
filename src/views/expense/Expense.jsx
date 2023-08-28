@@ -44,8 +44,8 @@ export const Expense = () => {
   const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
   const user = JSON.parse(sessionStorage.getItem("LoginTocken"));
   const salId=sessionStorage.getItem("salId");
-  const mohitId=sessionStorage.getItem("mohitId");
-  const salText =sessionStorage.getItem("salMali");
+  const salMali=sessionStorage.getItem("salMali");
+  const mohitId=sessionStorage.getItem("mohitId"); 
   const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }))
   const date = new DateObject({ calendar: persian, locale: persian_en })
   const [dateHeader, setDateHeader] = useState(date.format());
@@ -215,16 +215,12 @@ export const Expense = () => {
         formik.setFieldValue("tozihat", response.data.tozihat);
         formik.setFieldValue("sharh", response.data.sharh);
         formik.setFieldValue("tarikh", response.data.tarikh);
-        formik.setFieldValue("shomare", response.data.shomare);
-        formik.setFieldValue("mohit", response.data.mohidID);       
+        formik.setFieldValue("shomare", response.data.shomare);        
         GetAllTankhah(response.data.mohidID, response.data.salID);
         setState(response.data.tarikh);
         setDateHeader(response.data.tarikh);
         setStatus(response.data.status);      
-        formik.setFieldValue("salMali", response.data.salID);
-        formik.setFieldValue("tankhah", response.data.tankhah_ID);
-        GetAllTankhahInfo(response.data.tankhah_ID);
-            // setSalMali(event.target.value);
+        GetAllTankhahInfo(response.data.tankhah_ID);        
       }).catch(function (error) {
         swal("error", error.message, "error");
       })
@@ -232,7 +228,7 @@ export const Expense = () => {
 
   const addSouratHazineHeader = (data) => {
 
-    if (year != salText) {
+    if (year != salMali) {
       swal("توجه", "تاریخ و سال مالی یکسان نیست", "warning");
       return;
     }
@@ -264,7 +260,7 @@ export const Expense = () => {
           "tarikh": dateHeader,
           "sanadID": 0,
           "shomare_name": 0,
-          "salID": parseInt(salId),
+          "salID": parseInt(salMali),
           "tarikh_name": ""
         }
       }).then(function (response) {
@@ -355,7 +351,7 @@ export const Expense = () => {
     console.log(year);
   
 
-    if (year != salText) {
+    if (year != salMali) {
       swal("توجه", "بازه تاریخی و سال مالی یکسان نیست", "warning");
       return;
     }
@@ -396,7 +392,7 @@ export const Expense = () => {
               "tarikh": dateHeader,
               "sanadID": 0,
               "shomare_name": 0,
-              "salID": parseInt(salId),
+              "salID": parseInt(salMali),
               "tarikh_name": ""
             }
           }).then(function (response) {
