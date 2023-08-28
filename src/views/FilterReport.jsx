@@ -18,22 +18,20 @@ export const FilterReport = ({ getAllReports }) => {
     const [tankhahItems, setTankhahItems] = useState([]);
     const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_fa }));
     const [dateFrom, setDateFrom] = useState();
-    const [dateTo, setDateTo] = useState();
-    const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
+    const [dateTo, setDateTo] = useState();    
     const calendarRef = useRef();
-    const [salText,setSalText]=useState();
+    const salText=sessionStorage.getItem("salMali")
     const [yearFrom,setYearFrom]=useState();
     const [yearTo,setYearTo]=useState();
     const [tankhahId, setTankhahId] = useState();
     const [mandeKhat, setMandeKhat] = useState(false);
-    const [mohitItems, setMohitItems] = useState([]);
-    const [salMali, setSalMali] = useState([]);
-    const [mohitId, setMohitId] = useState();
-    const [salMaliItems, setSalMaliItems] = useState([]);
+    const salMali=sessionStorage.getItem("salMali");
+    const salId=sessionStorage.getItem("salId");
+    const mohitId=sessionStorage.getItem("salId");
+    const user = JSON.parse(sessionStorage.getItem("LoginTocken"));
 
     useEffect(() => {
-        GetAllMohit();
-        //GetCurrentFinanceYear();
+        GetAllTankhah();       
     }, []);
 
     const convertFrom = (date, format = state.format) => {
@@ -51,42 +49,14 @@ export const FilterReport = ({ getAllReports }) => {
         setDateTo(new DateObject(object).convert(persian, persian_en).format());
     }
 
-    // const GetCurrentFinanceYear = () => {
-    //     axios(
-    //         {
-    //             url: serverAdress + "GetFinanceYearById?salMali=" + parseInt(sessionStorage.getItem("SalMali")),
-    //             method: "get",
-    //             headers:
-    //             {
-    //                 Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-    //                 // 'Cache-Control': 'no-cache',
-    //                 // 'Pragma': 'no-cache',
-    //                 // 'Expires': '0',
-    //             }
-    //         }).then(function (response) {
-    //             if (response.data != null) {
-    //                 setDateFrom(response.data.salStart);
-    //                 setDateTo(response.data.salEnd);
-    //                 setSalId(response.data.salId);
-    //             }
-
-    //         }).catch(function (error) {
-    //             // handle error
-    //             //     console.log("axois error: ");
-    //             //     console.log(error);
-    //             //     alert(error);
-    //             swal("error", error.message, "error");
-    //         })
-    // }
-
-
     const changeTankhah = (tankhahId) => {
         setTankhahId(tankhahId);
     }
 
     const getAllReport = (e) => {
           e.preventDefault();
-        if (dateFrom==undefined || dateTo==undefined||tankhahId==undefined ||salMali.length==0){
+
+        if (dateFrom==undefined || dateTo==undefined||tankhahId==undefined ){
             swal("توجه", "وارد کردن تنخواه و تاریخ الزامی است", "warning"); 
             return;
         }
@@ -109,75 +79,15 @@ export const FilterReport = ({ getAllReports }) => {
 
         getAllReports(dateFrom, dateTo, salMali, tankhahId, mandeKhat);
     }
-
-    const GetAllMohit = () => {
-        console.log("user....");
-        console.log(user);
-        console.log(localStorage.getItem("access-tocken"));
-
-        axios(
-            {
-                url: serverAdress + `GetAllMohit?userId=${user.UserId}`,
-                method: "get",
-                headers:
-                {
-                    Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache',
-                    'Expires': '0',
-                }
-            }).then(function (response) {
-
-                console.log("get all mohit ....")
-                const resultItems = response.data;
-                console.log(resultItems);
-                resultItems.map(data => {
-                    setMohitItems(mohitItems => [...mohitItems, { MohitId: data.mohitID, MohitOnvan: data.mohitOnvan }]);
-                });
-
-
-
-            }).catch(function (error) {
-                swal("error", error.message, "error");
-            })
-
-
-
-    }
-
-    const GetAllSalMali = (mohitId) => {
-        axios(
-            {
-                url: serverAdress + `GetAllSalMali?mohitId=${mohitId}`,
-                method: "get",
-                headers:
-                {
-                    Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache',
-                    'Expires': '0',
-                }
-            }).then(function (response) {
-
-                console.log("get all sal mali ....")
-                const resultItems = response.data;
-                resultItems.map(data => {
-                    setSalMaliItems(salMaliItems => [...salMaliItems, { SalId: data.salId, SalMali: data.salMali }]);
-                });
-
-            }).catch(function (error) {
-                swal("error", error.message, "error");
-            })
-    }
-
-    const GetAllTankhah = (salId) => {
+  
+    const GetAllTankhah = () => {
 
         console.log(mohitId)
-        console.log(user.UserId)
+        console.log(user.userId)
         console.log(salId)
         axios(
             {
-                url: serverAdress + `GetAllTankhah?mohitId=${mohitId}&userId=${user.UserId}&salId=${salId}`,
+                url: serverAdress + `GetAllTankhah?mohitId=${mohitId}&userId=${user.userId}&salId=${salId}`,
                 method: "get",
                 headers:
                 {
@@ -199,25 +109,6 @@ export const FilterReport = ({ getAllReports }) => {
             })
     }
 
-    const changeMohit = (mohitId) => {
-        console.log("change mohit ...")
-        console.log(mohitId);
-        setMohitId(mohitId);
-        GetAllSalMali(mohitId);
-    }
-
-    const changeSalMali = (event) => {
-
-        console.log("change sal mali");
-        var index = event.nativeEvent.target.selectedIndex;
-        console.log(event.nativeEvent.target[index].text);
-        console.log(event.target.value)
-
-        setSalText(event.nativeEvent.target[index].text);
-        // console.log(salId);
-        setSalMali(event.target.value);
-        GetAllTankhah(event.target.value)
-    }
 
 
     return (
@@ -226,40 +117,8 @@ export const FilterReport = ({ getAllReports }) => {
                 <ListGroupItem >
                     <form >
                         <Row>
-                            <Col md="4" className="form-group">
-                                <div className="form-inline mt-3 mr-3">
-                                    <label htmlFor="mohit"> محیط کاربری*:</label>
-                                    <FormSelect id="mohit" name="mohit" onChange={(e) => changeMohit(e.target.value)} className='form-control' selectedIndex={0}>
-                                        <option value={""}>یک موردانتخاب کنید</option>
-                                        {
-                                            mohitItems.map((item, index) => (
-                                                <option key={index}
-                                                    value={item.MohitId}>
-                                                    {item.MohitOnvan}
-                                                </option>
-                                            ))
-                                        }
-                                    </FormSelect>
-                                </div>
-                            </Col>
-                            <Col md="4" className="form-group">
-                                <div className="form-inline mt-3 mr-3">
-                                    <label htmlFor="salMali">  سال مالی*:</label>
-                                    <FormSelect id="salMali" name="salMali" onChange={(e) => changeSalMali(e)} className='form-control'>
-                                        <option value={""}>یک موردانتخاب کنید</option>
-                                        {
-                                            salMaliItems.map((item, index) => (
-                                                <option key={index}
-                                                    value={item.SalId}>
-                                                    {item.SalMali}
-                                                </option>
-                                            ))
-                                        }
-                                    </FormSelect>
-                                </div>
-                            </Col>
-                            <Col md="4" className="form-group">
-                                <div className="form-inline mt-3 mr-3">
+                            <Col md="3" className="form-group">
+                                <div className="form-inline mr-3">
                                     <label htmlFor="tankhah"> تنخواه*:</label>
                                     <FormSelect id="tankhah" name="tankhah" onChange={(e) => changeTankhah(e.target.value)} className='form-control'>
                                     <option value={""}>یک موردانتخاب کنید</option>
@@ -274,8 +133,7 @@ export const FilterReport = ({ getAllReports }) => {
                                     </FormSelect>
                                 </div>
                             </Col>
-                        </Row>
-                        <Row>
+                      
                             <Col md="3" className="form-group">
                                 <div className="form-group mx-sm-3 mb-2">
                                     <label htmlFor="mande" > از تاریخ :</label>

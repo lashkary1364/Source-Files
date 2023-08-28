@@ -27,8 +27,7 @@ export const TankhahReportListExpense = ({ resultItems, dateFrom, dateTo }) => {
         const data = new Blob([excelBuffer], { type: fileType });
         FileSaver.saveAs(data, "exportexcel" + fileExtension);
     };
-    const [mandeKhat, setMandeKhat] = useState(false);
-
+   
     const [inputValue, setInputValue] = useState({
         note: '',
         date: '',

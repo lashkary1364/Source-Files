@@ -7,7 +7,7 @@ export default  function GetAllMohit ()  {
     const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
    
 
-    const promise = axios.get( serverAdress + `GetAllMohit?userId=${user.UserId}`, {
+    const promise = axios.get( serverAdress + `GetAllMohit?userId=${user.userId}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
       }

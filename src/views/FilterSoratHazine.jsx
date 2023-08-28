@@ -21,17 +21,15 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
     const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_fa }));
     const [dateFrom, setDateFrom] = useState(null);
     const [dateTo, setDateTo] = useState(null);
-    const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
+    const user = JSON.parse(sessionStorage.getItem("LoginTocken"));
     const calendarRef = useRef();
     const tozihatRef = useRef();
-    const [mohitItems, setMohitItems] = useState([]);
-    const [mohitId, setMohitId] = useState();
-    const [salMaliItems, setSalMaliItems] = useState([]);
+    const mohitId = sessionStorage.getItem("mohitId");
     const [projectItems, setProjectItems] = useState([]);
     const [projectId, setProjectId] = useState(null);
     const [soratHazineState, setSoratHazineState] = useState(2);
     const [order, setOrder] = useState(1);
-    const [salId, setSalId] = useState();
+    const salId = sessionStorage.getItem("salId");
     const [sanadState, setSanadState] = useState(0);
     const [values, setValues] = React.useState([]);
     const [options, setOptions] = useState([]);
@@ -42,8 +40,9 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
 
 
     useEffect(() => {
-        GetAllMohit();
-        //GetCurrentFinanceYear();
+        getAllProjects();
+        GetAllSoratHazineSharh();
+       
     }, []);
 
     const convertFrom = (date, format = state.format) => {
@@ -61,36 +60,9 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
         setDateTo(new DateObject(object).convert(persian, persian_en).format());
     }
 
-    // const GetCurrentFinanceYear = () => {
-    //     axios(
-    //         {
-    //             url: serverAdress + "GetFinanceYearById?salMali=" + parseInt(sessionStorage.getItem("SalMali")),
-    //             method: "get",
-    //             headers:
-    //             {
-    //                 Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-    //                 // 'Cache-Control': 'no-cache',
-    //                 // 'Pragma': 'no-cache',
-    //                 // 'Expires': '0',
-    //             }
-    //         }).then(function (response) {
-    //             if (response.data != null) {
-    //                 setDateFrom(response.data.salStart);
-    //                 setDateTo(response.data.salEnd);
-    //                 setSalId(response.data.salId);
-    //             }
+   
 
-    //         }).catch(function (error) {
-    //             // handle error
-    //             //     console.log("axois error: ");
-    //             //     console.log(error);
-    //             //     alert(error);
-    //             swal("error", error.message, "error");
-    //         })
-    // }
-
-
-    const getAllProjects = (mohitId) => {
+    const getAllProjects = () => {
         axios(
             {
                 url: serverAdress + `tankhah_GetAllProjects?mohitId=${mohitId}`,
@@ -132,7 +104,7 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
 
         e.preventDefault();
 
-        console.log(parseInt(user.UserId));
+        console.log(parseInt(user.userId));
         console.log(values.name);
 
         if (salId == undefined || mohitId == undefined) {
@@ -146,7 +118,7 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
         var data = {
             "MohitId": parseInt(mohitId),
             "SalId": parseInt(salId),
-            "UserId": parseInt(user.UserId),
+            "UserId": parseInt(user.userId),
             "FromDate": dateFrom,
             "ToDate": dateTo,
             "ProjectId": parseInt(projectId),
@@ -157,103 +129,14 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
             "Orederd": parseInt(order), //order ,
             "MohitName":mohitName
         }
-
-        console.log("data ...")
-        console.log(data);
+     
         getAllReports(data);
     }
 
-    const GetAllMohit = () => {
 
-        console.log("user....");
-        console.log(user);
-        console.log(localStorage.getItem("access-tocken"));
 
-        axios(
-            {
-                url: serverAdress + `GetAllMohit?userId=${user.UserId}`,
-                method: "get",
-                headers:
-                {
-                    Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache',
-                    'Expires': '0',
-                }
-            }).then(function (response) {
 
-                console.log("get all mohit ....")
-                const resultItems = response.data;
-                console.log(resultItems);
 
-                resultItems.map(data => {
-                    setMohitItems(mohitItems => [...mohitItems, { MohitId: data.mohitID, MohitOnvan: data.mohitOnvan }]);
-                });
-
-                //  setMohitId(resultItems[0].mohitID);
-            }).catch(function (error) {
-                swal("error", error.message, "error");
-            })
-
-    }
-
-    const GetAllSalMali = (mohitId) => {
-        axios(
-            {
-                url: serverAdress + `GetAllSalMali?mohitId=${mohitId}`,
-                method: "get",
-                headers:
-                {
-                    Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache',
-                    'Expires': '0',
-                }
-            }).then(function (response) {
-
-                console.log("get all sal mali ....")
-                const resultItems = response.data;
-                resultItems.map(data => {
-                    setSalMaliItems(salMaliItems => [...salMaliItems, { SalId: data.salId, SalMali: data.salMali }]);
-                });
-
-                //  setSalId(resultItems[0].salId);
-            }).catch(function (error) {
-                swal("error", error.message, "error");
-            })
-    }
-
-    const GetAllTankhah = (salId) => {
-
-        console.log(mohitId)
-        console.log(user.UserId)
-        console.log(salId)
-
-    }
-
-    const changeMohit = (e) => {
-        var index = e.nativeEvent.target.selectedIndex;
-        console.log("change mohit ...")
-        console.log(mohitId);
-        setMohitId(e.target.value);
-        GetAllSalMali(e.target.value);
-        getAllProjects(e.target.value);
-        GetAllSoratHazineSharh(e.target.value);
-        setMohitName(e.nativeEvent.target[index].text);
-        parameter.MohitName=e.nativeEvent.target[index].text;
-    }
-
-    const changeSalMali = (event) => {
-
-        console.log("change sal mali");
-        // var index = event.nativeEvent.target.selectedIndex;
-        // console.log(event.nativeEvent.target[index].text);
-        //console.log(event.target.value);
-        // setSalText(event.nativeEvent.target[index].text);
-        // setSalMali(event.target.value);
-        setSalId(event.target.value);
-        GetAllTankhah(event.target.value);
-    }
 
     const changeProject = (event) => {
         console.log(event.target.value);
@@ -276,7 +159,7 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
         setValues(a);
     };
 
-    const GetAllSoratHazineSharh = (mohitId) => {
+    const GetAllSoratHazineSharh = () => {
 
         axios(
             {
@@ -306,11 +189,7 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
                 });
 
             }).catch(function (error) {
-                // handle error
-                // console.log("axois error: ");
-                // console.log(error);
-                // alert(error);
-                swal("error", error.message, "error");
+               swal("error", error.message, "error");
             })
 
     }
@@ -321,41 +200,7 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
                 <ListGroupItem >
                     <form>
                         <Row>
-                            <Col md="3" className="form-group">
-                                <div className="form-inline mt-3 mr-3">
-                                    <label style={{ width: "30%" }} htmlFor="mohit"> محیط کاربری*:</label>
-                                    <FormSelect id="mohit" style={{ width: "70%" }} name="mohit" onChange={(e) => changeMohit(e)} className='form-control' selectedIndex={0}>
-                                        <option value={""}>یک موردانتخاب کنید</option>
-                                        {
-                                            mohitItems.map((item, index) => (
-                                                <option key={index}
-                                                    value={item.MohitId}>
-                                                    {item.MohitOnvan}
-                                                </option>
-                                            ))
-                                        }
-                                    </FormSelect>
-                                </div>
-                            </Col>
-
-                            <Col md="3" className="form-group">
-                                <div className="form-inline mt-3 mr-3">
-                                    <label htmlFor="salMali" style={{ width: "30%" }} >  سال مالی*:</label>
-                                    <FormSelect id="salMali" style={{ width: "70%" }} name="salMali" onChange={(e) => changeSalMali(e)} className='form-control'>
-                                        <option value={""}>یک موردانتخاب کنید</option>
-                                        {
-                                            salMaliItems.map((item, index) => (
-                                                <option key={index}
-                                                    value={item.SalId}>
-                                                    {item.SalMali}
-                                                </option>
-                                            ))
-                                        }
-                                    </FormSelect>
-                                </div>
-                            </Col>
-
-                            <Col md="3" className="form-group">
+                            <Col md="4" className="form-group">
                                 <div className="form-inline mt-3 mr-3">
                                     <label style={{ width: "30%" }} htmlFor="project">انتخاب پروژه :</label>
                                     <FormSelect id="project" style={{ width: "70%" }} name="project" onChange={(e) => changeProject(e)} className='form-control'>
@@ -372,7 +217,7 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
                                 </div>
                             </Col>
 
-                            <Col md="3" className="form-group">
+                            <Col md="4" className="form-group">
                                 <div className="form-inline mt-3 mr-3">
                                     <label htmlFor="project" style={{ width: "30%" }}> وضعیت صورت هزینه :</label>
                                     <FormSelect style={{ width: "70%" }} id="project" name="project" onChange={(e) => changesoratHazineState(e)} className='form-control'>
@@ -391,9 +236,25 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
                                     </FormSelect>
                                 </div>
                             </Col>
+                            <Col md="4" className="form-group">
+                                <div className="form-inline mt-3 mr-3">
+                                    <label htmlFor="sanad" style={{ width: "30%" }}> وضعیت سند :</label>
+                                    <FormSelect id="sanadId" style={{ width: "70%" }} name="sanadId" onChange={(e) => changeSanad(e)} className='form-control'>
+                                        <option value="0">
+                                            همه
+                                        </option>
+                                        <option value="1">
+                                            دارای سند حسابداری
+                                        </option>
+                                        <option value="2">
+                                            بدون سند حسابداری
+                                        </option>
+                                    </FormSelect>
+                                </div>
+                            </Col>
                         </Row>
                         <Row>
-                            <Col md="3" className="form-group mt-3">
+                            <Col md="4" className="form-group mt-3">
                                 <div className="form-inline mr-3">
                                     <label htmlFor="mande"  > از تاریخ :</label>
                                     <DatePicker inputClass='form-control  ml-3'
@@ -405,12 +266,11 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
                                         onChange={convertFrom}
                                         id="tarikh" name="tarikh"
                                         calendarPosition="bottom-right"
-
                                     />
                                 </div>
                             </Col>
 
-                            <Col md="3" className="form-group mt-3" >
+                            <Col md="4" className="form-group mt-3" >
                                 <div className="form-inline  mr-3">
                                     <label htmlFor="etebarMax">تا تاریخ:</label>
                                     <DatePicker inputClass='form-control ml-3'
@@ -425,26 +285,7 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
                                     />
                                 </div>
                             </Col>
-
-                            <Col md="3" className="form-group">
-                                <div className="form-inline mt-3 mr-3">
-                                    <label htmlFor="sanad" style={{ width: "30%" }}> وضعیت سند :</label>
-                                    <FormSelect id="sanadId" style={{ width: "70%" }} name="sanadId" onChange={(e) => changeSanad(e)} className='form-control'>
-                                        <option value="0">
-                                            همه
-                                        </option>
-                                        <option value="1">
-                                            دارای سند حسابداری
-                                        </option>
-                                        <option value="2">
-                                            بدون سند حسابداری
-                                        </option>
-
-                                    </FormSelect>
-                                </div>
-                            </Col>
-
-                            <Col md="3" className="form-group">
+                            <Col md="4" className="form-group">
                                 <div className="form-inline mt-3 mr-3">
                                     <label htmlFor="mande" style={{ width: "30%" }} > مرتب سازی بر اساس  :</label>
                                     <FormSelect id="project" name="project" onChange={(e) => changeOrder(e)} className='form-control' style={{ width: "70%" }}>
@@ -465,13 +306,13 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
                             </Col>
                         </Row>
                         <Row>
-                            <Col md="3" className="form-group">
+                            <Col md="4" className="form-group">
                                 <div className="form-inline mt-3 mr-3">
                                     <label htmlFor="mande" style={{ width: "30%" }} > توضیحات :</label>
                                     <textarea type="text" className="form-control" ref={tozihatRef} style={{ width: "70%" }} rows="2" cols="50"></textarea>
                                 </div>
                             </Col>
-                            <Col md="3" className="form-group">
+                            <Col md="4" className="form-group">
                                 <div className="form-inline mt-3 mr-3">
                                     <label htmlFor="sharhDetail" style={{ width: "30%" }}>شرح *:</label>
                                     <Autocomplete style={{ width: "70%" }}
@@ -489,7 +330,7 @@ export const FilterSoratHazine = ({ getAllReports  }) => {
                                     />
                                 </div>
                             </Col>
-                            <Col md="3" className="form-group">
+                            <Col md="4" className="form-group">
                                 <Button theme="primary" className="mt-10 mr-1" type="submit" onClick={(e) => { getAllReport(e) }} style={{ marginTop: "30px" }}>
                                     <span className='form-inline'>
                                         گزارش

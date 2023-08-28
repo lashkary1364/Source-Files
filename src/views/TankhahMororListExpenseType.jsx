@@ -57,14 +57,12 @@ export const TankhahMororListExpenseType = ({ resultItems, dateFrom, dateTo }) =
                                     content={() => ref.current}
                                 />
                             </div>
-
                             <div>
                                 <button onClick={(e) => exportToExcel(e)} type="button" className="btn btn-primary mb-2 mr-1">
                                     <FontAwesomeIcon icon={faFileExport} className="text-warning mr-2" />
                                     خروجی اکسل
                                 </button>
                             </div>
-
                             <div>
                                 <DownloadTableExcel
                                     filename="export-html-pdf"
@@ -76,7 +74,6 @@ export const TankhahMororListExpenseType = ({ resultItems, dateFrom, dateTo }) =
                                     </button>
                                 </DownloadTableExcel>
                             </div>
-
                         </div>
                     </ListGroupItem>
                 </ListGroup>
@@ -99,7 +96,6 @@ export const TankhahMororListExpenseType = ({ resultItems, dateFrom, dateTo }) =
                 <table dir="rtl" >
                     <thead>
                         <tr style={{ backgroundColor: "#d1d3d5" }} >
-
                             <th scope="col" >ردیف</th>
                             <th scope="col">شماره صورت هزینه</th>
                             <th scope="col">شماره برگه </th>
@@ -110,7 +106,6 @@ export const TankhahMororListExpenseType = ({ resultItems, dateFrom, dateTo }) =
                     </thead>
                     <tbody>
                         {
-
                             resultItems.length == 0 ? <tr><td colSpan={6} className="text-center">داده ای برای نمایش وجود ندارد</td></tr> :
                                 resultItems.map((item, index) =>
                                     <tr key={index}>

@@ -39,8 +39,6 @@ export const TestList = () => {
 
 
     const gridStyle = useMemo(() => ({ height: '500px', width: '100%', }), []);
-
-
     useEffect(() => {
         fetch('https://www.ag-grid.com/example-assets/row-data.json')
             .then(result => result.json())
@@ -57,7 +55,6 @@ export const TestList = () => {
         flex: 1,
 
     }));
-
 
     const paginationNumberFormatter = useCallback((params) => {
         return '[' + params.value.toLocaleString() + ']';

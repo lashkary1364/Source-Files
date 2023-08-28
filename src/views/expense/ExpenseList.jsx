@@ -7,10 +7,7 @@ import axios from 'axios'
 import { AgGridReact } from 'ag-grid-react';
 import { AG_GRID_LOCALE_FA } from '../../constants/global'
 import { useHistory } from "react-router-dom";
-import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
-import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../assets/view-css.css';
 import { ToastContainer, toast } from 'react-toastify';
@@ -21,24 +18,22 @@ import persian from "react-date-object/calendars/persian"
 import persian_en from "react-date-object/locales/persian_fa"
 import GetAllShomareName from "./ShomareName";
 
-
-
 export const ExpenseList = () => {
+
   const [selected, setSelected] = useState(null);
   const [visible, setVisible] = useState(true);
   const history = useHistory();
   const [selectedRow, setSelectedRow] = useState();
   const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
-  const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
+  const user = JSON.parse(sessionStorage.getItem("LoginTocken"));
+  const salId=sessionStorage.getItem("salId");
+  const salMali=sessionStorage.getItem("salMali");
+  const mohitId=sessionStorage.getItem("mohitId");
   const [tankhahItems, setTankhahItems] = useState([]);
   const gridRef = useRef();
   const [rowData, setRowData] = useState([]);
   const [ids, setIds] = useState([]);
-  const [listId, setListId] = useState("");
-  const [mohitItems, setMohitItems] = useState([]);
-  const [salMali, setSalMali] = useState([]);
-  const [mohitId, setMohitId] = useState();
-  const [salMaliItems, setSalMaliItems] = useState([]);
+  const [listId, setListId] = useState("");  
   const [columnDefs] = useState([
     {
       field: 'index', filter: 'agTextColumnFilter', headerName: 'ردیف', headerCheckboxSelection: true,
@@ -74,9 +69,9 @@ export const ExpenseList = () => {
   const [dateHeader, setDateHeader] = useState(date.format());
   const gridStyle = useMemo(() => ({ height: '600px', width: '100%', }), []);
   const getAllData = (tankhahId) => {
+ 
+    console.log(tankhahId)
 
-    console.log("tankhahId: " + tankhahId);
-    console.log('salId' + sessionStorage.getItem("SalMali"))
     axios({
       'method': 'GET',
       'url': serverAdress + 'GetAllTankhahHazine',
@@ -89,7 +84,7 @@ export const ExpenseList = () => {
       },
       'params': {
         'tankhahId': tankhahId,
-        'salId': sessionStorage.getItem("SalMali")
+        'salId': salMali
       },
     }).then(function (response) {
       console.log("response for getAllData")
@@ -104,46 +99,9 @@ export const ExpenseList = () => {
     })
   }
 
-  const options = [
-    { value: 'C++', label: 'C++' },
-    { value: 'JAVA', label: 'JAVA' },
-    { value: 'Javascript', label: 'Javascript' },
-    { value: 'Python', label: 'Python' },
-    { value: 'Swift', label: 'Swift' }
-  ];
-
-  const getAllTankhah = () => {
-
-    axios(
-      {
-        url: serverAdress + `GetAllTankhah?userId=${user.UserId}`,
-        method: "get",
-        headers:
-        {
-          Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache',
-          'Expires': '0',
-        }
-      }).then(function (response) {
-
-        console.log("get all tankhah ...")
-        const resultItems = response.data;
-        resultItems.map(data => {
-          setTankhahItems(tankhahItems => [...tankhahItems, { tankhah_name: data.tankhah_name, tankhah_ID: data.tankhah_ID, shomare_name: data.shomare_name, tarikh_name: data.tarikh_name, sanadID: data.sanadID }]);
-        });
-
-      }).catch(function (error) {
-        // handle error
-        console.log("axois error: ");
-        console.log(error);
-        swal("error", error.message, "error");
-      })
-  }
-
   useEffect(() => {
     getWindowDimensions();
-    GetAllMohit();
+    getAllTankhah();
   }, []);
 
   const defaultColDef = useMemo(() => ({
@@ -172,75 +130,15 @@ export const ExpenseList = () => {
     );
   }, []);
 
-  const GetAllMohit = () => {
-    console.log("user....");
-    console.log(user);
-    console.log(localStorage.getItem("access-tocken"));
-
-    axios(
-      {
-        url: serverAdress + `GetAllMohit?userId=${user.UserId}`,
-        method: "get",
-        headers:
-        {
-          Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-          // 'Cache-Control': 'no-cache',
-          // 'Pragma': 'no-cache',
-          // 'Expires': '0',
-        }
-      }).then(function (response) {
-
-        console.log("get all mohit ....")
-        const resultItems = response.data;
-        console.log(resultItems);
-        resultItems.map(data => {
-          setMohitItems(mohitItems => [...mohitItems, { MohitId: data.mohitID, MohitOnvan: data.mohitOnvan }]);
-        });
-
-      }).catch(function (error) {
-        swal("error", error.message, "error");
-      });
-  }
-
-  const GetAllSalMali = (mohitId) => {
-    console.log("fhhfhfhffhffhfhfhfhfhfh")
+  const getAllTankhah = () => {
+    
+    console.log("getAllTankhah");
     console.log(mohitId);
+    console.log(salId);
 
     axios(
       {
-        url: serverAdress + `GetAllSalMali?mohitId=${mohitId}`,
-        method: "get",
-        headers:
-        {
-          Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-          // 'Cache-Control': 'no-cache',
-          // 'Pragma': 'no-cache',
-          // 'Expires': '0',
-        }
-      }).then(function (response) {
-
-        console.log("get all sal mali ....")
-        const resultItems = response.data;
-        console.log(resultItems);
-        resultItems.map(data => {
-          setSalMaliItems(salMaliItems => [...salMaliItems, { SalId: data.salId, SalMali: data.salMali }]);
-        });
-
-      }).catch(function (error) {
-        console.log("error  GetAllSalMali");
-        console.log(error);
-        swal("error", error.message, "error");
-      })
-  }
-
-  const GetAllTankhah = (salId) => {
-
-    console.log(mohitId)
-    console.log(user.UserId)
-    console.log(salId)
-    axios(
-      {
-        url: serverAdress + `GetAllTankhah?mohitId=${mohitId}&userId=${user.UserId}&salId=${salId}`,
+        url: serverAdress + `GetAllTankhah?mohitId=${mohitId}&userId=${user.userId}&salId=${salId}`,
         method: "get",
         headers:
         {
@@ -259,26 +157,6 @@ export const ExpenseList = () => {
       }).catch(function (error) {
         swal("error", error.message, "error");
       })
-  }
-
-  const changeMohit = (mohitId) => {
-
-    console.log("change mohit ...")
-    console.log(mohitId);
-    setMohitId(mohitId);
-    if (mohitId != "") {
-      GetAllSalMali(mohitId);
-    }
-
-  }
-
-  const changeSalMali = (salId) => {
-    console.log("change sal mali");
-    setSalMali(salId);
-    if (salId != "") {
-      GetAllTankhah(salId)
-    }
-
   }
 
   const handleAdd = () => {
@@ -504,45 +382,12 @@ export const ExpenseList = () => {
       </Row>
       <Card small className="h-100" >
         <CardBody className="pt-0">
-          <Row>
-            <Col md="4" className="form-group">
-              <div className="form-inline mt-3 mr-3">
-                <label htmlFor="mohit"> محیط کاربری*:</label>
-                <FormSelect id="mohit" name="mohit" onClick={(e) => changeMohit(e.target.value)} className='form-control' >
-                  <option value="">یک موردانتخاب کنید</option>
-                  {
-                    mohitItems.map((item, index) => (
-                      <option key={index}
-                        value={item.MohitId}>
-                        {item.MohitOnvan}
-                      </option>
-                    ))
-                  }
-                </FormSelect>
-              </div>
-            </Col>
-            <Col md="4" className="form-group">
-              <div className="form-inline mt-3 mr-3">
-                <label htmlFor="salMali">  سال مالی*:</label>
-                <FormSelect id="salMali" name="salMali" onChange={(e) => changeSalMali(e.target.value)} className='form-control'>
-                  <option value="">یک موردانتخاب کنید</option>
-                  {
-                    salMaliItems.map((item, index) => (
-                      <option key={index}
-                        value={item.SalId}>
-                        {item.SalMali}
-                      </option>
-                    ))
-                  }
-                </FormSelect>
-              </div>
-            </Col>
+          <Row>       
             <Col md="4" className="form-group">
               <div className="form-inline mt-3 mr-3">
                 <label htmlFor="tankhah"> تنخواه*:</label>
                 <FormSelect id="tankhah" name="tankhah" onChange={(e) => getAllData(e.target.value)} className='form-control'
-                // value={formik.values.tankhah}
-                >
+                             >
                   <option value={""}>یک موردانتخاب کنید</option>
                   {
                     tankhahItems.map((item, index) => (

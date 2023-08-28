@@ -93,10 +93,7 @@ export const PrintListDetail = ({ headerItems, data }) => {
                     <th scope="col" >وضعیت</th>
                     <th scope="col" >مبلغ ریز هزینه (ریال)</th>
                   </tr>
-                </thead>
-                {console.log("jjjgggggddddaaaa")}
-                {console.log(item)}
-                {console.log(item.Details)}
+                </thead>              
                 <tbody>
                   {item?.Details.length > 0 ?
                     item?.Details.map((itemdetail, index) => (

@@ -37,21 +37,19 @@ export const Expense = () => {
   const [isAction, setIsAction] = useState(false);
   const queryParameters = new URLSearchParams(window.location.search);
   const soratId = queryParameters.get("id");
-  const [operation, setOperation] = useState(queryParameters.get("operation"));
+  const operation = queryParameters.get("operation");
   const calendarRef = useRef();
   const [tarikhError, setTarikhError] = useState(false);
-  const [tankhahItems, setTankhahItems] = useState([]);
-  const [mohitItems, setMohitItems] = useState([]);
-  const [salMaliItems, setSalMaliItems] = useState([]);
-  const [salMali, setSalMali] = useState([]);
-  const [mohitId, setMohitId] = useState();
+  const [tankhahItems, setTankhahItems] = useState([]); 
   const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
-  const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
+  const user = JSON.parse(sessionStorage.getItem("LoginTocken"));
+  const salId=sessionStorage.getItem("salId");
+  const mohitId=sessionStorage.getItem("mohitId");
+  const salText =sessionStorage.getItem("salMali");
   const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }))
   const date = new DateObject({ calendar: persian, locale: persian_en })
   const [dateHeader, setDateHeader] = useState(date.format());
-  const [status, setStatus] = useState(0);
-  const [salText, setSalText] = useState();
+  const [status, setStatus] = useState(0); 
   const [year, setYear] = useState(state.year);
 
   const convert = (date, format = state.format) => {
@@ -69,69 +67,15 @@ export const Expense = () => {
 
   useEffect(() => {
 
-    GetAllMohit();
+    GetAllTankhah();
 
     if (operation == "delete" || operation == "edit")
       setInfo();
 
   }, []);
 
-  const GetAllMohit = () => {
-    console.log("user....");
-    console.log(user);
-    console.log(localStorage.getItem("access-tocken"));
 
-    axios(
-      {
-        url: serverAdress + `GetAllMohit?userId=${user.UserId}`,
-        method: "get",
-        headers:
-        {
-          Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache',
-          'Expires': '0',
-        }
-      }).then(function (response) {
-
-        console.log("get all mohit ....")
-        const resultItems = response.data;
-        console.log(resultItems);
-        resultItems.map(data => {
-          setMohitItems(mohitItems => [...mohitItems, { MohitId: data.mohitID, MohitOnvan: data.mohitOnvan }]);
-        });
-
-      }).catch(function (error) {
-        swal("error", error.message, "error");
-      })
-  }
-
-  const GetAllSalMali = (mohitId) => {
-    axios(
-      {
-        url: serverAdress + `GetAllSalMali?mohitId=${mohitId}`,
-        method: "get",
-        headers:
-        {
-          Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache',
-          'Expires': '0',
-        }
-      }).then(function (response) {
-
-        console.log("get all sal mali ....")
-        const resultItems = response.data;
-        resultItems.map(data => {
-          setSalMaliItems(salMaliItems => [...salMaliItems, { SalId: data.salId, SalMali: data.salMali }]);
-        });
-
-      }).catch(function (error) {
-        swal("error", error.message, "error");
-      })
-  }
-
-  const GetAllTankhah = (mohitId, salId) => {
+  const GetAllTankhah = () => {
 
     console.log(mohitId);
     console.log(user.UserId);
@@ -139,7 +83,7 @@ export const Expense = () => {
 
     axios(
       {
-        url: serverAdress + `GetAllTankhah?mohitId=${mohitId}&userId=${user.UserId}&salId=${salId}`,
+        url: serverAdress + `GetAllTankhah?mohitId=${mohitId}&userId=${user.userId}&salId=${salId}`,
         method: "get",
         headers:
         {
@@ -165,7 +109,6 @@ export const Expense = () => {
 
     formik.setFieldValue("tankhah", tankhahId);
 
-
     axios(
       {
         url: serverAdress + `GetMohitId?tankhahId=${tankhahId}`,
@@ -179,9 +122,6 @@ export const Expense = () => {
         }
       }).then(function (response) {
         console.log(response.data);
-
-        setMohitId(response.data)
-
       }).catch(function (error) {
         // handle error      
         swal("error", error.message, "error");
@@ -191,7 +131,7 @@ export const Expense = () => {
 
     axios(
       {
-        url: serverAdress + `GetAllTankhahFinanceInfo?tankhahId=${tankhahId}&salId=${sessionStorage.getItem("SalMali")}`,
+        url: serverAdress + `GetAllTankhahFinanceInfo?tankhahId=${tankhahId}&salId=${salId}`,
         method: "get",
 
         headers:
@@ -213,29 +153,7 @@ export const Expense = () => {
       });
   }
 
-  const changeMohit = (mohitId) => {
-    formik.setFieldValue("mohit", mohitId);
-    console.log("change mohit ...")
-    setMohitId(mohitId);
-    GetAllSalMali(mohitId);
-  }
-
-  const changeSalMali = (event) => {
-    console.log("change sal mali");
-
-    //setSalMali(salId);
-    var index = event.nativeEvent.target.selectedIndex;
-    console.log(event.nativeEvent.target[index].text);
-    console.log(event.target.value);
-    formik.setFieldValue("salMali", event.target.value);
-    setSalText(event.nativeEvent.target[index].text);
-    setSalMali(event.target.value);
-    GetAllTankhah(mohitId, event.target.value);
-  }
-
-  const validationSchema = Yup.object().shape({
-    mohit: Yup.string().required('فیلد اجباری است'),
-    salMali: Yup.string().required('فیلد اجباری است'),
+  const validationSchema = Yup.object().shape({   
     tankhah: Yup.string().required('فیلد اجباری است'),
     sharh: Yup.string().required('فیلد شرح اجباری است'),
   });
@@ -249,9 +167,7 @@ export const Expense = () => {
       shomare: '',
       tarikh: new Date() || null,
       sharh: '',
-      tozihat: '',
-      salMali: '',
-      mohit: ''
+      tozihat: '',  
     },
     validationSchema,
     validateOnChange: true,
@@ -300,20 +216,15 @@ export const Expense = () => {
         formik.setFieldValue("sharh", response.data.sharh);
         formik.setFieldValue("tarikh", response.data.tarikh);
         formik.setFieldValue("shomare", response.data.shomare);
-
-        formik.setFieldValue("mohit", response.data.mohidID);
-
-        GetAllSalMali(response.data.mohidID);
+        formik.setFieldValue("mohit", response.data.mohidID);       
         GetAllTankhah(response.data.mohidID, response.data.salID);
         setState(response.data.tarikh);
         setDateHeader(response.data.tarikh);
-        setStatus(response.data.status);
-        setMohitId(response.data.mohidId);
+        setStatus(response.data.status);      
         formik.setFieldValue("salMali", response.data.salID);
         formik.setFieldValue("tankhah", response.data.tankhah_ID);
         GetAllTankhahInfo(response.data.tankhah_ID);
-        setSalText(response.data.salMali);
-       // setSalMali(event.target.value);
+            // setSalMali(event.target.value);
       }).catch(function (error) {
         swal("error", error.message, "error");
       })
@@ -322,10 +233,12 @@ export const Expense = () => {
   const addSouratHazineHeader = (data) => {
 
     if (year != salText) {
-      swal("توجه", " تاریخ و سال مالی یکسان نیست", "warning");
+      swal("توجه", "تاریخ و سال مالی یکسان نیست", "warning");
       return;
     }
+
     setIsAction(true);
+
     axios(
       {
         url: serverAdress + 'InsertTankhahSoratHazineHeader',
@@ -351,7 +264,7 @@ export const Expense = () => {
           "tarikh": dateHeader,
           "sanadID": 0,
           "shomare_name": 0,
-          "salID": parseInt(sessionStorage.getItem("SalMali")),
+          "salID": parseInt(salId),
           "tarikh_name": ""
         }
       }).then(function (response) {
@@ -440,8 +353,7 @@ export const Expense = () => {
   const updateSouratHazineHeader = (data) => {
     console.log("year");
     console.log(year);
-    console.log(salText);
-    console.log("salText");
+  
 
     if (year != salText) {
       swal("توجه", "بازه تاریخی و سال مالی یکسان نیست", "warning");
@@ -484,7 +396,7 @@ export const Expense = () => {
               "tarikh": dateHeader,
               "sanadID": 0,
               "shomare_name": 0,
-              "salID": parseInt(sessionStorage.getItem("SalMali")),
+              "salID": parseInt(salId),
               "tarikh_name": ""
             }
           }).then(function (response) {
@@ -529,7 +441,7 @@ export const Expense = () => {
               <ListGroupItem >
                 <form onSubmit={formik.handleSubmit}>
                   <Row>
-                    <Col md="4" className="form-group">
+                    {/* <Col md="4" className="form-group">
                       <label htmlFor="mohit">اتتخاب محیط کاربری*:</label>
                       <FormSelect id="mohit" name="mohit" onChange={(e) => changeMohit(e.target.value)} className={'form-control' + (formik.errors.mohit && formik.touched.mohit ? ' is-invalid' : '')}
                         value={formik.values.mohit}>
@@ -572,7 +484,7 @@ export const Expense = () => {
                             : null
                         }
                       </div>
-                    </Col>
+                    </Col> */}
                     <Col md="4" className="form-group">
                       <label htmlFor="tankhah">اتتخاب تنخواه*:</label>
                       <FormSelect id="tankhah" name="tankhah" onChange={(e) => GetAllTankhahInfo(e.target.value)} className={'form-control' + (formik.errors.tankhah && formik.touched.tankhah ? ' is-invalid' : '')}

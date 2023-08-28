@@ -58,14 +58,12 @@ export const TankhahReport = ({ resultItems, dateFrom, dateTo }) => {
                                     content={() => ref.current}
                                 />
                             </div>
-
                             <div>
                                 <button onClick={(e) => exportToExcel(e)} type="button" className="btn btn-primary mb-2 mr-1">
                                     <FontAwesomeIcon icon={faFileExport} className="text-warning mr-2" />
                                     خروجی اکسل
                                 </button>
                             </div>
-
                             <div>
                                 <DownloadTableExcel
                                     filename="export-html-pdf"
@@ -115,7 +113,6 @@ export const TankhahReport = ({ resultItems, dateFrom, dateTo }) => {
                                 resultItems.map((item, index) =>
                                     <tr key={index}>
                                         <td scope="row" data-label="ردیف">{item.radif}</td>
-                                        {/* <td>{item.radif}</td> */}
                                         <td data-label="شرح:">{item.sharh}</td>
                                         <td data-label="تاریخ:">{item.tarikh}</td>
                                         <td data-label="بدهکار:">{item.bed.toLocaleString()}</td>

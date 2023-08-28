@@ -23,67 +23,19 @@ export const TankhahMoror = () => {
     const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
     const calendarRef = useRef();
     const [items, setItems] = useState([]);
-    const [salId, setSalId] = useState()
-    const [tankhahId, setTankhahId] = useState();
-    const [mandeKhat, setMandeKhat] = useState(false);
+    const salId = sessionStorage.getItem("salId");
     const [isLoading, setIsLoading] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
         GetAllTankhah();
-        GetCurrentFinanceYear();
+     
     }, []);
-
-    const convertFrom = (date, format = state.format) => {
-        let object = { date, format }
-        setState(new DateObject(object).convert(persian, persian_en).format());
-        setDateFrom(new DateObject(object).convert(persian, persian_en).format())
-    }
-
-    const convertTo = (date, format = state.format) => {
-        let object = { date, format }
-        setState(new DateObject(object).convert(persian, persian_en).format());
-        setDateTo(new DateObject(object).convert(persian, persian_en).format())
-    }
-
-    const GetAllTankhahInfo = (tankhahId) => {
-        setTankhahId(tankhahId);
-    }
-
-    const GetCurrentFinanceYear = () => {
-        axios(
-            {
-                url: serverAdress + "GetFinanceYearById?salMali=" + parseInt(sessionStorage.getItem("SalMali")),
-                method: "get",
-                headers:
-                {
-                    Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache',
-                    'Expires': '0',
-                }
-            }).then(function (response) {
-
-                if (response.data != null) {
-                    setDateFrom(response.data.salStart);
-                    setDateTo(response.data.salEnd);
-                    setSalId(response.data.salId);
-                }
-
-            }).catch(function (error) {
-                // handle error
-                // console.log("axois error: ");
-                // console.log(error);
-                // alert(error);
-                swal("error", error.meddsgr, "error");
-            })
-    }
-
 
     const GetAllTankhah = () => {
         axios(
             {
-                url: serverAdress + `GetAllTankhah?userId=${user.UserId}`,
+                url: serverAdress + `GetAllTankhah?userId=${user.userId}`,
                 method: "get",
                 headers:
                 {
@@ -105,8 +57,8 @@ export const TankhahMoror = () => {
     }
 
     const getAllReports = (dateFrom, dateTo, salId, tankhahId, mandeKhat) => {
-        console.log("moror ...")
-
+       
+        console.log("moror ...");
         setDateFrom(dateFrom);
         setDateTo(dateTo);
         setIsLoading(true);
@@ -152,11 +104,7 @@ export const TankhahMoror = () => {
                     setIsLoading(false);
                 }, 2000);
 
-            }).catch(function (error) {
-                // handle error
-                // console.log("axois error: ");
-                // console.log(error);
-                // alert(error);
+            }).catch(function (error) {                
                 swal("error", error.message, "error");
                 setIsLoading(false);
             });

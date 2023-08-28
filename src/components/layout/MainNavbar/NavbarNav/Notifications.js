@@ -5,6 +5,7 @@ import { faRotate } from '@fortawesome/free-solid-svg-icons'
 // import { icon } from '@fortawesome/fontawesome-free'
 import { icon } from "@fortawesome/fontawesome-free-solid"
 import axios from 'axios'
+import swal from 'sweetalert';
 import persian from "react-date-object/calendars/persian"
 //import persian_fa from "react-date-object/locales/persian_fa"
 import DatePicker, { DateObject } from "react-multi-date-picker";
@@ -37,14 +38,14 @@ export default class Notifications extends React.Component {
 
 
   getFinanceYear() {
-
+    console.log(serverAdress + `GetAllFinanceYear?mohitId=${sessionStorage.getItem("mohitId")}`)
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
 
     var self = this;
 
     axios(
       {
-        url: serverAdress + `GetAllFinanceYear`,
+        url: serverAdress + `GetAllSalMali?mohitId=${sessionStorage.getItem("mohitId")}`,
         method: "get",
         headers:
         {
@@ -55,23 +56,28 @@ export default class Notifications extends React.Component {
         }
       }).then(function (response) {
 
-        console.log(response.data);
-
+        console.log("get all sal mali ....")
         const resultItems = response.data;
-
-        resultItems.map((data) => {
-          //   self.setState(state => { return { FinanceYear: [{ Id: data.salId, Name: data.salMali }] } });
+        resultItems.map(data => {
+          //   setSalMaliItems(salMaliItems => [...salMaliItems, { SalId: data.salId, SalMali: data.salMali }]);
           self.setState(prevState => ({
-            FinanceYear: [...prevState.FinanceYear, { Id: data.salId, Name: data.salMali  }]
+            FinanceYear: [...prevState.FinanceYear, { SalId: data.salId, SalMali: data.salMali }]
           }));
+
         });
 
       }).catch(function (error) {
-        // handle error
-        console.log("axois error: ");
         console.log(error)
+        swal("error", error.message + " " + "getFinanceYear", "error");
+
       })
 
+  }
+
+  changeSalMali(e) {
+    sessionStorage.setItem("salMali", e.target.innerText);
+    sessionStorage.setItem("salId", e.target.value);
+    swal("سال مالی به" +e.target.innerText + "تغییر یافت");
   }
 
   render() {
@@ -92,16 +98,9 @@ export default class Notifications extends React.Component {
         </NavLink>
         <Collapse
           open={this.state.visible}
-          className="dropdown-menu dropdown-menu-small"
-        >
+          className="dropdown-menu dropdown-menu-small">
           {this.state.FinanceYear.map((item) => (
-            <DropdownItem value={item.Id} onClick={(e) =>{
-
-              sessionStorage.setItem("SalMali", e.target.innerText);
-              sessionStorage.setItem("SalId", e.target.value);
-              alert("سال مالی به" + sessionStorage.getItem("SalMali") +"تغییر یافت");
-
-            }}>{item.Name}</DropdownItem>
+            <DropdownItem value={item.SalId} onClick={(e) => this.changeSalMali(e)}>{item.SalMali}</DropdownItem>
           ))}
         </Collapse>
       </NavItem>

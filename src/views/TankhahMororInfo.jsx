@@ -17,8 +17,7 @@ export const TankhahMororInfo = ({ resultItems, dateFrom, dateTo }) => {
     const fileType = "application/vnd.openxmlformats-officedocumnet.spreadsheetml.sheet;charset=UTF-8";
     const fileExtension = ".xlsx";
     //const excelData = [{ id: 1, name: "shabnam", family: "lashkary" }, { id: 2, name: "arezoo", family: "asadzadeh" }, { id: 3, name: "hamid", family: "soltani" }]
-    const ref = useRef(null);
-    const[mandeKhat,setMandeKhat]=useState(false);
+    const ref = useRef(null);   
     const exportToExcel = async (e) => {
 
         e.preventDefault();

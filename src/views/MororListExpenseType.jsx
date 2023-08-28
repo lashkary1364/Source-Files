@@ -23,10 +23,10 @@ export const MororListExpenseType = () => {
 
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
     const [tankhahItems, setTankhahItems] = useState([]);
-    const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }));
+    const state = useState(new DateObject({ calendar: persian, locale: persian_en }));
     const [dateFrom, setDateFrom] = useState(new DateObject({ calendar: persian, locale: persian_en }).format());
     const [dateTo, setDateTo] = useState(new DateObject({ calendar: persian, locale: persian_en }).format());
-    const [user] = useState(JSON.parse(sessionStorage.getItem("LoginTocken")));
+    const user = JSON.parse(sessionStorage.getItem("LoginTocken"));
     const calendarRef = useRef();
     const [items, setItems] = useState([]);
     const [dateFromError, setDateFromError] = useState(false);
@@ -34,23 +34,19 @@ export const MororListExpenseType = () => {
     const [tankhahId, setTankhahId] = useState();
     const [options, setOptions] = useState([]);
     const [values, setValues] = React.useState(null);
-    const [mohitId, setMohitId] = useState();
-    const [mohitItems, setMohitItems] = useState([]);
-    const [salMaliItems, setSalMaliItems] = useState([]);
-    const [salMali, setSalMali] = useState();
+    const mohitId = sessionStorage.getItem("mohitId");
+    const salId = sessionStorage.getItem("salId");
     const [isLoading, setIsLoading] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const [yearFrom, setYearFrom] = useState(state.year);
     const [yearTo, setYearTo] = useState(state.year);
-    const [salText, setSalText] = useState();
+    const salText = sessionStorage.getItem("salMali");
 
     useEffect(() => {
 
-        GetAllMohit();
+        GetAllTankhah();
+        GetAllSoratHazineSharh();
 
-        //GetAllTankhah();
-        // GetCurrentFinanceYear();
-        // GetAllSoratHazineSharh();
     }, []);
 
     const validationSchema = Yup.object().shape({
@@ -69,26 +65,19 @@ export const MororListExpenseType = () => {
         validateOnBlur: true,
         isInitialValid: true,
         onSubmit: (data) => {
-            console.log("data")
-            console.log(data);
-            console.log("sharh ...");
-            console.log(options);
-            console.log(dateFrom);
-            console.log(yearFrom);
-            console.log(dateTo);
-            console.log(yearTo);
+
             if (tankhahId == undefined || dateFrom == undefined || dateTo == undefined) {
                 swal("error", "وارد کردن تنخواه و بازه تاریخی و شرح الزامی است", "warning");
                 return;
             }
-    
+
             if (dateFrom > dateTo) {
                 swal("توجه", "بازه تاریخی درست وارد نشده است", "warning");
                 return;
             }
-    
+
             if (yearFrom != salText || yearTo != salText) {
-                swal("توجه", "بازه تاریخی و سال ملی یکسان نیست", "warning");
+                swal("توجه", "بازه تاریخی و سال مالی یکسان نیست", "warning");
                 return;
             }
             getAllTankhahMoror();
@@ -98,7 +87,6 @@ export const MororListExpenseType = () => {
 
     const onChange = (_, a) => {
         formik.setFieldValue("sharhDetail", a.name);
-
         setValues(a);
 
     };
@@ -111,7 +99,7 @@ export const MororListExpenseType = () => {
             setDateFromError(false);
         }
         setYearFrom(new DateObject(object).convert(persian, persian_en).format("YYYY"));
-       // setState(new DateObject(object).convert(persian, persian_en).format());
+        // setState(new DateObject(object).convert(persian, persian_en).format());
         setDateFrom(new DateObject(object).convert(persian, persian_en).format())
     }
 
@@ -128,72 +116,15 @@ export const MororListExpenseType = () => {
         setDateTo(new DateObject(object).convert(persian, persian_en).format())
     }
 
-    const GetAllTankhahInfo = (tankhahId) => {
-        setTankhahId(tankhahId);
-
-
-        axios(
-            {
-                url: serverAdress + `GetMohitId?tankhahId=${tankhahId}`,
-                method: "get",
-                headers:
-                {
-                    Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache',
-                    'Expires': '0',
-                }
-            }).then(function (response) {
-                console.log(response.data);
-
-                setMohitId(response.data)
-
-            }).catch(function (error) {
-                // handle error      
-                swal("error", error.message, "error");
-
-            });
-
-
-    }
-
-    const GetCurrentFinanceYear = () => {
-        axios(
-            {
-                url: serverAdress + "GetFinanceYearById?salMali=" + parseInt(sessionStorage.getItem("SalMali")),
-                method: "get",
-                headers:
-                {
-                    Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-                    // 'Cache-Control': 'no-cache',
-                    // 'Pragma': 'no-cache',
-                    // 'Expires': '0',
-                }
-            }).then(function (response) {
-
-                if (response.data != null) {
-                    setDateFrom(response.data.salStart);
-                    setDateTo(response.data.salEnd);
-                }
-
-            }).catch(function (error) {
-                // handle error
-                // console.log("axois error: ");
-                // console.log(error);
-                // alert(error);
-                swal("error", error.message, "error");
-            })
-    }
-
-    const GetAllTankhah = (salId) => {
+    const GetAllTankhah = () => {
 
         console.log(mohitId);
-        console.log(user.UserId);
+        console.log(user.userId);
         console.log(salId);
 
         axios(
             {
-                url: serverAdress + `GetAllTankhah?mohitId=${mohitId}&userId=${user.UserId}&salId=${salId}`,
+                url: serverAdress + `GetAllTankhah?mohitId=${mohitId}&userId=${user.userId}&salId=${salId}`,
                 method: "get",
                 headers:
                 {
@@ -215,7 +146,7 @@ export const MororListExpenseType = () => {
             })
     }
 
-    const GetAllSoratHazineSharh = (mohitId) => {
+    const GetAllSoratHazineSharh = () => {
 
         axios(
             {
@@ -255,7 +186,7 @@ export const MororListExpenseType = () => {
     }
 
     const getAllTankhahMoror = () => {
-       
+
         setIsLoading(true);
         axios(
             {
@@ -307,85 +238,7 @@ export const MororListExpenseType = () => {
         formik.setFieldValue("tankhah", tankhahId);
     }
 
-    const GetAllMohit = () => {
-        console.log("user....");
-        console.log(user);
-        console.log(localStorage.getItem("access-tocken"));
 
-        axios(
-            {
-                url: serverAdress + `GetAllMohit?userId=${user.UserId}`,
-                method: "get",
-                headers:
-                {
-                    Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache',
-                    'Expires': '0',
-                }
-            }).then(function (response) {
-
-                console.log("get all mohit ....")
-                const resultItems = response.data;
-                console.log(resultItems);
-                resultItems.map(data => {
-                    setMohitItems(mohitItems => [...mohitItems, { MohitId: data.mohitID, MohitOnvan: data.mohitOnvan }]);
-                });
-
-
-
-            }).catch(function (error) {
-                swal("error", error.message, "error");
-            })
-
-
-
-    }
-
-    const GetAllSalMali = (mohitId) => {
-        axios(
-            {
-                url: serverAdress + `GetAllSalMali?mohitId=${mohitId}`,
-                method: "get",
-                headers:
-                {
-                    Authorization: `Bearer ${localStorage.getItem("access-tocken")}`,
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache',
-                    'Expires': '0',
-                }
-            }).then(function (response) {
-
-                console.log("get all sal mali ....")
-                const resultItems = response.data;
-                resultItems.map(data => {
-                    setSalMaliItems(salMaliItems => [...salMaliItems, { SalId: data.salId, SalMali: data.salMali }]);
-                });
-
-            }).catch(function (error) {
-                swal("error", error.message, "error");
-            })
-    }
-
-    const changeMohit = (mohitId) => {
-        console.log("change mohit ...")
-        console.log(mohitId);
-        setMohitId(mohitId);
-        GetAllSalMali(mohitId);
-        GetAllSoratHazineSharh(mohitId);
-    }
-
-    const changeSalMali = (event) => {
-        console.log("change sal mali");
-        var index = event.nativeEvent.target.selectedIndex;
-        console.log(event.nativeEvent.target[index].text);
-        console.log(event.target.value)
-
-        setSalText(event.nativeEvent.target[index].text);
-        // console.log(salId);
-        setSalMali(event.target.value);
-        GetAllTankhah(event.target.value)
-    }
 
 
 
@@ -405,39 +258,7 @@ export const MororListExpenseType = () => {
                             <ListGroupItem>
                                 <form onSubmit={formik.handleSubmit}>
                                     <Row>
-                                        <Col md="4" className="form-group">
-                                            <div className="form-inline mt-3 mr-3">
-                                                <label htmlFor="mohit"> محیط کاربری*:</label>
-                                                <FormSelect id="mohit" name="mohit" onChange={(e) => changeMohit(e.target.value)} className='form-control' selectedIndex={0}>
-                                                    <option value={""}>یک موردانتخاب کنید</option>
-                                                    {
-                                                        mohitItems.map((item, index) => (
-                                                            <option key={index}
-                                                                value={item.MohitId}>
-                                                                {item.MohitOnvan}
-                                                            </option>
-                                                        ))
-                                                    }
-                                                </FormSelect>
-                                            </div>
-                                        </Col>
-                                        <Col md="4" className="form-group">
-                                            <div className="form-inline mt-3 mr-3">
-                                                <label htmlFor="salMali">  سال مالی*:</label>
-                                                <FormSelect id="salMali" name="salMali" onChange={(e) => changeSalMali(e)} className='form-control'>
-                                                    <option value={""}>یک موردانتخاب کنید</option>
-                                                    {
-                                                        salMaliItems.map((item, index) => (
-                                                            <option key={index}
-                                                                value={item.SalId}>
-                                                                {item.SalMali}
-                                                            </option>
-                                                        ))
-                                                    }
-                                                </FormSelect>
-                                            </div>
-                                        </Col>
-                                        <Col md="4" className="form-group">
+                                        <Col md="3" className="form-group">
                                             <div className="form-inline mt-3 mr-3">
                                                 <label htmlFor="tankhah"> تنخواه*:</label>
                                                 <FormSelect id="tankhah" name="tankhah" value={formik.values.tankhah} onChange={(e) => changeTankhah(e.target.value)} className={'form-control' + (formik.errors.tankhah && formik.touched.tankhah ? ' is-invalid' : '')}>
@@ -460,11 +281,9 @@ export const MororListExpenseType = () => {
                                                 </div>
                                             </div>
                                         </Col>
-                                    </Row>
-
-
-                                    <Row>
-                                        <Col md="4" className="form-group">
+                                    {/* </Row>
+                                    <Row> */}
+                                        <Col md="3" className="form-group">
                                             <div className="form-inline mt-3 mr-3">
                                                 <label htmlFor="mande" > از تاریخ :</label>
                                                 <DatePicker inputClass='form-control'
@@ -479,33 +298,13 @@ export const MororListExpenseType = () => {
                                                     calendarPosition="bottom-right"
 
                                                 />
-
-                                                {/* <DatePicker inputClass='form-control'
-                                            </div>
-                                           
-                                                    ref={calendarRef}
-                                                    calendar={persian}
-                                                    locale={persian_en}
-                                                    format={"YYYY/MM/DD"}
-                                                    value={dateFrom}
-                                                    onChange={convertFrom}
-                                                    id="tarikh" name="tarikh"
-                                                    calendarPosition="bottom-right"
-                                                />
-                                                <div className="invalid-feedback">
-                                                    {
-                                                        formik.errors.dateFrom && formik.touched.dateFrom
-                                                            ? formik.errors.dateFrom
-                                                            : null
-                                                    }
-                                                </div> */}
                                             </div>
                                             <div>
                                                 {dateFromError == true ? <div style={{ marginTop: "0.25rem", fontSize: "80%", color: "#c4183c", fontFamily: 'IRANSans', }}>فیلد تاریخ اجباری است</div> : ''}
                                             </div>
                                         </Col>
 
-                                        <Col md="4" className="form-group">
+                                        <Col md="3" className="form-group">
                                             <div className="form-inline mt-3 mr-3">
                                                 <label htmlFor="etebarMax">تا تاریخ:</label>
                                                 <DatePicker inputClass='form-control'
@@ -525,10 +324,10 @@ export const MororListExpenseType = () => {
                                             </div>
                                         </Col>
 
-                                        <Col md="4" className="form-group">
+                                        <Col md="3" className="form-group">
                                             <div className="form-inline mt-3 mr-3">
                                                 <label htmlFor="sharhDetail">شرح *:</label>
-                                                <Autocomplete style={{ width: "300px" }}
+                                                <Autocomplete style={{ width: "250px" }}
                                                     id="tags-outlined"
                                                     options={options}
                                                     getOptionLabel={(option) => option.name || ""}
@@ -552,23 +351,6 @@ export const MororListExpenseType = () => {
                                             </div>
                                         </Col>
                                     </Row>
-                                    {/* <div className="form-group mx-sm-3 mb-2">
-                                        <label htmlFor="tankhah">اتتخاب تنخواه*:</label>
-                                        <FormSelect id="tankhah" name="tankhah" className='form-control' onChange={(e) => GetAllTankhahInfo(e.target.value)}>
-                                            {/* <option value={""}>یک موردانتخاب کنید</option> */}
-                                    {/* {
-                                                tankhahItems.map((item, index) => (
-                                                    <option key={index}
-                                                        value={item.tankhah_ID}>
-                                                        {item.tankhah_name}
-                                                    </option>
-                                                ))
-                                            }
-                                        </FormSelect>
-                                    </div> */}
-
-
-
                                     <Button theme="primary" className="mb-2 mr-1" type="submit"  >
                                         <span className='form-inline'>
                                             گزارش

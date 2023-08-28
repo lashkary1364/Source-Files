@@ -20,23 +20,14 @@ export const MororRizHazine = () => {
     const [sumTaeedNaShode, setSumTaeedNaShode] = useState(0);
     const [sumTotal, setSumTotal] = useState(0);
     const [sumMablagh, setSumMablagh] = useState(0);
-    const [details, setDetails] = useState([]);
     const [data, setData] = useState();
 
 
-    useEffect(() => {
-
-        console.log("8777777777")
-        console.log(reportItems);
-
-    }, [reportItems])
 
 
     const getAllReports = (data) => {
 
-
-        console.log("data ...");
-        console.log(data);
+       
         setData(data);
         setReportItems([]);
         setReportRizItems([]);
@@ -54,9 +45,7 @@ export const MororRizHazine = () => {
                 },
                 data: data,
             }).then(function (response) {
-
-                console.log("GetAllReportSoratHazine....")
-                console.log(response.data);
+               
                 const resultItems = response.data;
                 var sumTaeedShode = 0;
                 var sumTaeedNashode = 0;
@@ -79,9 +68,7 @@ export const MororRizHazine = () => {
                             Tozihat: i.tozihat
                         })
                     ),
-                    console.log("detailItems"),
-                    console.log(detailItems),
-
+                 
                     sumTaeedShode += data.taeed_shode,
                     sumTaeedNashode += data.taeed_Nashode,
                     sumTotal += data.total,

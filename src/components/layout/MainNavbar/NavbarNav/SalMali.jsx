@@ -1,46 +1,51 @@
 import React from "react";
-import { NavItem, NavLink, Collapse, DropdownItem } from "shards-react";
+import { NavItem, NavLink, Badge, Collapse, DropdownItem, FormSelect } from "shards-react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHome } from '@fortawesome/free-solid-svg-icons'
-import axios from 'axios';
+import { faRotate } from '@fortawesome/free-solid-svg-icons'
+// import { icon } from '@fortawesome/fontawesome-free'
+import { icon } from "@fortawesome/fontawesome-free-solid"
+import axios from 'axios'
 import swal from 'sweetalert';
+import persian from "react-date-object/calendars/persian"
+//import persian_fa from "react-date-object/locales/persian_fa"
+import DatePicker, { DateObject } from "react-multi-date-picker";
 
-export default class Mohit extends React.Component {
- 
+
+export default class SalMali extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       visible: false,
-      mohitItems: []
+      FinanceYear: []
     };
 
-    this.getAllMohit = this.getAllMohit.bind(this);
     this.toggleNotifications = this.toggleNotifications.bind(this);
+    this.getFinanceYear = this.getFinanceYear.bind(this);
 
   }
 
   componentDidMount() {
-    this.getAllMohit();
+    this.getFinanceYear();
   }
 
-  getAllMohit = () => {
+  toggleNotifications() {
+    this.setState({
+      visible: !this.state.visible
+    });
+  }
 
-    console.log("get all mohit ...")
+
+
+  getFinanceYear() {
+    console.log(serverAdress + `GetAllFinanceYear?mohitId=${sessionStorage.getItem("mohitId")}`)
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
-    console.log(serverAdress);
-    const user = JSON.parse(sessionStorage.getItem("LoginTocken"));
-    console.log("user....");
-    console.log(user);
-    console.log(localStorage.getItem("access-tocken"));
-    console.log("server address ...");
-    console.log(serverAdress + `GetAllMohit?userId=${user.userId}`);
-    var self = this;
 
+    var self = this;
 
     axios(
       {
-        url: serverAdress + `GetAllMohit?userId=${user.userId}`,
+        url: serverAdress + `GetAllSalMali?mohitId=${sessionStorage.getItem("mohitId")}`,
         method: "get",
         headers:
         {
@@ -51,34 +56,29 @@ export default class Mohit extends React.Component {
         }
       }).then(function (response) {
 
-        console.log("get all mohit ....")
+        console.log("get all sal mali ....")
         const resultItems = response.data;
-        console.log(resultItems);
-        resultItems.map((data, index) =>
-          // this.setState({ mohitItems: [ { MohitId: data.mohitID, MohitOnvan: data.mohitOnvan }] });
+        resultItems.map(data => {
+          //   setSalMaliItems(salMaliItems => [...salMaliItems, { SalId: data.salId, SalMali: data.salMali }]);
+
           self.setState(prevState => ({
-            mohitItems: [...prevState.mohitItems, { moMohitId: data.hitID, MohitOnvan: data.mohitOnvan }]
-          })));
-          
+            FinanceYear: [...prevState.FinanceYear, { SalId: data.salId, SalMali: data.salMali }]
+          }));
+
+        });
 
       }).catch(function (error) {
-        // console.log(error.response.data);
-        console.log("error.response.status");
-        console.log(error);
-         swal("error", error.message+ " "+"getAllMohit", "error");
+        console.log(error)
+        swal("error", error.message + " " + "getFinanceYear", "error");
+
       })
+
   }
 
-  changeMohit(e) {
-    console.log(e.target);   
-    sessionStorage.setItem("mohitId", e.target.value);
-    swal("محیط کاربری به " + e.target.innerText + " تغییر یافت ")
-  }
-
-  toggleNotifications() {
-    this.setState({
-      visible: !this.state.visible
-    });
+  changeSalMali(e) {
+    sessionStorage.setItem("salMali", e.target.innerText);
+    sessionStorage.setItem("salId", e.target.value);
+    swal("سال مالی به" +e.target.innerText + "تغییر یافت");
   }
 
   render() {
@@ -89,8 +89,8 @@ export default class Mohit extends React.Component {
           className="nav-link-icon text-center"
           onClick={this.toggleNotifications}>
           <div className="nav-link-icon__wrapper text-nowrap px-3 mt-2">
-            <span className="mr-2">تغییر محیط کاری</span>
-            <FontAwesomeIcon icon={faHome} />
+            <span className="mr-2">تغییر سال مالی</span>
+            <FontAwesomeIcon icon={faRotate} />
             {/* <i className="material-icons">&#xE7F4;</i> */}
             {/* <Badge pill theme="danger">
               2
@@ -100,18 +100,9 @@ export default class Mohit extends React.Component {
         <Collapse
           open={this.state.visible}
           className="dropdown-menu dropdown-menu-small">
-          {
-            this.state.mohitItems.map((item, index) => <DropdownItem key={index} value={item.MohitId} onClick={(e) => this.changeMohit(e)}>{item.MohitOnvan}</DropdownItem>)
-          }
-          {/* <DropdownItem>
-           1400
-          </DropdownItem>
-          <DropdownItem>
-           1401
-          </DropdownItem>
-          <DropdownItem >
-           1402
-          </DropdownItem> */}
+          {this.state.FinanceYear.map((item) => (
+            <DropdownItem value={item.SalId} onClick={(e) => this.changeSalMali(e)}>{item.SalMali}</DropdownItem>
+          ))}
         </Collapse>
       </NavItem>
 

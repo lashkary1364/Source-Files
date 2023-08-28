@@ -17,15 +17,7 @@ export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMabl
   const [chapListState,setChapListState]=useState(true);
   const [chapListDetailState,setChapListDetailState]=useState(true);
 
-  useEffect(() => {
 
-    console.log("report items ...")
-    console.log(reportItems);
-
-    console.log("data");
-    console.log(data);
-
-  }, [reportItems])
 
   useEffect(() => {
     toggle(activeTab);
@@ -39,22 +31,10 @@ export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMabl
     }
   }
 
-  useEffect(() => {
-    console.log("selected row 4444440")
-    console.log(headerItems);
-  }, [headerItems]);
-
 
   const handelChangeSoratId = (item, checked) => {
 
-
-    console.log("item");
-    console.log(item);
-
-    if (checked) {
-
-      console.log("hhhhhhhhhhhhhhh");
-      console.log(item)
+    if (checked) {    
       var details = [];
       item.Details.map(i =>
         details.push({
@@ -87,17 +67,11 @@ export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMabl
           Total: item.Total,
           Details: details
         }]);
-
-      console.log("selectedRow");
-      console.log(selectedRow);
+      
     }
     else
     {
-      const filters = selectedRow.filter(m => m.SoratID !== item.SoratID);
-      console.log("remove items");
-      console.log(filters);
-      // setSelectedRow([]);
-      // setHeaderItems([]);
+      const filters = selectedRow.filter(m => m.SoratID !== item.SoratID);           
       setHeaderItems(filters);
       setSelectedRow(filters);
     }
