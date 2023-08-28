@@ -11,6 +11,7 @@ import { MororListExpenseType } from "./views/MororListExpenseType";
 import { TankhahSodoreName } from "./views/TankhahSodoreName";
 import { MororRizHazine } from "./views/MororRizHazine";
 import { TankhahReportListHazineha } from "./views/TankhahReportListHazineha";
+import { NotFound } from "./views/NotFound";
 
 export default [
   // {
@@ -18,11 +19,12 @@ export default [
   //   exact: true,
   //   layout: DefaultLayout,
   //   component: () => <Redirect to="/blog-overview" />
-  // },
-  {
+  // },  
+   {
     path: "/home",
+    exact: true,
     layout: DefaultLayout,
-    component: Home
+    component: Home   
   },  
   {
     path:"/expense",

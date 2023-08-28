@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container, Button } from "shards-react";
 import { Link} from "react-router-dom";
-export const NotFound = () => {
+export const  NotFound = () => {
   return (
     <Container fluid className="main-content-container px-4 pb-4" style={{ fontFamily: "IRANSans"}}>
     <div className="error">
