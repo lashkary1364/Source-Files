@@ -7,15 +7,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import { PrintListHeader } from './PrintListHeader';
 import { PrintListDetail } from './PrintListDetail';
+import swal from 'sweetalert';
 
 
-export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMablagh, sumTotal, sumTaeedShode, sumTaeedNashode ,data}) => {
+export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMablagh, sumTotal, sumTaeedShode, sumTaeedNashode, data }) => {
 
   const [activeTab, setActiveTab] = useState('listHeader');
   const [selectedRow, setSelectedRow] = useState([]);
   const [headerItems, setHeaderItems] = useState([]);
-  const [chapListState,setChapListState]=useState(true);
-  const [chapListDetailState,setChapListDetailState]=useState(true);
+  const [chapListState, setChapListState] = useState(true);
+  const [chapListDetailState, setChapListDetailState] = useState(true);
 
 
 
@@ -34,7 +35,7 @@ export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMabl
 
   const handelChangeSoratId = (item, checked) => {
 
-    if (checked) {    
+    if (checked) {
       var details = [];
       item.Details.map(i =>
         details.push({
@@ -67,11 +68,10 @@ export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMabl
           Total: item.Total,
           Details: details
         }]);
-      
+
     }
-    else
-    {
-      const filters = selectedRow.filter(m => m.SoratID !== item.SoratID);           
+    else {
+      const filters = selectedRow.filter(m => m.SoratID !== item.SoratID);
       setHeaderItems(filters);
       setSelectedRow(filters);
     }
@@ -79,14 +79,26 @@ export const TankhahReportListHazineha = ({ reportItems, reportRizItems, sumMabl
 
   const chapList = (e) => {
     e.preventDefault();
-    setActiveTab('printList');
-    setChapListState(false);
+    if (selectedRow.length == 0) {
+      swal("توجه","لطفا یک ردیف انتخاب نمایید","warning");
+    } else {
+      setActiveTab('printList');
+      setChapListState(false);
+    }
+
+
   }
 
   const chapListDetail = (e) => {
     e.preventDefault();
-    setActiveTab('printListDetail');
-    setChapListDetailState(false);
+    if (selectedRow.length == 0) {
+      swal("توجه","لطفا یک ردیف انتخاب نمایید","warning");
+    } else {
+      setActiveTab('printListDetail');
+      setChapListDetailState(false);
+    }
+
+
   }
 
 

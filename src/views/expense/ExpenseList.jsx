@@ -17,6 +17,8 @@ import DatePicker, { DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian"
 import persian_en from "react-date-object/locales/persian_fa"
 import GetAllShomareName from "./ShomareName";
+import ControlSession from '../ControlSession';
+
 
 export const ExpenseList = () => {
 
@@ -26,14 +28,14 @@ export const ExpenseList = () => {
   const [selectedRow, setSelectedRow] = useState();
   const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
   const user = JSON.parse(sessionStorage.getItem("LoginTocken"));
-  const salId=sessionStorage.getItem("salId");
-  const salMali=sessionStorage.getItem("salMali");
-  const mohitId=sessionStorage.getItem("mohitId");
+  const salId = sessionStorage.getItem("salId");
+  const salMali = sessionStorage.getItem("salMali");
+  const mohitId = sessionStorage.getItem("mohitId");
   const [tankhahItems, setTankhahItems] = useState([]);
   const gridRef = useRef();
   const [rowData, setRowData] = useState([]);
   const [ids, setIds] = useState([]);
-  const [listId, setListId] = useState("");  
+  const [listId, setListId] = useState("");
   const [columnDefs] = useState([
     {
       field: 'index', filter: 'agTextColumnFilter', headerName: 'ردیف', headerCheckboxSelection: true,
@@ -49,6 +51,7 @@ export const ExpenseList = () => {
     { field: 'sanadID', headerName: 'شماره سند', filter: 'agNumberColumnFilter', },
 
   ]);
+
   const calendarRef = useRef();
   const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }))
   const date = new DateObject({ calendar: persian, locale: persian_en })
@@ -69,7 +72,8 @@ export const ExpenseList = () => {
   const [dateHeader, setDateHeader] = useState(date.format());
   const gridStyle = useMemo(() => ({ height: '600px', width: '100%', }), []);
   const getAllData = (tankhahId) => {
- 
+
+    ControlSession();
     console.log(tankhahId)
 
     axios({
@@ -94,12 +98,19 @@ export const ExpenseList = () => {
       console.log("row data ===>");
       console.table(rowData);
     }).catch(function (error) {
+      
+      // if(error.response.status==401){
+      //   window.location.replace('/');
+      //   return;
+      // }
+      
       console.log("axois error: " + error);
-      swal("error", error.message, "error");
+      swal("خطای "+ error.response.status, error.response.data, "error");
     })
   }
 
   useEffect(() => {
+    ControlSession();
     getWindowDimensions();
     getAllTankhah();
   }, []);
@@ -131,7 +142,8 @@ export const ExpenseList = () => {
   }, []);
 
   const getAllTankhah = () => {
-    
+   
+    ControlSession();    
     console.log("getAllTankhah");
     console.log(mohitId);
     console.log(salId);
@@ -155,6 +167,17 @@ export const ExpenseList = () => {
         });
 
       }).catch(function (error) {
+
+        console.log("error");
+        console.log(error.response.header);
+        console.log(error.response.status);
+        console.log(error.response.data);
+        
+        // if(error.response.status==401){
+        //   window.location.replace('/');
+        //   return;
+        // }
+
         swal("error", error.message, "error");
       })
   }
@@ -166,14 +189,17 @@ export const ExpenseList = () => {
   const handleEdit = () => {
     console.log("selectedRow")
     console.log(selectedRow)
+   
     if (selectedRow == null || selectedRow == undefined) {
       swal("توجه", "لطفا یک ردیف انتخاب نمایید", "warning")
       return;
     }
+
     if (selectedRow.length > 1) {
       swal("توجه", "تعداد ردیف های انتخابی برای حذف بیشتر از یک ردیف میباشد", "warning");
       return;
     }
+
     history.push("/expense?id=" + selectedRow[0].soratID + "&operation=edit")
   }
 
@@ -183,33 +209,38 @@ export const ExpenseList = () => {
       swal("توجه", "لطفا یک ردیف انتخاب نمایید", "warning")
       return;
     }
+
     if (selectedRow.length > 1) {
       swal("توجه", "تعداد ردیف های انتخابی برای حذف بیشتر از یک ردیف میباشد", "warning");
       return;
     }
 
-    history.push("/expenceDetail?id=" + selectedRow[0].soratID + "&operation=detail")
+    history.push("/expenceDetail?id=" + selectedRow[0].soratID + "&operation=detail");
   }
 
   const handleDelete = () => {
-
 
     if (selectedRow == null || selectedRow == undefined || selectedRow.length == 0) {
       swal("توجه", "لطفا یک ردیف انتخاب نمایید", "warning")
       return;
     }
+
     if (selectedRow.length > 1) {
       swal("توجه", "تعداد ردیف های انتخابی برای حذف بیشتر از یک ردیف میباشد", "warning");
       return;
     }
-    history.push("/expense?id=" + selectedRow[0].soratID + "&operation=delete")
+
+    history.push("/expense?id=" + selectedRow[0].soratID + "&operation=delete");
+
   }
 
   const handleSodoreName = () => {
-    console.log("sodore name ....")
+
+    ControlSession();
+    console.log("sodore name ....");
     console.log(selectedRow);
     console.log(listId);
-
+    console.log(dateHeader);
     GetAllShomareName(listId).then(response => {
       if (response > 0) {
         swal("توجه", "بعضی از صورت هزینه های انتخابی دارای شماره نامه میباشند ابتدا نامه ها را باطل کنید", "warning");
@@ -220,14 +251,21 @@ export const ExpenseList = () => {
       }
 
     }).catch(error => {
+      
+      // if(error.response.status==401){
+      //   window.location.replace('/');
+      //   return;
+      // }
 
-      swal("error", error.message, "error");
+      swal("خطای "+ error.response.status, error.response.data, "error");
 
     });
 
   }
 
   const handleEbtaleName = () => {
+
+    ControlSession();
 
     axios(
       {
@@ -247,7 +285,8 @@ export const ExpenseList = () => {
         if (resultItems > 0) {
           swal("بعضی از صورت هزینه های انتخابی در وضعیت تایید شده هستند و قابل برگشت نمیباشند");
           return;
-        } else {
+        } else
+        {
           BargashtName();
         }
         // resultItems.map(data => {
@@ -257,6 +296,12 @@ export const ExpenseList = () => {
       }).catch(error => {
         console.log("axois error: ");
         console.log(error);
+
+        // if(error.response.status==401){
+        //   window.location.replace('/');
+        //   return;
+        // }
+
         swal("Error", error.message, "error");
         return;
       }
@@ -265,6 +310,8 @@ export const ExpenseList = () => {
   }
 
   const BargashtName = () => {
+    ControlSession();
+
     axios(
       {
         url: serverAdress + `EbtalName?list=${listId}`,
@@ -286,14 +333,16 @@ export const ExpenseList = () => {
 
       }).catch(function (error) {
         // handle error
+        
+        // if(error.response.status==401){
+        //   window.location.replace('/');
+        //   return;
+        // }
+
         console.log("axois error: ");
         console.log(error);
-        swal("Error", error.message, "error");
+        swal("خطای "+ error.response.status, error.response.data, "error");
       });
-
-
-
-
   }
 
   function onSelectionChanged(event) {
@@ -318,9 +367,7 @@ export const ExpenseList = () => {
   }
 
   const [modal, setModal] = useState(false);
-
   const toggle = () => setModal(!modal);
-
 
   window.addEventListener('resize', function () {
     setTimeout(function () {
@@ -333,9 +380,7 @@ export const ExpenseList = () => {
       } else {
         setVisible(true);
       }
-
-
-    })
+    });
   });
 
   const handelChangeSoratId = (item) => {
@@ -350,7 +395,9 @@ export const ExpenseList = () => {
   }
 
   function getWindowDimensions() {
+    
     const { innerWidth: width, innerHeight: height } = window;
+
     console.log({
       width,
       height
@@ -360,7 +407,7 @@ export const ExpenseList = () => {
       setVisible(false);
     } else {
       setVisible(true);
-    }
+    };
 
     return {
       width,
@@ -370,7 +417,6 @@ export const ExpenseList = () => {
   }
 
   return (
-
     <Container fluid className="main-content-container" >
       <Row className="page-header mt-2 ">
         <Col lg="12" >
@@ -382,11 +428,11 @@ export const ExpenseList = () => {
       </Row>
       <Card small className="h-100" >
         <CardBody className="pt-0">
-          <Row>       
+          <Row>
             <Col md="4" className="form-group">
               <div className="form-inline mt-3 mr-3">
                 <label htmlFor="tankhah"> تنخواه*:</label>
-                <FormSelect id="tankhah" name="tankhah" onChange={(e) => getAllData(e.target.value)} className='form-control' >                        
+                <FormSelect id="tankhah" name="tankhah" onChange={(e) => getAllData(e.target.value)} className='form-control' >
                   <option value={""}>یک موردانتخاب کنید</option>
                   {
                     tankhahItems.map((item, index) => (

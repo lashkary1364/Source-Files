@@ -81,10 +81,14 @@ export const MororListDaryaftiha = () => {
                 }, 2000);
 
             }).catch(function (error) {
+                if(error.response.status==401){
+                    window.location.replace('/');
+                    return;
+                  }
                 // handle error
                 // console.log("axois error: ");
                 // console.log(error);
-                swal("error", error.message, "error");
+                swal("خطای "+ error.response.status, error.response.data, "error");
             })
 
     }

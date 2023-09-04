@@ -62,6 +62,10 @@ export default class Mohit extends React.Component {
           
 
       }).catch(function (error) {
+        if(error.response.status==401){
+          window.location.replace('/');
+          return;
+        }
         // console.log(error.response.data);
         console.log("error.response.status");
         console.log(error);
@@ -72,6 +76,7 @@ export default class Mohit extends React.Component {
   changeMohit(e) {
     console.log(e.target);   
     sessionStorage.setItem("mohitId", e.target.value);
+    sessionStorage.setItem("mohitName", e.target.innerText);
     swal("محیط کاربری به " + e.target.innerText + " تغییر یافت ")
   }
 

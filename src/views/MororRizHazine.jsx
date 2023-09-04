@@ -96,7 +96,11 @@ export const MororRizHazine = () => {
                 setSumTotal(sumTotal);
                 
             }).catch(function (error) {
-                swal("error", error.message, "error");
+                if(error.response.status==401){
+                    window.location.replace('/');
+                    return;
+                  }
+                  swal("خطای "+ error.response.status, error.response.data, "error");
                 setIsLoading(false);
             })
 
@@ -136,7 +140,11 @@ export const MororRizHazine = () => {
                 setIsVisible(true);
 
             }).catch(function (error) {
-                swal("error", error.message, "error");
+                if(error.response.status==401){
+                    window.location.replace('/');
+                    return;
+                  }
+                  swal("خطای "+ error.response.status, error.response.data, "error");
                 setIsLoading(false);
             })
 

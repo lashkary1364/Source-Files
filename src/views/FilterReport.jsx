@@ -9,29 +9,32 @@ import DatePicker, { DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import persian_en from "react-date-object/locales/persian_en";
-import { TankhahReportListExpense } from './TankhahReportListExpense';
 import swal from 'sweetalert';
-import e from 'cors';
+import { useHistory } from "react-router-dom";   
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowLeft } from '@fortawesome/fontawesome-free-solid';
+
 export const FilterReport = ({ getAllReports }) => {
 
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
     const [tankhahItems, setTankhahItems] = useState([]);
     const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_fa }));
     const [dateFrom, setDateFrom] = useState();
-    const [dateTo, setDateTo] = useState();    
+    const [dateTo, setDateTo] = useState();
     const calendarRef = useRef();
-    const salText=sessionStorage.getItem("salMali")
-    const [yearFrom,setYearFrom]=useState();
-    const [yearTo,setYearTo]=useState();
+    const salText = sessionStorage.getItem("salMali")
+    const [yearFrom, setYearFrom] = useState();
+    const [yearTo, setYearTo] = useState();
     const [tankhahId, setTankhahId] = useState();
     const [mandeKhat, setMandeKhat] = useState(false);
-    const salMali=sessionStorage.getItem("salMali");
-    const salId=sessionStorage.getItem("salId");
-    const mohitId=sessionStorage.getItem("salId");
+    const salMali = sessionStorage.getItem("salMali");
+    const salId = sessionStorage.getItem("salId");
+    const mohitId = sessionStorage.getItem("salId");
     const user = JSON.parse(sessionStorage.getItem("LoginTocken"));
+    let history = useHistory();
 
     useEffect(() => {
-        GetAllTankhah();       
+        GetAllTankhah();
     }, []);
 
     const convertFrom = (date, format = state.format) => {
@@ -54,32 +57,32 @@ export const FilterReport = ({ getAllReports }) => {
     }
 
     const getAllReport = (e) => {
-          e.preventDefault();
+        e.preventDefault();
 
-        if (dateFrom==undefined || dateTo==undefined||tankhahId==undefined ){
-            swal("توجه", "وارد کردن تنخواه و تاریخ الزامی است", "warning"); 
+        if (dateFrom == undefined || dateTo == undefined || tankhahId == undefined) {
+            swal("توجه", "وارد کردن تنخواه و تاریخ الزامی است", "warning");
             return;
         }
 
-        if (dateFrom>dateTo){
-            swal("توجه", "بازه تاریخی درست وارد نشده است", "warning"); 
-            return; 
-        }
-
-        if(yearFrom!=salText || yearTo!=salText){
-            swal("توجه", "بازه تاریخی و سال ملی یکسان نیست", "warning"); 
+        if (dateFrom > dateTo) {
+            swal("توجه", "بازه تاریخی درست وارد نشده است", "warning");
             return;
         }
-        
+
+        if (yearFrom != salText || yearTo != salText) {
+            swal("توجه", "بازه تاریخی و سال ملی یکسان نیست", "warning");
+            return;
+        }
+
         console.log(dateFrom?.format?.("YYYY"));
         console.log(dateFrom.year);
-        console.log(dateTo);    
+        console.log(dateTo);
         console.log(salMali);
         console.log(tankhahId);
 
-        getAllReports(dateFrom, dateTo, salMali, tankhahId, mandeKhat);
+        getAllReports(dateFrom, dateTo, salMali, tankhahId, mandeKhat, salId);
     }
-  
+
     const GetAllTankhah = () => {
 
         console.log(mohitId)
@@ -105,7 +108,12 @@ export const FilterReport = ({ getAllReports }) => {
                 });
 
             }).catch(function (error) {
-                swal("error", error.message, "error");
+                if (error.response.status == 401) {
+                    window.location.replace('/');
+                    return;
+                }
+
+                swal("خطای "+ error.response.status, error.response.data, "error");
             })
     }
 
@@ -121,7 +129,7 @@ export const FilterReport = ({ getAllReports }) => {
                                 <div className="form-inline mr-3">
                                     <label htmlFor="tankhah"> تنخواه*:</label>
                                     <FormSelect id="tankhah" name="tankhah" onChange={(e) => changeTankhah(e.target.value)} className='form-control'>
-                                    <option value={""}>یک موردانتخاب کنید</option>
+                                        <option value={""}>یک موردانتخاب کنید</option>
                                         {
                                             tankhahItems.map((item, index) => (
                                                 <option key={index}
@@ -133,7 +141,7 @@ export const FilterReport = ({ getAllReports }) => {
                                     </FormSelect>
                                 </div>
                             </Col>
-                      
+
                             <Col md="3" className="form-group">
                                 <div className="form-group mx-sm-3 mb-2">
                                     <label htmlFor="mande" > از تاریخ :</label>
@@ -143,11 +151,12 @@ export const FilterReport = ({ getAllReports }) => {
                                         locale={persian_fa}
                                         format={"YYYY/MM/DD"}
                                         value={dateFrom}
-                                        onChange={convertFrom}                                     
+                                        onChange={convertFrom}
                                         calendarPosition="bottom-right"
                                     />
                                 </div>
                             </Col>
+
                             <Col md="3" className="form-group">
                                 <div className="form-group mx-sm-3 mb-2">
                                     <label htmlFor="etebarMax">تا تاریخ:</label>
@@ -157,25 +166,31 @@ export const FilterReport = ({ getAllReports }) => {
                                         locale={persian_fa}
                                         format={"YYYY/MM/DD"}
                                         value={dateTo}
-                                        onChange={convertTo}                                       
+                                        onChange={convertTo}
                                         calendarPosition="bottom-right"
                                     />
                                 </div>
                             </Col>
+
                             <Col md="3" className="form-group">
                                 <div className="form-group mx-sm-3 mb-2">
                                     <input type="checkbox" name="vehicle1" onChange={(e) => setMandeKhat(e.target.checked)} />
                                     <label > محاسبه مانده در خط</label>
                                 </div>
                             </Col>
-                            <Col md="3" className="form-group">
+                            </Row>
+                            <Row>                           
                                 <Button theme="primary" className="mb-2 mr-1" type="submit" onClick={(e) => { getAllReport(e) }} >
                                     <span className='form-inline'>
                                         گزارش
                                     </span>
                                 </Button>
-                            </Col>
-                        </Row>
+                            
+                                <Button theme="primary" className="mb-2 mr-1" type="submit" onClick={(e) =>{ e.preventDefault(); history.goBack()} } >
+                                <FontAwesomeIcon icon={faArrowLeft} className="text-warning mr-2"  />
+                                 برگشت                                  
+                                </Button>                          
+                            </Row>
                     </form>
                 </ListGroupItem>
             </ListGroup>

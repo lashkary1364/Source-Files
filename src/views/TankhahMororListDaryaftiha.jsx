@@ -61,7 +61,7 @@ export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) =>
                                 </button>
                             </div>
 
-                            <div>
+                            {/* <div>
                                 <DownloadTableExcel
                                     filename="export-html-pdf"
                                     sheet="tankhah"
@@ -72,7 +72,7 @@ export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) =>
                                         صدور html به اکسل
                                     </button>
                                 </DownloadTableExcel>
-                            </div>
+                            </div> */}
 
                         </div>
                     </ListGroupItem>
@@ -80,17 +80,18 @@ export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) =>
             </Card>
             <div id="table-to-xls" ref={ref} className="table-to-xls" style={{ margin: "50px" }}>
                 <div className="border-tankhah-header">
-                    <div >{JSON.parse(sessionStorage.getItem("LoginTocken")).LastMohitName}</div>
+                    <div >{sessionStorage.getItem("mohitName")}</div>
                     <div >
-                        <span >لیست گردش حساب:تنخواه </span>
-                        <span>{" " + JSON.parse(sessionStorage.getItem("LoginTocken")).userFirstName + " " + JSON.parse(sessionStorage.getItem("LoginTocken")).userLastName + " "} </span>
-                    </div>
-                    <div >
-                        <span>از : </span>
+                        <span > لیست دریافتی </span>
+                        <span >از : </span>
                         <span>{" " + dateFrom + " "}</span>
-                        <span>تا :</span>
+                        <span >تا :</span>
                         <span>{" " + dateTo + " "}</span>
+                        {/* <span>{" " + JSON.parse(sessionStorage.getItem("LoginTocken")).userFirstName + " " + JSON.parse(sessionStorage.getItem("LoginTocken")).userLastName + " "} </span> */}
                     </div>
+                    {/* <div >
+                        
+                    </div> */}
                 </div>
 
                 <table dir="rtl" >

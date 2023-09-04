@@ -7,10 +7,6 @@ import {
   Button, FormSelect, Alert
 } from "shards-react";
 import ReactLoading from 'react-loading';
-import { confirmAlert } from 'react-confirm-alert'; // Import
-import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
-import { faHouseMedicalCircleCheck, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios';
 import DatePicker, { DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian"
@@ -25,33 +21,32 @@ import {
   Route,
   useHistory
 } from 'react-router-dom';
-import * as moment from 'jalali-moment';
 import swal from 'sweetalert';
 import GetAllShomareName from './ShomareName';
-
+import ControlSession from '../ControlSession';
 
 
 export const Expense = () => {
 
   const history = useHistory();
   const [isAction, setIsAction] = useState(false);
+
   const queryParameters = new URLSearchParams(window.location.search);
   const soratId = queryParameters.get("id");
   const operation = queryParameters.get("operation");
   const calendarRef = useRef();
   const [tarikhError, setTarikhError] = useState(false);
-  const [tankhahItems, setTankhahItems] = useState([]); 
+  const [tankhahItems, setTankhahItems] = useState([]);
   const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
   const user = JSON.parse(sessionStorage.getItem("LoginTocken"));
-  const salId=sessionStorage.getItem("salId");
-  const salMali=sessionStorage.getItem("salMali");
-  const mohitId=sessionStorage.getItem("mohitId"); 
-  const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }))
+  const salId = sessionStorage.getItem("salId");
+  const salMali = sessionStorage.getItem("salMali");
+  const mohitId = sessionStorage.getItem("mohitId");
+  const [state, setState] = useState(new DateObject({ calendar: persian, locale: persian_en }));
   const date = new DateObject({ calendar: persian, locale: persian_en })
   const [dateHeader, setDateHeader] = useState(date.format());
-  const [status, setStatus] = useState(0); 
+  const [status, setStatus] = useState(0);
   const [year, setYear] = useState(state.year);
-
   const convert = (date, format = state.format) => {
     let object = { date, format }
     if (date == null)
@@ -62,7 +57,6 @@ export const Expense = () => {
     setState(new DateObject(object).convert(persian, persian_en).format());
     setYear(new DateObject(object).convert(persian, persian_en).format("YYYY"));
     setDateHeader(new DateObject(object).convert(persian, persian_en).format());
-
   }
 
   useEffect(() => {
@@ -74,9 +68,9 @@ export const Expense = () => {
 
   }, []);
 
-
   const GetAllTankhah = () => {
 
+    ControlSession();
     console.log(mohitId);
     console.log(user.UserId);
     console.log(salId);
@@ -101,12 +95,19 @@ export const Expense = () => {
         });
 
       }).catch(function (error) {
-        swal("error", error.message, "error");
+
+        // if(error.response.status==401){
+        //   window.location.replace('/');
+        //   return;
+        // }
+
+        swal("خطای "+ error.response.status, error.response.data, "error");
       })
   }
 
   const GetAllTankhahInfo = (tankhahId) => {
 
+    ControlSession();
     formik.setFieldValue("tankhah", tankhahId);
 
     axios(
@@ -123,8 +124,14 @@ export const Expense = () => {
       }).then(function (response) {
         console.log(response.data);
       }).catch(function (error) {
-        // handle error      
-        swal("error", error.message, "error");
+
+        // handle error    
+        // if(error.response.status==401){
+        //   window.location.replace('/');
+        //   return;
+        // } 
+
+        swal("خطای "+ error.response.status, error.response.data, "error");
 
       });
 
@@ -147,13 +154,19 @@ export const Expense = () => {
         formik.setFieldValue("mande", response.data.mojodi)
 
       }).catch(function (error) {
+
+        // if(error.response.status==401){
+        //   window.location.replace('/');
+        //   return;
+        // }
+
         // handle error      
         swal("error", error.message, "error");
 
       });
   }
 
-  const validationSchema = Yup.object().shape({   
+  const validationSchema = Yup.object().shape({
     tankhah: Yup.string().required('فیلد اجباری است'),
     sharh: Yup.string().required('فیلد شرح اجباری است'),
   });
@@ -167,7 +180,7 @@ export const Expense = () => {
       shomare: '',
       tarikh: new Date() || null,
       sharh: '',
-      tozihat: '',  
+      tozihat: '',
     },
     validationSchema,
     validateOnChange: true,
@@ -209,24 +222,32 @@ export const Expense = () => {
           'Expires': '0',
         }
       }).then(function (response) {
+
         console.log(response.data.mohidID)
         console.log("set info ....");
         console.log(response.data);
         formik.setFieldValue("tozihat", response.data.tozihat);
         formik.setFieldValue("sharh", response.data.sharh);
         formik.setFieldValue("tarikh", response.data.tarikh);
-        formik.setFieldValue("shomare", response.data.shomare);        
+        formik.setFieldValue("shomare", response.data.shomare);
         GetAllTankhah(response.data.mohidID, response.data.salID);
         setState(response.data.tarikh);
         setDateHeader(response.data.tarikh);
-        setStatus(response.data.status);      
-        GetAllTankhahInfo(response.data.tankhah_ID);        
+        setStatus(response.data.status);
+        GetAllTankhahInfo(response.data.tankhah_ID);
       }).catch(function (error) {
-        swal("error", error.message, "error");
+
+        // if(error.response.status==401){
+        //   window.location.replace('/');
+        //   return;
+        // }
+
+        swal("خطای "+ error.response.status, error.response.data, "error");
       })
   }
 
   const addSouratHazineHeader = (data) => {
+    ControlSession();
 
     if (year != salMali) {
       swal("توجه", "تاریخ و سال مالی یکسان نیست", "warning");
@@ -276,13 +297,20 @@ export const Expense = () => {
         }, 1000);
 
       }).catch(function (error) {
+
+        // if(error.response.status==401){
+        //   window.location.replace('/');
+        //   return;
+        // }
+
         setIsAction(false);
-        swal("error", error.message, "error");
+        swal("خطای "+ error.response.status, error.response.data, "error");
       });
 
   }
 
   const deleteSouratHazineHeader = async (id) => {
+    ControlSession();
 
     if (status != 0) {
       swal("توجه", "این سند قابل حذف نمیباشد", "warning");
@@ -327,8 +355,15 @@ export const Expense = () => {
 
                 })
                 .catch(function (error) {
+
+                  // if(error.response.status==401)
+                  // {
+                  //   window.location.replace('/');
+                  //   return;
+                  // }
+
                   setIsAction(false);
-                  swal("error", error.message, "error");
+                  swal("خطای "+ error.response.status, error.response.data, "error");
                 });
 
             }
@@ -341,15 +376,22 @@ export const Expense = () => {
       }
 
     }).catch(error => {
+
+      // if(error.response.status==401){
+      //   window.location.replace('/');
+      //   return;
+      // }
+
       swal("error", error.message, "error");
     });
 
   }
 
   const updateSouratHazineHeader = (data) => {
+    ControlSession();
     console.log("year");
     console.log(year);
-  
+
 
     if (year != salMali) {
       swal("توجه", "بازه تاریخی و سال مالی یکسان نیست", "warning");
@@ -413,11 +455,16 @@ export const Expense = () => {
           })
       }
     }).catch(error => {
+
+      // if(error.response.status==401){
+      //   window.location.replace('/');
+      //   return;
+      // }
+
       console.log(error);
-      swal("error", error.message, "error")
+      swal("خطای "+ error.response.status, error.response.data, "error");
     });
   }
-
 
   return (
     <Container fluid className="main-content-container px-4">
@@ -437,50 +484,6 @@ export const Expense = () => {
               <ListGroupItem >
                 <form onSubmit={formik.handleSubmit}>
                   <Row>
-                    {/* <Col md="4" className="form-group">
-                      <label htmlFor="mohit">اتتخاب محیط کاربری*:</label>
-                      <FormSelect id="mohit" name="mohit" onChange={(e) => changeMohit(e.target.value)} className={'form-control' + (formik.errors.mohit && formik.touched.mohit ? ' is-invalid' : '')}
-                        value={formik.values.mohit}>
-                        <option value={""}>یک موردانتخاب کنید</option>
-                        {
-                          mohitItems.map((item, index) => (
-                            <option key={index}
-                              value={item.MohitId}>
-                              {item.MohitOnvan}
-                            </option>
-                          ))
-                        }
-                      </FormSelect>
-                      <div className="invalid-feedback">
-                        {
-                          formik.errors.mohit && formik.touched.mohit
-                            ? formik.errors.mohit
-                            : null
-                        }
-                      </div>
-                    </Col>
-                    <Col md="4" className="form-group">
-                      <label htmlFor="salMali">اتتخاب  سال مالی*:</label>
-                      <FormSelect id="salMali" name="salMali" onChange={(e) => changeSalMali(e)} className={'form-control' + (formik.errors.salMali && formik.touched.salMali ? ' is-invalid' : '')}
-                        value={formik.values.salMali}>
-                        <option value={""}>یک موردانتخاب کنید</option>
-                        {
-                          salMaliItems.map((item, index) => (
-                            <option key={index}
-                              value={item.SalId}>
-                              {item.SalMali}
-                            </option>
-                          ))
-                        }
-                      </FormSelect>
-                      <div className="invalid-feedback">
-                        {
-                          formik.errors.salMali && formik.touched.salMali
-                            ? formik.errors.salMali
-                            : null
-                        }
-                      </div>
-                    </Col> */}
                     <Col md="4" className="form-group">
                       <label htmlFor="tankhah">اتتخاب تنخواه*:</label>
                       <FormSelect id="tankhah" name="tankhah" onChange={(e) => GetAllTankhahInfo(e.target.value)} className={'form-control' + (formik.errors.tankhah && formik.touched.tankhah ? ' is-invalid' : '')}
@@ -561,8 +564,8 @@ export const Expense = () => {
                     <Col md="4" className="form-group">
                       <label htmlFor="tozihat">توضیحات</label>
                       <textarea className='form-control' id="tozihat" name="tozihat" onChange={formik.handleChange} value={formik.values.tozihat}
-                        disabled={operation == "delete" ? true : false} maxLength="1000"
-                      ></textarea>
+                        disabled={operation == "delete" ? true : false} maxLength="1000" ></textarea>
+                     
                       <div className="invalid-feedback">
                         {
                           formik.errors.tozihat && formik.touched.tozihat
@@ -598,7 +601,6 @@ export const Expense = () => {
                               </Button>
                               : ""
                         }
-
                       </div>
                     </Col>
                   </Row>

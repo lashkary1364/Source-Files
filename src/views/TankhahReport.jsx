@@ -65,7 +65,7 @@ export const TankhahReport = ({ resultItems, dateFrom, dateTo }) => {
                                 </button>
                             </div>
                             <div>
-                                <DownloadTableExcel
+                                {/* <DownloadTableExcel
                                     filename="export-html-pdf"
                                     sheet="tankhah"
                                     currentTableRef={ref.current}
@@ -74,19 +74,17 @@ export const TankhahReport = ({ resultItems, dateFrom, dateTo }) => {
                                         <FontAwesomeIcon icon={faFileExcel} className="text-warning mr-2" />
                                         صدور html به اکسل
                                     </button>
-                                </DownloadTableExcel>
+                                </DownloadTableExcel> */}
                             </div>
-
                         </div>
                     </ListGroupItem>
                 </ListGroup>
             </Card>
             <div id="table-to-xls" ref={ref} className="table-to-xls" style={{margin:"50px"}} >
                 <div className="border-tankhah-header">
-                    <div >{JSON.parse(sessionStorage.getItem("LoginTocken")).LastMohitName}</div>
+                    <div >{sessionStorage.getItem("mohitName")}</div>
                     <div>
-                        <span >لیست گردش حساب:تنخواه </span>
-                        <span>{" " + JSON.parse(sessionStorage.getItem("LoginTocken")).userFirstName + " " + JSON.parse(sessionStorage.getItem("LoginTocken")).userLastName + " "} </span>
+                        <span >لیست هزینه های ثبت شده </span>                
                     </div>
                     <div >
                         <span>از : </span>

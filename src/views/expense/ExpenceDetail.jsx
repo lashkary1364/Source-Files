@@ -104,8 +104,11 @@ export const ExpenceDetail = () => {
                 setSalText(response.data.salMali);
                 GetAllSoratHazineSharh(response.data.mohidID);
             }).catch(function (error) {
-
-                swal("error", error.message, "error");
+                if(error.response.status==401){
+                    window.location.replace('/');
+                    return;
+                  }
+                  swal("خطای "+ error.response.status, error.response.data, "error");
             });
 
     }
@@ -143,7 +146,11 @@ export const ExpenceDetail = () => {
                 });
 
             }).catch(function (error) {
-                swal("error", error.message, "error");
+                if(error.response.status==401){
+                    window.location.replace('/');
+                    return;
+                  }
+                  swal("خطای "+ error.response.status, error.response.data, "error");
 
             });
 
@@ -181,7 +188,11 @@ export const ExpenceDetail = () => {
                 });
 
             }).catch(function (error) {
-                swal("error", error.message, "error");
+                if(error.response.status==401){
+                    window.location.replace('/');
+                    return;
+                  }
+                  swal("خطای "+ error.response.status, error.response.data, "error");
             })
 
     }
@@ -334,8 +345,12 @@ export const ExpenceDetail = () => {
                                     }, 1000);
 
                                 }).catch(function (error) {
+                                    if(error.response.status==401){
+                                        window.location.replace('/');
+                                        return;
+                                      }
                                     setIsAction(false);
-                                    swal("error", error.message, "error");
+                                    swal("خطای "+ error.response.status, error.response.data, "error");
 
                                 });
 
@@ -343,8 +358,11 @@ export const ExpenceDetail = () => {
                         }
 
                     }).catch(function (error) {
-
-                        swal("Error", error.message, "error");
+                        if(error.response.status==401){
+                            window.location.replace('/');
+                            return;
+                          }
+                          swal("خطای "+ error.response.status, error.response.data, "error");
                         return null;
                     });
 
@@ -464,7 +482,11 @@ export const ExpenceDetail = () => {
                     className: 'toast-message'
                 });
             }).catch(error => {
-                swal("error", error.message, "error");
+                if(error.response.status==401){
+                    window.location.replace('/');
+                    return;
+                  }
+                  swal("خطای "+ error.response.status, error.response.data, "error");
             });
     }
 

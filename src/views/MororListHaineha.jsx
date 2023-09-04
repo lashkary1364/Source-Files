@@ -68,7 +68,11 @@ export const MororListHaineha = () => {
                 // console.log("axois error: ");
                 // console.log(error);
                 // alert(error);
-                swal("error", error.message, "error");
+                if(error.response.status==401){
+                    window.location.replace('/');
+                    return;
+                  }
+                  swal("خطای "+ error.response.status, error.response.data, "error");
                 setIsLoading(false);
             })
 

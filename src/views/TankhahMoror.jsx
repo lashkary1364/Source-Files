@@ -28,8 +28,7 @@ export const TankhahMoror = () => {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
-        GetAllTankhah();
-     
+        GetAllTankhah();     
     }, []);
 
     const GetAllTankhah = () => {
@@ -52,11 +51,15 @@ export const TankhahMoror = () => {
                 });
 
             }).catch(function (error) {
-                swal("error", error.message, "error");
+                if(error.response.status==401){
+                    window.location.replace('/');
+                    return;
+                  }
+                  swal("خطای "+ error.response.status, error.response.data, "error");
             })
     }
 
-    const getAllReports = (dateFrom, dateTo, salId, tankhahId, mandeKhat) => {
+    const getAllReports = (dateFrom, dateTo, salMali, tankhahId, mandeKhat , salId) => {
        
         console.log("moror ...");
         setDateFrom(dateFrom);
@@ -65,6 +68,13 @@ export const TankhahMoror = () => {
         setIsLoading(true);
         setIsVisible(true)
 
+        console.log({
+            "fromDate": dateFrom,
+            "toDate": dateTo,
+            "salId": salId,
+            "tankhahId": tankhahId,
+            "showMande": mandeKhat
+        });
         axios(
             {
                 url: serverAdress + "GetTankhahMoror",
@@ -104,8 +114,12 @@ export const TankhahMoror = () => {
                     setIsLoading(false);
                 }, 2000);
 
-            }).catch(function (error) {                
-                swal("error", error.message, "error");
+            }).catch(function (error) {  
+                if(error.response.status==401){
+                    window.location.replace('/');
+                    return;
+                  }              
+                  swal("خطای "+ error.response.status, error.response.data, "error");
                 setIsLoading(false);
             });
     }
@@ -132,7 +146,6 @@ export const TankhahMoror = () => {
                     }                   
                 </Col>
             </Row>
-
         </Container>
     )
 }

@@ -16,7 +16,9 @@ import * as Yup from 'yup';
 import { TankhahMororListExpenseType } from "./TankhahMororListExpenseType";
 import swal from 'sweetalert';
 import { Spinner } from 'react-bootstrap';
-
+import { useHistory } from "react-router-dom";   
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowLeft } from '@fortawesome/fontawesome-free-solid';
 
 
 export const MororListExpenseType = () => { 
@@ -42,6 +44,7 @@ export const MororListExpenseType = () => {
     const [yearFrom, setYearFrom] = useState(state.year);
     const [yearTo, setYearTo] = useState(state.year);
 
+    let history = useHistory();
 
     useEffect(() => {
 
@@ -147,7 +150,7 @@ export const MororListExpenseType = () => {
                 });
 
             }).catch(function (error) {
-                swal("error", error.message, "error");
+                swal("خطای "+ error.response.status, error.response.data, "error");
             })
     }
 
@@ -184,7 +187,7 @@ export const MororListExpenseType = () => {
                 // console.log("axois error: ");
                 // console.log(error);
                 // alert(error);
-                swal("error", error.message, "error");
+                swal("خطای "+ error.response.status, error.response.data, "error");
             })
 
     }
@@ -231,7 +234,11 @@ export const MororListExpenseType = () => {
                 // console.log("axois error: ");
                 // console.log(error);
                 // alert(error);
-                swal("error", error.message, "error");
+                if(error.response.status==401){
+                    window.location.replace('/');
+                    return;
+                  }
+                  swal("خطای "+ error.response.status, error.response.data, "error");
                 setIsLoading(false);
             });
 
@@ -355,11 +362,21 @@ export const MororListExpenseType = () => {
                                             </div>
                                         </Col>
                                     </Row>
-                                    <Button theme="primary" className="mb-2 mr-1" type="submit"  >
+                                    <Row>
+                                        <div className='form-inline'>
+                                        <Button theme="primary" className="mb-2 mr-1" type="submit"  >
                                         <span className='form-inline'>
                                             گزارش
                                         </span>
                                     </Button>
+                                    <button className="btn btn-primary mb-2 mr-1" onClick={() => history.goBack()}><FontAwesomeIcon icon={faArrowLeft} className="text-warning mr-2"  />بازگشت</button>
+                                        </div>
+                                    </Row>
+                                    
+
+
+
+                              
 
                                 </form>
                             </ListGroupItem>

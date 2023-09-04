@@ -9,8 +9,7 @@ import persian from "react-date-object/calendars/persian";
 import { DateObject } from "react-multi-date-picker";
 import swal from 'sweetalert';
 import { LoginModal } from './views/LoginModal';
-
-
+import { LoadingBootstrap } from './views/LoadingBootstrap';
 
 const Login = () => {
 
@@ -22,6 +21,9 @@ const Login = () => {
     const [show, setShow] = useState(false);
     const handleShow = () => setShow(true);
     const handleClose = () => setShow(false);
+    const [isDisable, setIsDisable] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
     const validationSchema = Yup.object().shape({
         userName: Yup.string().required('فیلد نام کاربری اجباری است'),
         //test test
@@ -41,6 +43,7 @@ const Login = () => {
         // acceptTerms: Yup.bool().oneOf([true], 'Accept Terms is required'),
     });
 
+
     const formik = useFormik({
         initialValues:
         {
@@ -51,7 +54,8 @@ const Login = () => {
         // validateOnChange: false,
         // validateOnBlur: false,
         onSubmit: (data) => {
-
+            setIsDisable(true);
+            setIsLoading(true);
             axios(
                 {
                     url: serverAdress + 'login',
@@ -68,14 +72,28 @@ const Login = () => {
                 }).then(function (response) {
                     console.log("response");
                     console.log(response);
-                    if (response.data == 401) {
+
+                    if (response.data == 600) {
                         setErrorFlag(true);
-                        setErrorMessage("نام کاربری یا رمز عبور نادرست است");
+                        swal("error", "کاربر محترم شما مجاز به استفاده از نرم افزار نیستید", "error");
+                        setErrorMessage("کاربر محترم شما مجاز به استفاده از نرم افزار نیستید");
+                        setIsDisable(false);
+                        setIsLoading(false);
                         return false;
-                    } else if (response.data.isAdmin == true) {
-                        swal("توجه", "این کاربر مجاز به ورود به سیستم تنخواه تحت وب نمی باشد", "warning");
-                        return;
                     }
+                    else
+                        if (response.data == 401) {
+                            setErrorFlag(true);
+                            setErrorMessage("نام کاربری یا رمز عبور نادرست است");
+                            setIsDisable(false);
+                            setIsLoading(false);
+                            return false;
+                        } else if (response.data.isAdmin == true) {
+                            swal("توجه", "این کاربر مجاز به ورود به سیستم تنخواه تحت وب نمی باشد", "warning");
+                            setIsDisable(false);
+                            setIsLoading(false);
+                            return;
+                        }
 
                     console.log("response: ")
                     console.log(response.data);
@@ -98,19 +116,24 @@ const Login = () => {
                         console.log(response.data.access_token);
                         localStorage.setItem("access-tocken", response.data.access_token);
                         setUserId(response.data.userId);
+                        setIsDisable(false);
+                        setIsLoading(false);
                         handleShow();
-
                     } else {
                         setErrorFlag(true);
-                        setErrorMessage("نام کاربری یا رمز عبور نادرست است")
+                        setErrorMessage("نام کاربری یا رمز عبور نادرست است");
+                        setIsDisable(false);
+                        setIsLoading(false);
                     }
-
-
+                    setIsDisable(false);
+                    setIsLoading(false);
                 }).catch(function (error) {
+                    setIsDisable(false);
+                    setIsLoading(false);
                     // handle error
                     setErrorFlag(true);
                     console.log("axois error: " + error);
-                    swal("error", error.message, "error");
+                    swal("خطای " + error.response.status, error.response.data, "error");
                     setErrorMessage(error.message)
                     localStorage.clear();
 
@@ -152,7 +175,8 @@ const Login = () => {
                             }
 
                             <div className="container-login100-form-btn" style={{ fontFamily: "IRANSans" }}>
-                                <button className="login100-form-btn" type='submit' style={{ height: "40px", width: "150px", fontFamily: "IRANSans" }}>ورود</button>
+                                <button disabled={isDisable}  className="btn login100-form-btn" type='submit' style={{ height: "40px", width: "150px", fontFamily: "IRANSans" }}>ورود</button>
+                                {isLoading ? <LoadingBootstrap></LoadingBootstrap> : ''}
                             </div>
 
                         </form>

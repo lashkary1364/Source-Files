@@ -135,8 +135,12 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
         }, 1000);
 
       }).catch(function (error) {
+        if(error.response.status==401){
+          window.location.replace('/');
+          return;
+        }
         setIsAction(false);
-        swal("error", error.message, "error");
+        swal("خطای "+ error.response.status, error.response.data, "error");
 
       })
 
@@ -186,10 +190,7 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
                 gridRef.current.api.redrawRows();
                 gridRef.current.api.redrawRows({ rowNodes: rowData });
               } 
-                deleteSouratHazineDetail(selectedRow.ID);
-              
-
-
+                deleteSouratHazineDetail(selectedRow.ID);    
             }
             else {
             }
@@ -197,10 +198,14 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
 
         }
       }).catch(function (error) {
+        if(error.response.status==401){
+          window.location.replace('/');
+          return;
+        }
         // handle error
         console.log("axois error: ");
         console.log(error);
-        swal("Error", error.message, "error");
+        swal("خطای "+ error.response.status, error.response.data, "error");
 
       });
   }

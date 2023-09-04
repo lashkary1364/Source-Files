@@ -64,7 +64,7 @@ export const TankhahMororListExpenseType = ({ resultItems, dateFrom, dateTo }) =
                                 </button>
                             </div>
                             <div>
-                                <DownloadTableExcel
+                                {/* <DownloadTableExcel
                                     filename="export-html-pdf"
                                     sheet="tankhah"
                                     currentTableRef={ref.current}>
@@ -72,7 +72,7 @@ export const TankhahMororListExpenseType = ({ resultItems, dateFrom, dateTo }) =
                                         <FontAwesomeIcon icon={faFileExcel} className="text-warning mr-2" />
                                         صدور html به اکسل
                                     </button>
-                                </DownloadTableExcel>
+                                </DownloadTableExcel> */}
                             </div>
                         </div>
                     </ListGroupItem>
@@ -80,16 +80,13 @@ export const TankhahMororListExpenseType = ({ resultItems, dateFrom, dateTo }) =
             </Card>
             <div id="table-to-xls" ref={ref} className="table-to-xls" style={{ margin: "50px" }} >
                 <div className="border-tankhah-header">
-                    <div  >{JSON.parse(sessionStorage.getItem("LoginTocken")).LastMohitName}</div>
+                <div >{sessionStorage.getItem("mohitName")}</div>
                     <div >
-                        <span >گزارش نوع هزینه ها</span>
-                        <span>{" " + JSON.parse(sessionStorage.getItem("LoginTocken")).userFirstName + " " + JSON.parse(sessionStorage.getItem("LoginTocken")).userLastName + " "} </span>
-                    </div>
-                    <div >
-                        <span>از : </span>
+                    <span >گزارش نوع هزینه ها</span>
+                        <span >  از : </span>
                         <span>{" " + dateFrom + " "}</span>
-                        <span>تا :</span>
-                        <span>{" " + dateTo + " "}</span>
+                        <span >تا :</span>
+                        <span>{" " + dateTo + " "}</span>                      
                     </div>
                 </div>
 

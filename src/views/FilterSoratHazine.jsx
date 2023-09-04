@@ -12,7 +12,9 @@ import persian_en from "react-date-object/locales/persian_en";
 import swal from 'sweetalert';
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
-
+import { useHistory } from "react-router-dom";   
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowLeft } from '@fortawesome/fontawesome-free-solid';
 
 export const FilterSoratHazine = ({ getAllReports }) => {
 
@@ -38,7 +40,7 @@ export const FilterSoratHazine = ({ getAllReports }) => {
     const [yearFrom, setYearFrom] = useState(null);
     const [yearTo, setYearTo] = useState(null);
     const salMali = sessionStorage.getItem("salMali");
-
+    let history = useHistory();
 
     useEffect(() => {
         getAllProjects();
@@ -90,7 +92,11 @@ export const FilterSoratHazine = ({ getAllReports }) => {
 
 
             }).catch(function (error) {
-                swal("error", error.message, "error");
+                if(error.response.status==401){
+                    window.location.replace('/');
+                    return;
+                  }
+                  swal("خطای "+ error.response.status, error.response.data, "error");
             });
 
     }
@@ -198,7 +204,11 @@ export const FilterSoratHazine = ({ getAllReports }) => {
                 });
 
             }).catch(function (error) {
-                swal("error", error.message, "error");
+                if(error.response.status==401){
+                    window.location.replace('/');
+                    return;
+                  }
+                  swal("خطای "+ error.response.status, error.response.data, "error");
             })
 
     }
@@ -339,12 +349,13 @@ export const FilterSoratHazine = ({ getAllReports }) => {
                                     />
                                 </div>
                             </Col>
-                            <Col md="4" className="form-group">
-                                <Button theme="primary" className="mt-10 mr-1" type="submit" onClick={(e) => { getAllReport(e) }} style={{ marginTop: "30px" }}>
+                            <Col md="4" className="form-inline">
+                                <Button theme="primary" className="mt-10 mr-1" type="submit" onClick={(e) => { getAllReport(e) }} >
                                     <span className='form-inline'>
                                         گزارش
                                     </span>
                                 </Button>
+                                <button className="btn btn-primary mt-10 mr-1" onClick={() => history.goBack()}><FontAwesomeIcon icon={faArrowLeft} className="text-warning mr-2"  />بازگشت</button>
                             </Col>
                         </Row>
                     </form>

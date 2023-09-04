@@ -60,7 +60,6 @@ export default class SalMali extends React.Component {
         const resultItems = response.data;
         resultItems.map(data => {
           //   setSalMaliItems(salMaliItems => [...salMaliItems, { SalId: data.salId, SalMali: data.salMali }]);
-
           self.setState(prevState => ({
             FinanceYear: [...prevState.FinanceYear, { SalId: data.salId, SalMali: data.salMali }]
           }));
@@ -68,9 +67,12 @@ export default class SalMali extends React.Component {
         });
 
       }).catch(function (error) {
+        if(error.response.status==401){
+          window.location.replace('/');
+          return;
+        }
         console.log(error)
         swal("error", error.message + " " + "getFinanceYear", "error");
-
       })
 
   }

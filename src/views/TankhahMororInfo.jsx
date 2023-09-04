@@ -69,7 +69,7 @@ export const TankhahMororInfo = ({ resultItems, dateFrom, dateTo }) => {
                             </div>
 
                             <div>
-                                <DownloadTableExcel
+                                {/* <DownloadTableExcel
                                     filename="export-html-pdf"
                                     sheet="tankhah"
                                     currentTableRef={ref.current}
@@ -78,7 +78,7 @@ export const TankhahMororInfo = ({ resultItems, dateFrom, dateTo }) => {
                                         <FontAwesomeIcon icon={faFileExcel} className="text-warning mr-2" />
                                         صدور html به اکسل
                                     </button>
-                                </DownloadTableExcel>
+                                </DownloadTableExcel> */}
                             </div>
 
                         </div>
