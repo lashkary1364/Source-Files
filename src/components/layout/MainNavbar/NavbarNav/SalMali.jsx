@@ -38,9 +38,8 @@ export default class SalMali extends React.Component {
 
 
   getFinanceYear() {
-    console.log(serverAdress + `GetAllFinanceYear?mohitId=${sessionStorage.getItem("mohitId")}`)
+    
     const serverAdress = process.env.REACT_APP_SERVER_ADRESS;
-
     var self = this;
 
     axios(

@@ -10,15 +10,15 @@ import XLSX from 'sheetjs-style'
 import { useDownloadExcel, DownloadTableExcel } from "react-export-table-to-excel";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileExcel, faFilePdf, faFileExport } from '@fortawesome/free-solid-svg-icons';
-import '../assets/table.css'
+import '../../assets/table.css';
 
-export const TankhahMororListExpenseType = ({ resultItems, dateFrom, dateTo }) => {
+
+export const TankhahReportListExpense = ({ resultItems, dateFrom, dateTo }) => {
 
     const fileType = "application/vnd.openxmlformats-officedocumnet.spreadsheetml.sheet;charset=UTF-8";
     const fileExtension = ".xlsx";
-    //const excelData = [{ id: 1, name: "shabnam", family: "lashkary" }, { id: 2, name: "arezoo", family: "asadzadeh" }, { id: 3, name: "hamid", family: "soltani" }]
+  
     const ref = useRef(null);
-
     const exportToExcel = async (e) => {
         e.preventDefault();
         const ws = XLSX.utils.json_to_sheet(resultItems);
@@ -27,7 +27,7 @@ export const TankhahMororListExpenseType = ({ resultItems, dateFrom, dateTo }) =
         const data = new Blob([excelBuffer], { type: fileType });
         FileSaver.saveAs(data, "exportexcel" + fileExtension);
     };
-
+   
     const [inputValue, setInputValue] = useState({
         note: '',
         date: '',
@@ -57,14 +57,16 @@ export const TankhahMororListExpenseType = ({ resultItems, dateFrom, dateTo }) =
                                     content={() => ref.current}
                                 />
                             </div>
+
                             <div>
                                 <button onClick={(e) => exportToExcel(e)} type="button" className="btn btn-primary mb-2 mr-1">
                                     <FontAwesomeIcon icon={faFileExport} className="text-warning mr-2" />
                                     خروجی اکسل
                                 </button>
                             </div>
-                            <div>
-                                {/* <DownloadTableExcel
+
+                            {/* <div>
+                                <DownloadTableExcel
                                     filename="export-html-pdf"
                                     sheet="tankhah"
                                     currentTableRef={ref.current}>
@@ -72,48 +74,54 @@ export const TankhahMororListExpenseType = ({ resultItems, dateFrom, dateTo }) =
                                         <FontAwesomeIcon icon={faFileExcel} className="text-warning mr-2" />
                                         صدور html به اکسل
                                     </button>
-                                </DownloadTableExcel> */}
-                            </div>
+                                </DownloadTableExcel>
+                            </div> */}
                         </div>
                     </ListGroupItem>
                 </ListGroup>
             </Card>
-            <div id="table-to-xls" ref={ref} className="table-to-xls" style={{ margin: "50px" }} >
+
+            
+            <div id="table-to-xls" ref={ref} className="table-to-xls" style={{margin:"50px"}} >
                 <div className="border-tankhah-header">
-                <div >{sessionStorage.getItem("mohitName")}</div>
+                  
+                    <div >{sessionStorage.getItem("mohitName")}</div>
+                    <div>
+                        <span >لیست هزینه های ثبت شده </span>                
+                    </div>
                     <div >
-                    <span >گزارش نوع هزینه ها</span>
-                        <span >  از : </span>
+                        <span>از : </span>
                         <span>{" " + dateFrom + " "}</span>
-                        <span >تا :</span>
-                        <span>{" " + dateTo + " "}</span>                      
+                        <span>تا :</span>
+                        <span>{" " + dateTo + " "}</span>
                     </div>
                 </div>
 
-                <table dir="rtl" >
+                <table >
                     <thead>
-                        <tr style={{ backgroundColor: "#d1d3d5" }} >
+                        <tr style={{backgroundColor: "#d1d3d5"}}   >
                             <th scope="col" >ردیف</th>
-                            <th scope="col">شماره صورت هزینه</th>
-                            <th scope="col">شماره برگه </th>
-                            <th scope="col">شرح </th>
-                            <th scope="col">تاریخ پرداخت</th>
+                            <th scope="col" >تاریخ</th>
+                            <th scope="col">شماره</th>
+                            <th scope="col">نام پروژه</th>
+                            <th scope="col">شرح</th>
+                            <th scope="col">تنخواه</th>
                             <th scope="col">مبلغ</th>
                         </tr>
                     </thead>
                     <tbody>
                         {
-                            resultItems.length == 0 ? <tr><td colSpan={6} className="text-center">داده ای برای نمایش وجود ندارد</td></tr> :
-                                resultItems.map((item, index) =>
-                                    <tr key={index}>
-                                        <td scope="row" data-label="ردیف:">{item.radif}</td>
-                                        <td data-label="شماره صورت هزینه:">{item.Shomare}</td>
-                                        <td data-label="شماره برگه:">{item.ShomareBarge}</td>
-                                        <td data-label="شرح:">{item.Sharh}</td>
-                                        <td data-label="تاریخ تایید:">{item.TarikhPardakht}</td>
-                                        <td data-label="مبلغ:">{item.Mablagh}</td>
-                                    </tr>
-                                )
+                            resultItems.map((item, index) =>
+                                <tr key={index}>
+                                    <td scope="row" data-label="ردیف:">{index+1}</td>
+                                    <td data-label="تاریخ:">{item.tarikh}</td>
+                                    <td data-label="شماره:">{item.shomare}</td>
+                                    <td style={{paddingTop:"5px"}}   data-label="نام پروژه:">{item.proname}</td>
+                                    <td data-label="شرح:">{item.sharh}</td>
+                                    <td data-label="تنخواه:">{item.tankhah.toLocaleString()}</td>
+                                    <td data-label="مبلغ:">{item.total.toLocaleString()}</td>
+                                </tr>
+                            )
                         }
                     </tbody>
                 </table>
@@ -124,3 +132,4 @@ export const TankhahMororListExpenseType = ({ resultItems, dateFrom, dateTo }) =
 
     )
 }
+

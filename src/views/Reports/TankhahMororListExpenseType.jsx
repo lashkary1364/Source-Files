@@ -10,16 +10,16 @@ import XLSX from 'sheetjs-style'
 import { useDownloadExcel, DownloadTableExcel } from "react-export-table-to-excel";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileExcel, faFilePdf, faFileExport } from '@fortawesome/free-solid-svg-icons';
-import '../assets/table.css'
+import '../../assets/table.css'
 
-export const TankhahReport = ({ resultItems, dateFrom, dateTo }) => {
+export const TankhahMororListExpenseType = ({ resultItems, dateFrom, dateTo }) => {
 
     const fileType = "application/vnd.openxmlformats-officedocumnet.spreadsheetml.sheet;charset=UTF-8";
     const fileExtension = ".xlsx";
     //const excelData = [{ id: 1, name: "shabnam", family: "lashkary" }, { id: 2, name: "arezoo", family: "asadzadeh" }, { id: 3, name: "hamid", family: "soltani" }]
     const ref = useRef(null);
-    const exportToExcel = async (e) => {
 
+    const exportToExcel = async (e) => {
         e.preventDefault();
         const ws = XLSX.utils.json_to_sheet(resultItems);
         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
@@ -27,7 +27,6 @@ export const TankhahReport = ({ resultItems, dateFrom, dateTo }) => {
         const data = new Blob([excelBuffer], { type: fileType });
         FileSaver.saveAs(data, "exportexcel" + fileExtension);
     };
-
 
     const [inputValue, setInputValue] = useState({
         note: '',
@@ -68,8 +67,7 @@ export const TankhahReport = ({ resultItems, dateFrom, dateTo }) => {
                                 {/* <DownloadTableExcel
                                     filename="export-html-pdf"
                                     sheet="tankhah"
-                                    currentTableRef={ref.current}
-                                >
+                                    currentTableRef={ref.current}>
                                     <button type="button" className="btn btn-primary mb-2 mr-1" >
                                         <FontAwesomeIcon icon={faFileExcel} className="text-warning mr-2" />
                                         صدور html به اکسل
@@ -80,42 +78,40 @@ export const TankhahReport = ({ resultItems, dateFrom, dateTo }) => {
                     </ListGroupItem>
                 </ListGroup>
             </Card>
-            <div id="table-to-xls" ref={ref} className="table-to-xls" style={{margin:"50px"}} >
+            <div id="table-to-xls" ref={ref} className="table-to-xls" style={{ margin: "50px" }} >
                 <div className="border-tankhah-header">
-                    <div >{sessionStorage.getItem("mohitName")}</div>
-                    <div>
-                        <span >لیست هزینه های ثبت شده </span>                
-                    </div>
+                <div >{sessionStorage.getItem("mohitName")}</div>
                     <div >
-                        <span>از : </span>
+                    <span >گزارش نوع هزینه ها</span>
+                        <span >  از : </span>
                         <span>{" " + dateFrom + " "}</span>
-                        <span>تا :</span>
-                        <span>{" " + dateTo + " "}</span>
+                        <span >تا :</span>
+                        <span>{" " + dateTo + " "}</span>                      
                     </div>
                 </div>
 
-                <table>
+                <table dir="rtl" >
                     <thead>
-                        <tr style={{backgroundColor: "#d1d3d5"}} >
-                            <th scope="col">ردیف</th>
-                            <th scope="col">شرح</th>
-                            <th scope="col">تاریخ</th>
-                            <th scope="col">بدهکار</th>
-                            <th scope="col">بستانکار</th>
-                            <th scope="col">مانده</th>
+                        <tr style={{ backgroundColor: "#d1d3d5" }} >
+                            <th scope="col" >ردیف</th>
+                            <th scope="col">شماره صورت هزینه</th>
+                            <th scope="col">شماره برگه </th>
+                            <th scope="col">شرح </th>
+                            <th scope="col">تاریخ پرداخت</th>
+                            <th scope="col">مبلغ</th>
                         </tr>
                     </thead>
                     <tbody>
                         {
-                            resultItems.length == 0 ? <tr><td className='text-center' colSpan={5}> داده ای برای نمایش وجود ندارد </td></tr> :
+                            resultItems.length == 0 ? <tr><td colSpan={6} className="text-center">داده ای برای نمایش وجود ندارد</td></tr> :
                                 resultItems.map((item, index) =>
                                     <tr key={index}>
-                                        <td scope="row" data-label="ردیف">{item.radif}</td>
-                                        <td data-label="شرح:">{item.sharh}</td>
-                                        <td data-label="تاریخ:">{item.tarikh}</td>
-                                        <td data-label="بدهکار:">{item.bed.toLocaleString()}</td>
-                                        <td data-label="بستانکار:">{item.bes.toLocaleString()}</td>
-                                        <td data-label="مانده:">   {item.mande<0 ? `(${Math.abs(item.mande.toLocaleString())})` :item.mande.toLocaleString()} </td>
+                                        <td scope="row" data-label="ردیف:">{item.radif}</td>
+                                        <td data-label="شماره صورت هزینه:">{item.Shomare}</td>
+                                        <td data-label="شماره برگه:">{item.ShomareBarge}</td>
+                                        <td data-label="شرح:">{item.Sharh}</td>
+                                        <td data-label="تاریخ تایید:">{item.TarikhPardakht}</td>
+                                        <td data-label="مبلغ:">{item.Mablagh}</td>
                                     </tr>
                                 )
                         }
@@ -128,4 +124,3 @@ export const TankhahReport = ({ resultItems, dateFrom, dateTo }) => {
 
     )
 }
-

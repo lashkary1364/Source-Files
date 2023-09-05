@@ -15,18 +15,10 @@ import PrivateRoute from "./PrivateRoute";
 export default () => (
   
   <Router basename={process.env.REACT_APP_BASENAME || ""}>   
-      
     <Switch>
     <Route path="/" key={100000} exact component={Login}></Route>
-    {/* <Route path="*" component={NotFound} /> */}
     <PrivateRoute></PrivateRoute>
     </Switch>
- 
-    {/* <Redirect to="/" /> */}
-   
-    {/* <Route path="/" key={100000} exact component={Login} />
-    <Route path="*" key={100001} component={NotFound}></Route> */}
-
   </Router>
 
 );

@@ -14,7 +14,7 @@ import { faFileExcel, faFilePdf, faFileExport, faBackward } from '@fortawesome/f
 import Num2persian from 'num2persian';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
-import '../assets/view-css.css';
+import '../../assets/view-css.css';
 import swal from 'sweetalert';
 import { Spinner } from 'react-bootstrap';
 import { faArrowLeft } from '@fortawesome/fontawesome-free-solid';
@@ -171,7 +171,7 @@ export const TankhahSodoreName = () => {
                                 <tbody>
                                     <tr>
                                         <td rowSpan={2} style={{ verticalAlign: "middle", border: "1px solid rgb(40, 39, 39)" }}>
-                                            <img src={require("./../images/deka.png")}></img>
+                                            <img src={require("../../images/deka.png")}></img>
                                         </td>
                                         <td scope="row" rowSpan={2} style={{ verticalAlign: "middle", border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}  ><h3>فرم تنخواه گردان</h3></td>
                                         <td style={{ border: "1px solid rgb(40, 39, 39)", fontFamily: "B Nazanin", fontWeight: "bold", fontSize: "12pt" }}>شماره :{shomareName}</td>

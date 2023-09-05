@@ -4,13 +4,13 @@ import { ExpenseList } from "./views/expense/ExpenseList";
 import { Expense } from "./views/expense/Expense";
 import { ExpenceDetail } from "./views/expense/ExpenceDetail";
 import { Home } from "./views/Home";
-import { TankhahMoror } from "./views/TankhahMoror";
-import { MororListHaineha } from "./views/MororListHaineha";
-import { MororListDaryaftiha } from "./views/MororListDaryaftiha";
-import { MororListExpenseType } from "./views/MororListExpenseType";
-import { TankhahSodoreName } from "./views/TankhahSodoreName";
-import { MororRizHazine } from "./views/MororRizHazine";
-import { TankhahReportListHazineha } from "./views/TankhahReportListHazineha";
+import { TankhahMoror } from "./views/Reports/TankhahMoror";
+import { MororListHaineha } from "./views/Reports/MororListHaineha";
+import { MororListDaryaftiha } from "./views/Reports/MororListDaryaftiha";
+import { MororListExpenseType } from "./views/Reports/MororListExpenseType";
+import { TankhahSodoreName } from "./views/Reports/TankhahSodoreName";
+import { MororRizHazine } from "./views/Reports/MororRizHazine";
+import { TankhahReportListHazineha } from "./views/Reports/TankhahReportListHazineha";
 import { NotFound } from "./views/NotFound";
 
 export default [
