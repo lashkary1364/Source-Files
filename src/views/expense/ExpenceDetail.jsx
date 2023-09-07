@@ -244,8 +244,6 @@ export const ExpenceDetail = () => {
                     return;
                 }
 
-
-
                 setRowIndex(rowIndex + 1);
                 const ids = rowGrid.map(object => {
                     return object.ID;

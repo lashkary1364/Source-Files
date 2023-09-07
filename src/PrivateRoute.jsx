@@ -40,20 +40,13 @@ const PrivateRoute = () => {
                                         );
                                     })}
                                 ></Route>
-
-
                             </>
-
-
                             // </React.Suspense>
-
-
                         )
                     })
 
                     :
-                    <Route path="/" key={100000} exact component={Login}></Route>
-                    
+                    <Route path="/" key={100000} exact component={Login}></Route>                    
                     // <Redirect to="/"   ></Redirect>
             }
         </div>
