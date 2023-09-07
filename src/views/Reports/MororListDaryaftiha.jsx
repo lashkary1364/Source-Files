@@ -28,7 +28,6 @@ export const MororListDaryaftiha = () => {
         setDateFrom(dateFrom);
         setDateTo(dateTo);
         setIsLoading(true);
-        // e.preventDefault();
         console.log({
             "fromDate": dateFrom,
             "toDate": dateTo,

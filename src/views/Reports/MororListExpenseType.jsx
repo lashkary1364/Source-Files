@@ -183,10 +183,7 @@ export const MororListExpenseType = () => {
                 });
 
             }).catch(function (error) {
-                // handle error
-                // console.log("axois error: ");
-                // console.log(error);
-                // alert(error);
+                
                 swal("خطای "+ error.response.status, error.response.data, "error");
             })
 
@@ -217,8 +214,7 @@ export const MororListExpenseType = () => {
                 }
             }).then(function (response) {
                 const resultItems = response.data;
-                setItems([]);
-                // console.log(response.data);            
+                setItems([]);                      
                 resultItems.map((item) => {
                     setItems(items => [...items, { radif: item.radif, Mablagh: item.mab.toLocaleString(), Sharh: item.sharh, Shomare: item.shomare, ShomareBarge: item.shomare_barge, TarikhPardakht: item.tarikh_pardakht }])
                 });
@@ -230,11 +226,7 @@ export const MororListExpenseType = () => {
 
 
             }).catch(function (error) {
-                // handle error
-                // console.log("axois error: ");
-                // console.log(error);
-                // alert(error);
-                if(error.response.status==401){
+              if(error.response.status==401){
                     window.location.replace('/');
                     return;
                   }
@@ -292,8 +284,6 @@ export const MororListExpenseType = () => {
                                                 </div>
                                             </div>
                                         </Col>
-                                    {/* </Row>
-                                    <Row> */}
                                         <Col md="3" className="form-group">
                                             <div className="form-inline mt-3 mr-3">
                                                 <label htmlFor="mande" > از تاریخ :</label>
@@ -371,13 +361,7 @@ export const MororListExpenseType = () => {
                                     </Button>
                                     <button className="btn btn-primary mb-2 mr-1" onClick={() => history.goBack()}><FontAwesomeIcon icon={faArrowLeft} className="text-warning mr-2"  />بازگشت</button>
                                         </div>
-                                    </Row>
-                                    
-
-
-
-                              
-
+                                    </Row>  
                                 </form>
                             </ListGroupItem>
                         </ListGroup>

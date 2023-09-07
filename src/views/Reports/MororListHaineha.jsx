@@ -22,8 +22,7 @@ export const MororListHaineha = () => {
 
         setIsLoading(true);   
         setDateTo(dateTo);
-        setDateFrom(dateFrom);
-        
+        setDateFrom(dateFrom);        
 
         axios(
             {
@@ -56,7 +55,6 @@ export const MororListHaineha = () => {
                     setItems(items => [...items, { total: item.total, shomare: item.shomare, proname: item.proname, sharh: item.sharh, TankhahId: item.TankhahId, proname: item.proname, tankhah: item.tankhah, tarikh: item.tarikh }])
                 });
 
-
                 setIsVisible(true);
                 window.setTimeout(() => {
                     setIsLoading(false);
@@ -64,10 +62,7 @@ export const MororListHaineha = () => {
 
 
             }).catch(function (error) {
-                // handle error
-                // console.log("axois error: ");
-                // console.log(error);
-                // alert(error);
+               
                 if(error.response.status==401){
                     window.location.replace('/');
                     return;

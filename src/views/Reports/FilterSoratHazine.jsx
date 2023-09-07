@@ -139,9 +139,9 @@ export const FilterSoratHazine = ({ getAllReports }) => {
             "ProjectId": parseInt(projectId),
             "SoratHazineState": parseInt(soratHazineState),
             "Sharh": values.name,
-            "SanadState": parseInt(sanadState),  //sanadState,
+            "SanadState": parseInt(sanadState), 
             "Tozihat": tozihatRef.current.value,
-            "Orederd": parseInt(order), //order ,
+            "Orederd": parseInt(order), 
             "MohitName": mohitName
         }
 

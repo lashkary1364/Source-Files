@@ -3,7 +3,7 @@ import React from 'react'
 import { Redirect, Route, useLocation } from 'react-router-dom'
 import routes from "./routes";
 import withTracker from "./withTracker";
-
+import Login from "./login";
 
 const PrivateRoute = () => {
 
@@ -51,7 +51,10 @@ const PrivateRoute = () => {
                         )
                     })
 
-                    : <Redirect to="/"   ></Redirect>
+                    :
+                    <Route path="/" key={100000} exact component={Login}></Route>
+                    
+                    // <Redirect to="/"   ></Redirect>
             }
         </div>
 

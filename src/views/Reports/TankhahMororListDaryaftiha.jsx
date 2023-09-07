@@ -86,12 +86,8 @@ export const TankhahMororListDaryaftiha = ({ resultItems, dateFrom, dateTo }) =>
                         <span >از : </span>
                         <span>{" " + dateFrom + " "}</span>
                         <span >تا :</span>
-                        <span>{" " + dateTo + " "}</span>
-                        {/* <span>{" " + JSON.parse(sessionStorage.getItem("LoginTocken")).userFirstName + " " + JSON.parse(sessionStorage.getItem("LoginTocken")).userLastName + " "} </span> */}
-                    </div>
-                    {/* <div >
-                        
-                    </div> */}
+                        <span>{" " + dateTo + " "}</span>                       
+                    </div>                    
                 </div>
 
                 <table dir="rtl" >
