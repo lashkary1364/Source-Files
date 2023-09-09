@@ -42,13 +42,13 @@ export const ExpenseList = () => {
       checkboxSelection: true,
       showDisabledCheckboxes: true,
     },
-    { field: 'shomare', headerName: 'شماره', },
+    { field: 'shomare', headerName: 'شماره',filter: 'agNumberColumnFilter' },
     { field: 'sharh', headerName: 'شرح', },
-    { field: 'tarikh', headerName: 'تاریخ', },
-    { field: 'str_status', headerName: 'وضعیت', },
+    { field: 'tarikh', headerName: 'تاریخ', filter: 'agTextColumnFilter' },
+    { field: 'str_status', headerName: 'وضعیت',filter: 'agSetColumnFilter' },
     { field: 'shomare_name', headerName: 'شماره نامه', filter: 'agNumberColumnFilter', },
     { field: 'tarikh_name', headerName: 'تاریخ نامه', filter: 'agNumberColumnFilter', },
-    { field: 'sanadID', headerName: 'شماره سند', filter: 'agNumberColumnFilter', },
+    { field: 'shomare_sanad', headerName: 'شماره سند', filter: 'agNumberColumnFilter', },
 
   ]);
 
@@ -460,9 +460,8 @@ export const ExpenseList = () => {
                 <div className="example-wrapper">
                   <div className="form-inline mb-2">
                     <span >سایز صفحه:</span>
-                    <select className="form-contro ml-2" onChange={onPageSizeChanged} id="page-size" defaultValue={5}>
-                      <option value="5" >5</option>
-                      <option value="10" >10</option>
+                    <select className="form-contro ml-2" onChange={onPageSizeChanged} id="page-size" defaultValue={10}>
+                     <option value="10" >10</option>
                       <option value="100">100</option>
                       <option value="500">500</option>
                       <option value="1000">1000</option>
@@ -487,7 +486,7 @@ export const ExpenseList = () => {
                   localeText={AG_GRID_LOCALE_FA}
                   pivotPanelShow={'always'}
                   pagination={true}
-                  paginationPageSize={5}
+                  paginationPageSize={10}
                   paginationNumberFormatter={paginationNumberFormatter}
                   alwaysShowBothConditions={true}
                   caseSensitive={false}

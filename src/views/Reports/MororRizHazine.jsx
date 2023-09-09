@@ -22,9 +22,6 @@ export const MororRizHazine = () => {
     const [sumMablagh, setSumMablagh] = useState(0);
     const [data, setData] = useState();
 
-
-
-
     const getAllReports = (data) => {
 
        
@@ -32,7 +29,8 @@ export const MororRizHazine = () => {
         setReportItems([]);
         setReportRizItems([]);
         setIsLoading(true);
-        
+        console.log(data);
+
         axios(
             {
                 url: serverAdress + `GetAllReportSoratHazine`,
@@ -46,7 +44,7 @@ export const MororRizHazine = () => {
                 },
                 data: data,
             }).then(function (response) {
-               
+               console.log(response.data);
                 const resultItems = response.data;
                 var sumTaeedShode = 0;
                 var sumTaeedNashode = 0;
@@ -130,8 +128,8 @@ export const MororRizHazine = () => {
                         Sharh: data.sharh, Mablagh: data.mablagh,
                         Tozihat: data.tozihat, Ok: data.ok, OkStr: data.okStr,
                     }])
-
                 ));
+                
                 setSumMablagh(sumMablagh);
                 setIsVisible(true);
 
@@ -150,6 +148,8 @@ export const MororRizHazine = () => {
 
 
     }
+
+
 
     return (
         <Container fluid className="main-content-container px-4">
