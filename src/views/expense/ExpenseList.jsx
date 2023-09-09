@@ -42,13 +42,13 @@ export const ExpenseList = () => {
       checkboxSelection: true,
       showDisabledCheckboxes: true,
     },
-    { field: 'shomare', headerName: 'شماره',filter: 'agNumberColumnFilter' },
+    { field: 'shomare', headerName: 'شماره'},//,filter: 'agNumberColumnFilter' },
     { field: 'sharh', headerName: 'شرح', },
-    { field: 'tarikh', headerName: 'تاریخ', filter: 'agTextColumnFilter' },
-    { field: 'str_status', headerName: 'وضعیت',filter: 'agSetColumnFilter' },
-    { field: 'shomare_name', headerName: 'شماره نامه', filter: 'agNumberColumnFilter', },
-    { field: 'tarikh_name', headerName: 'تاریخ نامه', filter: 'agNumberColumnFilter', },
-    { field: 'shomare_sanad', headerName: 'شماره سند', filter: 'agNumberColumnFilter', },
+    { field: 'tarikh', headerName: 'تاریخ',},// filter: 'agTextColumnFilter' },
+    { field: 'str_status', headerName: 'وضعیت',} ,//filter: 'agSetColumnFilter' },
+    { field: 'shomare_name', headerName: 'شماره نامه', },//filter: 'agNumberColumnFilter', },
+    { field: 'tarikh_name', headerName: 'تاریخ نامه',},// filter: 'agNumberColumnFilter', },
+    { field: 'shomare_sanad', headerName: 'شماره سند',},// filter: 'agNumberColumnFilter', },
 
   ]);
 

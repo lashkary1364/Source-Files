@@ -12,7 +12,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
-import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { faSubscript, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { useHistory } from 'react-router-dom';
 import swal from "sweetalert";
 import { Rowing } from "@material-ui/icons";
@@ -21,6 +21,7 @@ import { Rowing } from "@material-ui/icons";
 
 export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSouratHazineDetail }) => {
 
+  const [sumPrice, setSumPrice] = useState(0);
   const [selected, setSelected] = useState(null);
   const [visible, setVisible] = useState();
   const [isAction, setIsAction] = useState(false);
@@ -46,7 +47,11 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
 
   useEffect(() => {
     setRowData([]);
+    let p = 0;
+
     gridData.map((data, index) => {
+      p = p + data?.Mablagh;
+      setSumPrice()
       setRowData(rowData => [...rowData, {
         "ID": data?.ID,
         "RowIndex": index,
@@ -64,10 +69,12 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
         "item_ID": data?.item_ID,
         "State": data?.State,
         "ok": data?.ok,// == 0 ? 'بررسی نشده' : data?.ok == 1 ? 'تایید شده' : 'رد شده'
-        "okDesc": data?.okDesc
+        "okDesc": data?.okDesc,
+        "sumPrice": data?.sumPrice
       }]);
     });
 
+    setSumPrice(p);
   }, [gridData]);
 
   useEffect(() => {
@@ -135,12 +142,12 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
         }, 1000);
 
       }).catch(function (error) {
-        if(error.response.status==401){
+        if (error.response.status == 401) {
           window.location.replace('/');
           return;
         }
         setIsAction(false);
-        swal("خطای "+ error.response.status, error.response.data, "error");
+        swal("خطای " + error.response.status, error.response.data, "error");
 
       })
 
@@ -189,8 +196,8 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
               if (visible) {
                 gridRef.current.api.redrawRows();
                 gridRef.current.api.redrawRows({ rowNodes: rowData });
-              } 
-                deleteSouratHazineDetail(selectedRow.ID);    
+              }
+              deleteSouratHazineDetail(selectedRow.ID);
             }
             else {
             }
@@ -198,14 +205,14 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
 
         }
       }).catch(function (error) {
-        if(error.response.status==401){
+        if (error.response.status == 401) {
           window.location.replace('/');
           return;
         }
         // handle error
         console.log("axois error: ");
         console.log(error);
-        swal("خطای "+ error.response.status, error.response.data, "error");
+        swal("خطای " + error.response.status, error.response.data, "error");
 
       });
   }
@@ -281,8 +288,11 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
                 swal("توجه", "این ردیف در دیتابیس ذخیر نشده است دمیتوانید آن را حذف و دوباره وارد نمایید", "warning");
             }}>ویرایش</button>
             <button type="button" className="btn btn-secondary" onClick={handleDelete}>حذف</button>
-          </div>
 
+          </div>
+          <span className="ml-5" style={{ fontSize: "15pt" , fontFamily:"b nazanin" }}>
+            جمع مبلغ فاکتورها:
+            <span className="ml-2 mr-2 " style={{backgroundColor:"#adf7e6" , fontWeight:"bold"}} >{sumPrice == 0 ? 0 : sumPrice.toLocaleString()}</span></span><span className="ml-2" style={{ fontSize: "15pt" ,fontFamily:"b nazanin" }}>ریال</span>
           {visible ?
             <div className="ag-theme-alpine mb-5" style={gridStyle}>
               <div className="example-wrapper">
