@@ -36,13 +36,13 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
       checkboxSelection: true,
       showDisabledCheckboxes: true,
     },
-    { field: 'ShomareBarge', headerName: 'شماره فاکتور', },
-    { field: 'TarikhPardakht', headerName: 'تاریخ پرداخت', },
-    { field: 'Mablagh1', headerName: 'مبلغ', },
-    { field: 'Sharh', headerName: 'شرح', },
-    { field: 'State', hide: true },
-    { field: 'Tozihat', headerName: 'توضیحات', },
-    { field: 'okDesc', headerName: 'وضعیت', },
+    // { field: 'ShomareBarge', headerName: 'شماره فاکتور', },
+    // { field: 'TarikhPardakht', headerName: 'تاریخ پرداخت', },
+    // { field: 'Mablagh1', headerName: 'مبلغ', },
+    // { field: 'Sharh', headerName: 'شرح', },
+    // { field: 'State', hide: true },
+    // { field: 'Tozihat', headerName: 'توضیحات', },
+    // { field: 'okDesc', headerName: 'وضعیت', },
   ]);
 
   useEffect(() => {
@@ -290,9 +290,9 @@ export const ExpenseDetailList = ({ gridData, editDetail, handleNew, deleteSoura
             <button type="button" className="btn btn-secondary" onClick={handleDelete}>حذف</button>
 
           </div>
-          <span className="ml-5" style={{ fontSize: "15pt" , fontFamily:"b nazanin" }}>
+          <span className="ml-5" style={{ fontSize: "15pt", fontFamily: "b nazanin" }}>
             جمع مبلغ فاکتورها:
-            <span className="ml-2 mr-2 " style={{backgroundColor:"#adf7e6" , fontWeight:"bold"}} >{sumPrice == 0 ? 0 : sumPrice.toLocaleString()}</span></span><span className="ml-2" style={{ fontSize: "15pt" ,fontFamily:"b nazanin" }}>ریال</span>
+            <span className="ml-2 mr-2 " style={{ backgroundColor: "#adf7e6", fontWeight: "bold" }} >{sumPrice == 0 ? 0 : sumPrice.toLocaleString()}</span></span><span className="ml-2" style={{ fontSize: "15pt", fontFamily: "b nazanin" }}>ریال</span>
           {visible ?
             <div className="ag-theme-alpine mb-5" style={gridStyle}>
               <div className="example-wrapper">
